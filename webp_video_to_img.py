@@ -7,7 +7,7 @@ import pathlib  # 导入 pathlib 模块
 # ==============================================================================
 #
 # 脚本名称 (Script Name):
-#   webp_video_to.py
+#   webp_video_to_img.py
 #
 # 主要目的 (Main Purpose):
 #   本脚本用于将指定根目录及其子目录下的视频文件批量转换为动画 WebP 格式。
