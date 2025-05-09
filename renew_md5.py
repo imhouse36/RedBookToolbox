@@ -1,7 +1,9 @@
 import os
 import hashlib
 import random
-import time # 引入 time 模块用于暂停
+import time
+import pathlib
+from typing import Optional, Tuple  # 导入 Optional 和 Tuple
 
 # ==============================================================================
 # 脚本功能核心备注 (Script Core Functionality Notes)
@@ -42,13 +44,21 @@ import time # 引入 time 模块用于暂停
 #
 # ==============================================================================
 
+# --- 配置常量 ---
+IMAGE_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.tiff')
+MIN_BYTES_TO_APPEND = 1
+MAX_BYTES_TO_APPEND = 16
+MD5_CHUNK_SIZE = 4096
 
-def get_file_md5(filepath):
+
+# --- /配置常量 ---
+
+def get_file_md5(filepath: pathlib.Path) -> Optional[str]:  # 修改: str | None -> Optional[str]
     """计算文件的MD5值"""
     hash_md5 = hashlib.md5()
     try:
-        with open(filepath, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
+        with filepath.open("rb") as f:
+            for chunk in iter(lambda: f.read(MD5_CHUNK_SIZE), b""):
                 hash_md5.update(chunk)
         return hash_md5.hexdigest()
     except FileNotFoundError:
@@ -59,22 +69,22 @@ def get_file_md5(filepath):
         return None
 
 
-def modify_image_md5(filepath):
+def modify_image_md5(filepath: pathlib.Path) -> Tuple[
+    Optional[str], Optional[str]]:  # 修改: tuple[str | None, str | None] -> Tuple[Optional[str], Optional[str]]
     """
     通过在文件末尾附加随机字节来修改文件的MD5值。
-    返回 (旧MD5, 新MD5) 或 (None, None) 如果失败, 或 (旧MD5, None) 如果修改步骤失败。
+    返回 (旧MD5, 新MD5) 或 (None, None) 如果获取旧MD5失败,
+    或 (旧MD5, None) 如果修改步骤失败。
     """
     original_md5 = get_file_md5(filepath)
     if original_md5 is None:
-        return None, None
+        return None, None  # original_md5已经是Optional[str], new_md5也会是Optional[str]
 
     try:
-        # 生成1到16个随机字节
-        num_bytes_to_append = random.randint(1, 16)
+        num_bytes_to_append = random.randint(MIN_BYTES_TO_APPEND, MAX_BYTES_TO_APPEND)
         random_bytes = os.urandom(num_bytes_to_append)
 
-        # 以二进制追加模式打开文件并写入随机字节
-        with open(filepath, "ab") as f:
+        with filepath.open("ab") as f:
             f.write(random_bytes)
 
         new_md5 = get_file_md5(filepath)
@@ -87,40 +97,39 @@ def modify_image_md5(filepath):
         return original_md5, None
 
 
-def process_directory_recursively(root_directory_path):
+def process_directory_recursively(root_directory_path_str: str):
     """处理指定目录及其所有子目录下的图片文件"""
-    image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.tiff')
+    root_path = pathlib.Path(root_directory_path_str)
 
-    print(f"\n开始递归处理目录: {root_directory_path}\n")
+    print(f"\n开始递归处理目录: {root_path}\n")
     modified_count = 0
     failed_count = 0
     processed_files_count = 0
 
-    for dirpath, dirnames, filenames in os.walk(root_directory_path):
-        print(f"--- 正在扫描目录: {dirpath} ---")
+    for dirpath_str, _, filenames in os.walk(root_path):
+        dir_path = pathlib.Path(dirpath_str)
+        print(f"--- 正在扫描目录: {dir_path} ---")
         for filename in filenames:
-            if filename.lower().endswith(image_extensions):
-                filepath = os.path.join(dirpath, filename)
-                if os.path.isfile(filepath): # 确保是文件，os.walk理论上只返回文件名
+            if filename.lower().endswith(IMAGE_EXTENSIONS):
+                filepath = dir_path / filename
+                if filepath.is_file():
                     processed_files_count += 1
                     print(f"处理文件: {filepath}")
 
                     original_md5, new_md5 = modify_image_md5(filepath)
 
-                    if original_md5 and new_md5:
+                    if original_md5 and new_md5:  # Both are not None
                         if original_md5 != new_md5:
                             print(f"  原MD5: {original_md5}")
                             print(f"  新MD5: {new_md5} (已更改)")
                             modified_count += 1
                         else:
-                            # 理论上追加了字节，MD5应该会变，如果没变则是个问题
                             print(f"  警告: MD5未改变! 原MD5: {original_md5}, 新MD5: {new_md5}")
                             failed_count += 1
-                    elif original_md5 and new_md5 is None:
-                        # 修改步骤失败，但原始MD5已知
+                    elif original_md5 and new_md5 is None:  # Modification failed but original_md5 known
                         print(f"  修改失败或无法获取新MD5。原MD5: {original_md5}")
                         failed_count += 1
-                    else: # original_md5 is None
+                    else:  # original_md5 is None (implies initial get_file_md5 failed)
                         print(f"  无法获取原始MD5。")
                         failed_count += 1
                     print("-" * 20)
@@ -133,36 +142,33 @@ def process_directory_recursively(root_directory_path):
 
 
 if __name__ == "__main__":
-    # 1. 提示用户输入目录路径
     while True:
-        target_directory_input = input(
-            "请输入要处理的图片根目录路径 (例如: D:\\Downloads\\live\\小红书发布图\\万达店 ): ")
-        target_directory_input = target_directory_input.strip()
+        target_directory_input_str = input(
+            "请输入要处理的图片根目录路径 (例如: D:\\Downloads\\live\\小红书发布图\\万达店 ): ").strip()
 
-        if not target_directory_input:
+        target_path_obj = pathlib.Path(target_directory_input_str)
+
+        if not target_directory_input_str:
             print("错误：未输入路径，请重新输入。")
-        elif not os.path.isdir(target_directory_input):
-            print(f"错误：路径 '{target_directory_input}' 不是一个有效的目录或目录不存在。请重新输入。")
+        elif not target_path_obj.is_dir():
+            print(f"错误：路径 '{target_directory_input_str}' 不是一个有效的目录或目录不存在。请重新输入。")
         else:
-            break # 输入有效，跳出循环
+            break
 
-    # --- 警告信息 ---
     print("\n！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！")
     print("警告：此脚本将直接修改指定目录及其所有子目录下的图片文件内容以更改其MD5值。")
     print("强烈建议在运行此脚本前备份您的原始图片！")
-    print(f"您指定的目标根目录是: \"{target_directory_input}\"")
-    print("脚本将立即开始处理，没有额外的确认步骤 (除了下面的5秒延迟)。") # 修改了这行描述
-    print("如果您不确定，请在5秒内按 Ctrl+C 中止脚本。") # 修改了这行描述
+    print(f"您指定的目标根目录是: \"{target_path_obj}\"")
+    print("脚本将立即开始处理，没有额外的确认步骤 (除了下面的5秒延迟)。")
+    print("如果您不确定，请在5秒内按 Ctrl+C 中止脚本。")
     print("！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！\n")
 
-    # 为了给用户一个非常短暂的机会在看到警告后中止
     print("将在5秒后开始处理...")
     try:
         time.sleep(5)
-    except KeyboardInterrupt: # 允许用户在sleep期间按Ctrl+C退出
+    except KeyboardInterrupt:
         print("\n操作已由用户中止。")
         exit()
 
-
-    process_directory_recursively(target_directory_input)
+    process_directory_recursively(str(target_path_obj))
     print("\n所有操作已完成。")

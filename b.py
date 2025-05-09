@@ -15,75 +15,51 @@
 # - 在该基础目录下，会存在名为 "1", "2", ..., "10" 的10个子文件夹。
 # - 控制台会输出每个文件夹的创建状态。
 
-import os
-import errno
+import pathlib # 导入 pathlib
+import errno   # errno 仍然可能用于某些特定的错误检查，但Path对象的方法通常会自己处理
 
-
-# import sys # sys模块不再需要，因为我们使用input()
-
-def create_folders(base_dir_param):
+def create_folders_pathlib(base_dir_str):
     """
-    在指定的基础目录下创建10个编号的子文件夹。
+    在指定的基础目录下创建10个编号的子文件夹 (使用 pathlib)。
 
     参数:
-    base_dir_param (str): 用户通过input()输入的基础目录路径。
+    base_dir_str (str): 用户通过input()输入的基础目录路径字符串。
     """
-    # 脚本核心逻辑开始
     try:
-        # 步骤1: 确保基础目录存在
-        # 如果用户提供的基础目录 (base_dir_param) 不存在，则尝试创建它。
-        # os.makedirs 会创建所有必需的中间目录。
-        if not os.path.exists(base_dir_param):
-            os.makedirs(base_dir_param)
-            print(f"基础目录已创建: {base_dir_param}")
-        else:
-            print(f"基础目录已存在: {base_dir_param}")
+        base_path = pathlib.Path(base_dir_str)
 
-        # 步骤2: 创建10个文件夹，命名从1到10
-        # 循环10次，每次创建一个编号的子文件夹。
-        for i in range(1, 11):
-            # 构造每个子文件夹的完整路径
-            folder_path = os.path.join(base_dir_param, str(i))
+        # 创建基础目录
+        # mkdir(parents=True, exist_ok=True)
+        # parents=True: 如果父目录不存在，一并创建 (类似 os.makedirs)
+        # exist_ok=True: 如果目录已存在，不引发错误
+        base_path.mkdir(parents=True, exist_ok=True)
+        print(f"基础目录 '{base_path}' 确保存在。")
 
-            # 检查子文件夹是否已存在
-            if not os.path.exists(folder_path):
-                # 如果不存在，则创建子文件夹
-                os.mkdir(folder_path)
-                print(f"创建文件夹: {folder_path}")
-            else:
-                # 如果已存在，则打印提示信息
-                print(f"文件夹已存在: {folder_path}")
+        # 创建10个子文件夹
+        for i in range(1, 21):
+            folder_path = base_path / str(i) # 使用 / 操作符拼接路径
+            try:
+                folder_path.mkdir(exist_ok=True) # parents=False 默认，因为父目录已存在
+                print(f"子文件夹 '{folder_path}' 确保存在。")
+            except OSError as e:
+                # 捕获可能的权限问题等
+                print(f"创建子文件夹 '{folder_path}' 时出错: {e}")
 
-        print("所有文件夹创建完成")
-        # 结果: 在 base_dir_param 目录下，会生成名为 "1" 到 "10" 的10个子文件夹。
 
-    except OSError as e:
-        # 步骤3: 错误处理
-        # 捕获在创建文件夹过程中可能发生的操作系统错误。
-        if e.errno != errno.EEXIST:
-            print(f"创建文件夹时出错: {e}")
-            # 根据情况，你可能仍想在这里 raise e，或者只是打印错误然后允许脚本结束
-            # raise
-        else:
-            print(f"尝试创建已存在的目录时被忽略 (属于正常流程): {e.filename}")
-    except Exception as ex:  # 捕获其他可能的错误，例如路径字符串无效
+        print("所有文件夹处理完成。")
+
+    except OSError as e: # 主要捕获 base_path.mkdir 时可能发生的错误
+        # 例如，如果 base_dir_str 指向一个文件，或者权限不足
+        print(f"处理基础目录 '{base_dir_str}' 时发生操作系统错误: {e}")
+    except Exception as ex: # 捕获其他意外错误
         print(f"发生意外错误: {ex}")
 
 
 if __name__ == "__main__":
-    # 主程序入口
+    base_directory_from_input = input("请输入基础目录路径 (例如: D:\\Downloads\\live\\小红书发布图\\万达店): ").strip()
 
-    # 提示用户输入基础目录路径
-    # input() 函数会暂停脚本执行，等待用户在控制台输入，并按 Enter 键
-    base_directory_from_input = input("请输入基础目录路径 (例如: D:\\Downloads\\live\\小红书发布图\\万达店): ")
-
-    # 去除用户输入路径前后可能存在的空格
-    base_directory_from_input = base_directory_from_input.strip()
-
-    # 检查用户是否真的输入了内容
     if not base_directory_from_input:
         print("错误：未输入目录路径。脚本将退出。")
     else:
         print(f"接收到的基础目录路径: {base_directory_from_input}")
-        # 调用核心功能函数
-        create_folders(base_directory_from_input)
+        create_folders_pathlib(base_directory_from_input)

@@ -1,14 +1,16 @@
 import os
 import subprocess
-import shutil
+import shutil  # 虽然未使用，但保留原导入
+import pathlib
+import time  # 从其他脚本看，可能需要暂停，但此脚本中当前未使用
+from typing import Union, Tuple, List, Optional  # 导入 Union, Tuple, List, Optional
 
 # ==============================================================================
 # 脚本功能核心备注 (Script Core Functionality Notes)
 # ==============================================================================
 #
-# 脚本名称 (Script Name):
-#   zip_webp.py (备注：此文件名可能不完全反映其当前功能，
-#                其核心功能是从原始视频重新生成 WebP 文件)
+# 脚本建议名称 (Suggested Script Name):
+#   regenerate_problematic_webp.py (或 optimize_large_webp.py)
 #
 # 主要目的 (Main Purpose):
 #   本脚本用于批量处理指定根目录及其子目录下的 WebP 文件。
@@ -56,68 +58,67 @@ import shutil
 
 
 # --- 配置 ---
-FFMPEG_PATH = "ffmpeg"  # 如果不在PATH中，请指定完整路径
-
-# 原始视频文件可能的扩展名列表 (请根据您的实际情况调整)
-# 脚本会按此顺序查找原始视频文件
+FFMPEG_PATH = "ffmpeg"
 ORIGINAL_VIDEO_EXTENSIONS = ['.mp4', '.mov', '.mkv', '.avi', '.wmv', '.flv', '.webm', '.mpeg', '.mpg']
-
-# WebP转换参数基础 (帧率和时长会动态设置)
 BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO = [
     "-c:v", "libwebp",
-    "-lossless", "0",  # 0 表示有损，1 表示无损
-    "-q:v", "75",  # 有损压缩质量 (0-100，越高越好)
-    "-loop", "0",  # 0 表示无限循环
-    "-an",  # 通常WebP不含音频
+    "-lossless", "0",
+    "-q:v", "75",
+    "-loop", "0",
+    "-an",
 ]
-# 从原始视频截取的时长，例如只取前3秒
-VIDEO_DURATION_FOR_WEBP = "3"
+VIDEO_DURATION_FOR_WEBP = "3"  # 秒
+FFMPEG_TIMEOUT_SECONDS = 180
+
+
 # --- /配置 ---
 
-def get_human_readable_size(size_bytes):
+def get_human_readable_size(size_bytes: Optional[int]) -> str:  # 使用 Optional[int] 替代 int | None
     """将字节大小转换为人类可读的格式 (B, KB, MB, GB)"""
     if size_bytes is None:
         return "N/A"
     if size_bytes == 0:
         return "0 B"
-    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    size_name = ("B", "KB", "MB", "GB", "TB")
     i = 0
-    size_bytes = float(size_bytes)
-    while size_bytes >= 1024 and i < len(size_name) - 1:
-        size_bytes /= 1024.0
+    size_bytes_float = float(size_bytes)
+    while size_bytes_float >= 1024 and i < len(size_name) - 1:
+        size_bytes_float /= 1024.0
         i += 1
-    return f"{size_bytes:.2f} {size_name[i]}"
+    return f"{size_bytes_float:.2f} {size_name[i]}"
 
 
-def get_valid_folder_path_from_user(prompt_message):
+def get_valid_folder_path_from_user(prompt_message: str) -> pathlib.Path:
     """提示用户输入一个文件夹路径，并验证其有效性。"""
     while True:
-        folder_path = input(prompt_message).strip()
-        if folder_path.startswith('"') and folder_path.endswith('"'):
-            folder_path = folder_path[1:-1]
-        elif folder_path.startswith("'") and folder_path.endswith("'"):
-            folder_path = folder_path[1:-1]
+        folder_path_str = input(prompt_message).strip()
+        if folder_path_str.startswith('"') and folder_path_str.endswith('"'):
+            folder_path_str = folder_path_str[1:-1]
+        elif folder_path_str.startswith("'") and folder_path_str.endswith("'"):
+            folder_path_str = folder_path_str[1:-1]
 
-        if os.path.isdir(folder_path):
-            return folder_path
+        folder_path_obj = pathlib.Path(folder_path_str)
+        if folder_path_obj.is_dir():
+            return folder_path_obj
         else:
-            print(f"错误：路径 '{folder_path}' 不是一个有效的文件夹，或文件夹不存在。请重新输入。")
+            print(f"错误：路径 '{folder_path_str}' 不是一个有效的文件夹，或文件夹不存在。请重新输入。")
 
 
-def check_ffmpeg_availability(ffmpeg_path):
+def check_ffmpeg_availability(ffmpeg_exe_path: str) -> bool:
     """检查FFmpeg是否可用"""
     try:
-        subprocess.run([ffmpeg_path, "-version"], capture_output=True, check=True, text=True, encoding='utf-8')
-        print(f"FFmpeg 在 '{ffmpeg_path}' 找到并可用。\n")
+        result = subprocess.run([ffmpeg_exe_path, "-version"], capture_output=True, check=True, text=True,
+                                encoding='utf-8', errors='replace')
+        print(f"FFmpeg 在 '{ffmpeg_exe_path}' 找到并可用。\n")
         return True
     except FileNotFoundError:
-        print(f"错误: FFmpeg 可执行文件在 '{ffmpeg_path}' 未找到。")
+        print(f"错误: FFmpeg 可执行文件在 '{ffmpeg_exe_path}' 未找到。")
         print("请确保FFmpeg已安装并添加到系统PATH，或者在脚本中正确配置 FFMPEG_PATH。")
         return False
     except subprocess.CalledProcessError as e:
-        print(f"错误: 执行 FFmpeg 时出错: {e}")
-        print(f"FFmpeg 输出: {e.stdout}")
-        print(f"FFmpeg 错误: {e.stderr}")
+        print(f"错误: 执行 FFmpeg -version 时出错 (返回码: {e.returncode}):")
+        if e.stdout: print(f"  Stdout: {e.stdout.strip()}")
+        if e.stderr: print(f"  Stderr: {e.stderr.strip()}")
         print("FFmpeg 可能安装不正确。")
         return False
     except Exception as e_gen:
@@ -125,8 +126,10 @@ def check_ffmpeg_availability(ffmpeg_path):
         return False
 
 
-def get_regeneration_parameters():
+def get_regeneration_parameters() -> Tuple[float, int]:  # 使用 Tuple
     """获取用户输入的大小阈值 X (MB) 和新帧率 Y (fps)"""
+    size_threshold_bytes = 0.0
+    new_fps_val = 0
     while True:
         try:
             size_threshold_mb_str = input(
@@ -135,6 +138,7 @@ def get_regeneration_parameters():
             if size_threshold_mb <= 0:
                 print("错误：大小阈值必须为正数。")
                 continue
+            size_threshold_bytes = size_threshold_mb * 1024 * 1024
             break
         except ValueError:
             print("错误：请输入一个有效的数字作为大小阈值。")
@@ -142,56 +146,108 @@ def get_regeneration_parameters():
     while True:
         try:
             new_fps_str = input("请输入重新生成 WebP 时使用的新目标帧率 Y (fps): ").strip()
-            new_fps = int(new_fps_str)
-            if new_fps <= 0:
+            new_fps_val = int(new_fps_str)
+            if new_fps_val <= 0:
                 print("错误：帧率必须为正整数。")
                 continue
             break
         except ValueError:
             print("错误：请输入一个有效的整数作为帧率。")
-    return size_threshold_mb * 1024 * 1024, new_fps
+    return size_threshold_bytes, new_fps_val
 
 
-def find_original_video_file(webp_dir, base_name_for_lookup):
+def find_original_video_file(webp_dir_path: pathlib.Path, base_name_for_lookup: str) -> Optional[
+    pathlib.Path]:  # 使用 Optional
     """
     根据 WebP 文件的基本名称和目录，查找可能的原始视频文件。
-    返回找到的原始视频文件的完整路径，如果找不到则返回 None。
+    返回找到的原始视频文件的 Path 对象，如果找不到则返回 None。
     """
     for video_ext in ORIGINAL_VIDEO_EXTENSIONS:
-        potential_video_path = os.path.join(webp_dir, base_name_for_lookup + video_ext)
-        if os.path.isfile(potential_video_path):
+        potential_video_path = webp_dir_path / (base_name_for_lookup + video_ext)
+        if potential_video_path.is_file():
             return potential_video_path
     return None
 
 
-def regenerate_webp_from_source_video(root_dir, ffmpeg_exe_path, size_threshold_bytes, new_fps):
+def build_ffmpeg_command_for_regeneration(ffmpeg_exe_path: str,
+                                          source_video_path: pathlib.Path,
+                                          output_webp_path: pathlib.Path,
+                                          target_fps: int) -> List[str]:  # 使用 List
+    """构建用于从视频重新生成WebP的FFmpeg命令列表。"""
+    command = [
+        ffmpeg_exe_path,
+        "-y",
+        "-i", str(source_video_path),
+        "-t", VIDEO_DURATION_FOR_WEBP,
+    ]
+
+    command.extend(BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO)
+
+    # 简化 -vf 处理：总是添加 fps 滤镜，如果 BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO
+    # 中已有 -vf，则新的 fps 会被追加。如果想更精确控制，需要解析或调整 BASE_OPTIONS。
+    # 一个简单且常见的方法是确保 BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO 不包含 fps，然后在这里添加。
+
+    existing_vf_filters = []
+    temp_command = []
+    vf_value_next = False
+
+    # 提取现有的-vf（如果有）并移除它，以便我们可以重新构建它
+    for i, opt in enumerate(command):
+        if opt == "-vf":
+            if i + 1 < len(command):
+                existing_vf_filters.extend(f.strip() for f in command[i + 1].split(',') if f.strip())
+            vf_value_next = True  # 标记下一个元素是-vf的值，即使它已经被处理
+            continue  # 跳过 "-vf" 本身
+        if vf_value_next:
+            vf_value_next = False  # 跳过-vf的值
+            continue
+        temp_command.append(opt)  # 保留其他选项
+
+    command = temp_command
+
+    # 从现有滤镜中移除任何旧的fps设置（如果存在）
+    final_filters = [f for f in existing_vf_filters if not f.startswith("fps=")]
+
+    # 添加新的fps设置
+    final_filters.append(f"fps={target_fps}")
+
+    if final_filters:
+        command.extend(["-vf", ",".join(final_filters)])
+
+    command.append(str(output_webp_path))
+    return command
+
+
+def regenerate_webp_from_source_video(root_dir_path: pathlib.Path, ffmpeg_exe_path: str,
+                                      size_threshold_bytes: float, new_fps: int):
     """
     在指定目录及其子目录中查找 WebP 文件，
     如果文件大小超过阈值，则尝试从其对应的原始视频文件重新生成 WebP。
     """
     regenerated_count = 0
     failed_count = 0
-    skipped_count = 0
+    skipped_size_count = 0
     no_source_found_count = 0
     processed_webp_files = 0
 
-    print(f"\n开始在目录 '{root_dir}' 及其子目录中扫描 WebP 文件以尝试重新生成...")
-    print(f"大小阈值: {get_human_readable_size(size_threshold_bytes)} (超过此大小的 WebP 会被尝试替换)")
+    print(f"\n开始在目录 '{root_dir_path}' 及其子目录中扫描 WebP 文件以尝试重新生成...")
+    print(f"大小阈值: {get_human_readable_size(int(size_threshold_bytes))} (超过此大小的 WebP 会被尝试替换)")
     print(f"新帧率 (用于重新生成): {new_fps} fps")
     print(f"将从原始视频截取前 {VIDEO_DURATION_FOR_WEBP} 秒。")
     print(f"尝试查找的原始视频扩展名: {', '.join(ORIGINAL_VIDEO_EXTENSIONS)}")
     print("-" * 30)
 
-    for dirpath, _, filenames in os.walk(root_dir):
+    for dirpath_str, _, filenames in os.walk(root_dir_path):
+        current_dir_path = pathlib.Path(dirpath_str)
         for filename in filenames:
-            if filename.lower().endswith(".webp"):
+            problematic_webp_path = current_dir_path / filename
+            if problematic_webp_path.suffix.lower() == ".webp" and problematic_webp_path.is_file():
                 processed_webp_files += 1
-                problematic_webp_path = os.path.join(dirpath, filename)
 
                 try:
-                    original_webp_size_bytes = os.path.getsize(problematic_webp_path)
-                except OSError as e:
-                    print(f"\n错误: 无法获取文件 '{problematic_webp_path}' 的大小: {e}, 跳过。")
+                    original_webp_size_bytes = problematic_webp_path.stat().st_size
+                except OSError as e_stat:
+                    print(f"\n错误: 无法获取文件 '{problematic_webp_path}' 的大小: {e_stat}, 跳过。")
                     failed_count += 1
                     continue
 
@@ -199,14 +255,14 @@ def regenerate_webp_from_source_video(root_dir, ffmpeg_exe_path, size_threshold_
                 print(f"  当前 WebP 大小: {get_human_readable_size(original_webp_size_bytes)}")
 
                 if original_webp_size_bytes <= size_threshold_bytes:
-                    print(f"  文件大小未超过阈值 {get_human_readable_size(size_threshold_bytes)}，跳过重新生成。")
-                    skipped_count += 1
+                    print(f"  文件大小未超过阈值 {get_human_readable_size(int(size_threshold_bytes))}，跳过重新生成。")
+                    skipped_size_count += 1
                     continue
 
-                base_for_lookup, _ = os.path.splitext(filename)
+                base_for_lookup = problematic_webp_path.stem
                 print(f"  将使用基础名 '{base_for_lookup}' 查找原始视频。")
 
-                source_video_path = find_original_video_file(dirpath, base_for_lookup)
+                source_video_path = find_original_video_file(current_dir_path, base_for_lookup)
 
                 if not source_video_path:
                     print(f"  错误: 未能找到与基础名 '{base_for_lookup}' 对应的原始视频文件。跳过重新生成。")
@@ -217,67 +273,31 @@ def regenerate_webp_from_source_video(root_dir, ffmpeg_exe_path, size_threshold_
 
                 output_webp_path = problematic_webp_path
 
-                command = [
-                    ffmpeg_exe_path,
-                    "-y",
-                    "-i", source_video_path,
-                    "-t", VIDEO_DURATION_FOR_WEBP,
-                ]
+                command_list = build_ffmpeg_command_for_regeneration(
+                    ffmpeg_exe_path, source_video_path, output_webp_path, new_fps
+                )
 
-                current_conversion_options = list(BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO)
-
-                temp_options_excluding_vf = []
-                existing_vf_value = ""
-                skip_next_for_vf_value = False
-
-                for i in range(len(current_conversion_options)):
-                    if skip_next_for_vf_value:
-                        skip_next_for_vf_value = False
-                        continue
-
-                    if current_conversion_options[i] == "-vf":
-                        if i + 1 < len(current_conversion_options):
-                            existing_vf_value = current_conversion_options[i + 1]
-                            skip_next_for_vf_value = True
-                    else:
-                        temp_options_excluding_vf.append(current_conversion_options[i])
-
-                new_vf_filters = []
-                if existing_vf_value:
-                    for filt in existing_vf_value.split(','):
-                        if not filt.strip().startswith("fps="):
-                            new_vf_filters.append(filt.strip())
-
-                new_vf_filters.append(f"fps={new_fps}")
-
-                final_vf_string = ",".join(filter(None, new_vf_filters))
-
-                command.extend(temp_options_excluding_vf)
-                if final_vf_string:
-                    command.extend(["-vf", final_vf_string])
-
-                command.append(output_webp_path)
-
-                print(f"  执行命令从原始视频重新生成 WebP: {' '.join(command)}")
+                print(f"  执行命令从原始视频重新生成 WebP: {' '.join(command_list)}")
 
                 try:
-                    process = subprocess.run(command, capture_output=True, text=True, check=False,
-                                             encoding='utf-8', errors='replace', timeout=180)
+                    result = subprocess.run(command_list, capture_output=True, text=True, check=False,
+                                            encoding='utf-8', errors='replace', timeout=FFMPEG_TIMEOUT_SECONDS)
 
-                    if process.returncode == 0:
-                        if not os.path.exists(output_webp_path) or os.path.getsize(output_webp_path) == 0:
+                    if result.returncode == 0:
+                        # 再次检查文件是否存在且非空，因为FFmpeg有时即使返回0也可能没有成功写入
+                        if not output_webp_path.exists() or output_webp_path.stat().st_size == 0:
                             print(f"  错误: FFmpeg 声称成功，但新生成的 WebP 文件 '{output_webp_path}' 未找到或为空。")
-                            print(f"    FFmpeg 输出 (stdout):\n{process.stdout or '无'}")
-                            print(f"    FFmpeg 错误 (stderr):\n{process.stderr or '无'}")
+                            if result.stdout: print(f"    FFmpeg 输出 (stdout):\n{result.stdout.strip()}")
+                            if result.stderr: print(f"    FFmpeg 错误 (stderr):\n{result.stderr.strip()}")
                             failed_count += 1
                             continue
 
-                        new_webp_size_bytes = os.path.getsize(output_webp_path)
+                        new_webp_size_bytes = output_webp_path.stat().st_size
                         print(f"  成功从原始视频重新生成 WebP: {output_webp_path}")
                         print(f"    原问题 WebP 大小: {get_human_readable_size(original_webp_size_bytes)}")
                         print(f"    新生成 WebP 大小: {get_human_readable_size(new_webp_size_bytes)}")
 
-                        size_change_percentage = 0
+                        size_change_percentage = 0.0
                         if original_webp_size_bytes > 0:
                             size_change_percentage = ((
                                                                   new_webp_size_bytes - original_webp_size_bytes) / original_webp_size_bytes) * 100
@@ -288,16 +308,22 @@ def regenerate_webp_from_source_video(root_dir, ffmpeg_exe_path, size_threshold_
                             print(f"    新 WebP 相对于旧 WebP 的大小改变: N/A (新旧 WebP 大小均为0)")
                         regenerated_count += 1
                     else:
-                        print(f"  错误: FFmpeg 从原始视频重新生成 WebP 失败 (返回码: {process.returncode})")
-                        print(f"    FFmpeg 输出 (stdout):\n{process.stdout or '无'}")
-                        print(f"    FFmpeg 错误 (stderr):\n{process.stderr or '无'}")
+                        print(f"  错误: FFmpeg 从原始视频重新生成 WebP 失败 (返回码: {result.returncode})")
+                        if result.stdout: print(f"    FFmpeg 输出 (stdout):\n{result.stdout.strip()}")
+                        if result.stderr: print(f"    FFmpeg 错误 (stderr):\n{result.stderr.strip()}")
                         failed_count += 1
 
-                except subprocess.TimeoutExpired:
-                    print(f"  错误: FFmpeg 从原始视频重新生成 WebP 超时: {source_video_path}")
+                except subprocess.TimeoutExpired as e_timeout:
+                    print(
+                        f"  错误: FFmpeg 从原始视频重新生成 WebP 超时 ({FFMPEG_TIMEOUT_SECONDS}s): {source_video_path}")
+                    # subprocess.TimeoutExpired.stdout/stderr are bytes, so decode them
+                    if e_timeout.stdout: print(
+                        f"    FFmpeg 输出 (stdout):\n{e_timeout.stdout.decode('utf-8', 'replace').strip()}")
+                    if e_timeout.stderr: print(
+                        f"    FFmpeg 错误 (stderr):\n{e_timeout.stderr.decode('utf-8', 'replace').strip()}")
                     failed_count += 1
-                except Exception as e:
-                    print(f"  执行 FFmpeg 从原始视频重新生成 WebP 时发生意外错误: {e}")
+                except Exception as e_general:
+                    print(f"  执行 FFmpeg 从原始视频重新生成 WebP 时发生意外错误: {e_general}")
                     failed_count += 1
 
     print("\n--- 从原始视频重新生成 WebP 完成 ---")
@@ -306,7 +332,7 @@ def regenerate_webp_from_source_video(root_dir, ffmpeg_exe_path, size_threshold_
     else:
         print(f"总共扫描 .webp 文件: {processed_webp_files}")
         print(f"成功重新生成: {regenerated_count} 个 WebP 文件")
-        print(f"因大小未超阈值而跳过: {skipped_count} 个文件")
+        print(f"因大小未超阈值而跳过: {skipped_size_count} 个文件")
         print(f"因未找到对应原始视频而跳过: {no_source_found_count} 个文件")
         print(f"重新生成失败: {failed_count} 个文件")
 
@@ -318,13 +344,14 @@ if __name__ == "__main__":
     if not check_ffmpeg_availability(FFMPEG_PATH):
         input("\nFFmpeg 未正确配置。按 Enter 键退出...")
     else:
-        target_root_directory = get_valid_folder_path_from_user("请输入包含问题 WebP 文件的根目录路径: ")
-        size_threshold, target_fps = get_regeneration_parameters()
+        target_root_directory_path = get_valid_folder_path_from_user("请输入包含问题 WebP 文件的根目录路径: ")
+        size_threshold_val, target_fps_val = get_regeneration_parameters()
 
         print("\n警告：此脚本将尝试覆盖原始的 .webp 文件。")
         confirm = input("在继续之前，请确保您已备份重要数据。输入 'yes' 继续: ").strip().lower()
         if confirm == 'yes':
-            regenerate_webp_from_source_video(target_root_directory, FFMPEG_PATH, size_threshold, target_fps)
+            regenerate_webp_from_source_video(target_root_directory_path, FFMPEG_PATH,
+                                              size_threshold_val, target_fps_val)
         else:
             print("操作已取消。")
 
