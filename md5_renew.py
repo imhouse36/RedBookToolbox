@@ -144,7 +144,7 @@ def process_directory_recursively(root_directory_path_str: str):
 if __name__ == "__main__":
     while True:
         target_directory_input_str = input(
-            "请输入要处理的图片根目录路径 (例如: D:\\Downloads\\live\\小红书发布图\\万达店 ): ").strip()
+            "请输入要处理的图片根目录路径 : ").strip()
 
         target_path_obj = pathlib.Path(target_directory_input_str)
 

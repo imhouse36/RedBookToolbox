@@ -36,7 +36,7 @@ def create_folders_pathlib(base_dir_str):
         print(f"基础目录 '{base_path}' 确保存在。")
 
         # 创建10个子文件夹
-        for i in range(1, 21):
+        for i in range(1, 31):
             folder_path = base_path / str(i) # 使用 / 操作符拼接路径
             try:
                 folder_path.mkdir(exist_ok=True) # parents=False 默认，因为父目录已存在
@@ -56,7 +56,7 @@ def create_folders_pathlib(base_dir_str):
 
 
 if __name__ == "__main__":
-    base_directory_from_input = input("请输入基础目录路径 (例如: D:\\Downloads\\live\\小红书发布图\\万达店): ").strip()
+    base_directory_from_input = input("请输入基础目录路径 : ").strip()
 
     if not base_directory_from_input:
         print("错误：未输入目录路径。脚本将退出。")
