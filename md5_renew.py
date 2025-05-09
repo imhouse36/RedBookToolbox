@@ -10,7 +10,7 @@ from typing import Optional, Tuple  # 导入 Optional 和 Tuple
 # ==============================================================================
 #
 # 脚本名称 (Script Name):
-#   renew_md5.py
+#   md5_renew.py
 #
 # 主要目的 (Main Purpose):
 #   本脚本用于修改指定根目录及其所有子目录下特定类型图片文件的MD5哈希值。
