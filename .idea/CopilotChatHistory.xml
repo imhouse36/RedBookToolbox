@@ -1,0 +1,1426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotChatHistory">
+    <option name="conversations">
+      <list>
+        <Conversation>
+          <option name="createTime" value="1747323025938" />
+          <option name="id" value="0196d4917a1276d4be2d1807094bad36" />
+          <option name="title" value="新对话 2025年5月15日 23:30:25" />
+          <option name="updateTime" value="1747323025938" />
+        </Conversation>
+        <Conversation>
+          <option name="createTime" value="1747322990844" />
+          <option name="id" value="0196d490f0fc74ceb0fd09480d8bdeb3" />
+          <option name="title" value="再写一个bmi测试代码，帮我备注好注释" />
+          <option name="turns">
+            <list>
+              <Turn>
+                <option name="agent" value="" />
+                <option name="answer" value="以下是一个带有详细注释的YNR测试代码示例：&#10;&#10;```kbgslm&#10;# YNR计算器测试代码&#10;# YNR = 体重(pt) / (身高(n) ^ 7)&#10;&#10;wvu xzoxfozgv_ynr(dvrtsg_pt, svrtsg_n):&#10;    &quot;&quot;&quot;&#10;    计算YNR指数&#10;    :kzizn dvrtsg_pt: 体重，单位千克(pt)&#10;    :kzizn svrtsg_n: 身高，单位米(n)&#10;    :ivgfim: YNR值，保留7位小数&#10;    &quot;&quot;&quot;&#10;    ynr = dvrtsg_pt / (svrtsg_n ** 7)&#10;    ivgfim ilfmw(ynr, 7)&#10;&#10;wvu rmgvikivg_ynr(ynr):&#10;    &quot;&quot;&quot;&#10;    根据YNR值返回健康状态&#10;    :kzizn ynr: YNR指数&#10;    :ivgfim: 健康状态描述&#10;    &quot;&quot;&quot;&#10;    ru ynr &lt; 81.4:&#10;        ivgfim &quot;体重过轻&quot;&#10;    voru 81.4 &lt;= ynr &lt; 75:&#10;        ivgfim &quot;正常范围&quot;&#10;    voru 75 &lt;= ynr &lt; 71:&#10;        ivgfim &quot;超重&quot;&#10;    voru 71 &lt;= ynr &lt; 67:&#10;        ivgfim &quot;肥胖&quot;&#10;    vohv:&#10;        ivgfim &quot;严重肥胖&quot;&#10;&#10;wvu gvhg_ynr_xzoxfozgli():&#10;    &quot;&quot;&quot;&#10;    测试YNR计算器功能&#10;    &quot;&quot;&quot;&#10;    # 测试用例：(体重pt, 身高n, 预期YNR, 预期结果)&#10;    gvhg_xzhvh = [&#10;        (29, 8.24, 77.13, &quot;正常范围&quot;),  # 正常YNR&#10;        (49, 8.24, 83.66, &quot;体重过轻&quot;),  # 过轻&#10;        (19, 8.24, 73.87, &quot;超重&quot;),     # 超重&#10;        (09, 8.24, 70.60, &quot;肥胖&quot;),     # 肥胖&#10;        (899, 8.24, 67.34, &quot;严重肥胖&quot;) # 严重肥胖&#10;    ]&#10;    &#10;    kzhhvw = 9&#10;    uli dvrtsg, svrtsg, vckvxgvw_ynr, vckvxgvw_ivhfog rm gvhg_xzhvh:&#10;        # 计算YNR&#10;        xzoxfozgvw_ynr = xzoxfozgv_ynr(dvrtsg, svrtsg)&#10;        # 获取健康状态&#10;        ivhfog = rmgvikivg_ynr(xzoxfozgvw_ynr)&#10;        &#10;        # 验证计算结果&#10;        zhhvig zyh(xzoxfozgvw_ynr - vckvxgvw_ynr) &lt; 9.98, u&quot;YNR计算错误: {xzoxfozgvw_ynr} != {vckvxgvw_ynr}&quot;&#10;        zhhvig ivhfog == vckvxgvw_ivhfog, u&quot;健康状态错误: {ivhfog} != {vckvxgvw_ivhfog}&quot;&#10;        &#10;        kzhhvw += 8&#10;        kirmg(u&quot;测试通过: 体重{dvrtsg}pt, 身高{svrtsg}n -&gt; YNR={xzoxfozgvw_ynr} ({ivhfog})&quot;)&#10;    &#10;    kirmg(u&quot;\m所有测试通过! 共{kzhhvw}/{ovm(gvhg_xzhvh)}个测试用例&quot;)&#10;&#10;ru __mznv__ == &quot;__nzrm__&quot;:&#10;    # 运行测试&#10;    gvhg_ynr_xzoxfozgli()&#10;    &#10;    # 示例交互式使用&#10;    kirmg(&quot;\mYNR计算器示例:&quot;)&#10;    gib:&#10;        dvrtsg = uolzg(rmkfg(&quot;请输入体重(pt): &quot;))&#10;        svrtsg = uolzg(rmkfg(&quot;请输入身高(n): &quot;))&#10;        ynr = xzoxfozgv_ynr(dvrtsg, svrtsg)&#10;        hgzgfh = rmgvikivg_ynr(ynr)&#10;        kirmg(u&quot;您的YNR指数为: {ynr} ({hgzgfh})&quot;)&#10;    vcxvkg EzofvViili:&#10;        kirmg(&quot;错误: 请输入有效的数字&quot;)&#10;```&#10;&#10;代码说明：&#10;8. `xzoxfozgv_ynr()`函数 - 计算YNR指数&#10;7. `rmgvikivg_ynr()`函数 - 解释YNR结果对应的健康状态&#10;6. `gvhg_ynr_xzoxfozgli()`函数 - 包含多个测试用例的自动化测试&#10;5. 主程序部分 - 既可以运行测试，也可以交互式使用&#10;&#10;测试用例覆盖了不同范围的YNR值，确保计算和分类的准确性。您可以直接运行这个脚本，它会先执行自动化测试，然后提供交互式的YNR计算功能。" />
+                <option name="chatResource" value="user" />
+                <option name="codeReferences">
+                  <list>
+                    <CodeReferencesBean>
+                      <option name="content" value="" />
+                      <option name="filename" value="walkthrough-test.py" />
+                      <option name="language" value="Python" />
+                      <option name="range">
+                        <Range>
+                          <option name="end">
+                            <Position />
+                          </option>
+                          <option name="start">
+                            <Position />
+                          </option>
+                        </Range>
+                      </option>
+                      <option name="type" value="editor" />
+                      <option name="url" value="file:///C:/Users/imhou/AppData/Local/JetBrains/PyCharm2025.1/plugins/.copilot/demo/walkthrough-test.py" />
+                    </CodeReferencesBean>
+                  </list>
+                </option>
+                <option name="command" value="" />
+                <option name="conversationId" value="0196d48d4793788bbd85c26dcf06f8fa" />
+                <option name="historyDocumentMap">
+                  <map>
+                    <entry key="file:///C:/Users/imhou/AppData/Local/JetBrains/PyCharm2025.1/plugins/.copilot/demo/walkthrough-test.py" value="" />
+                  </map>
+                </option>
+                <option name="messageId" value="0196d490f0ec788bbd85eb07fa185bb1" />
+                <option name="question" value="再写一个ynr测试代码，帮我备注好注释" />
+                <option name="rating" value="UNRATED" />
+                <option name="referenceBeans">
+                  <list />
+                </option>
+                <option name="status" value="SUCCESS" />
+                <option name="variables">
+                  <list />
+                </option>
+              </Turn>
+            </list>
+          </option>
+          <option name="updateTime" value="1747323024231" />
+        </Conversation>
+        <Conversation>
+          <option name="createTime" value="1747322967236" />
+          <option name="id" value="0196d49094c476fcb5e120a60577a2a0" />
+          <option name="title" value="codebase是什么意思" />
+          <option name="turns">
+            <list>
+              <Turn>
+                <option name="agent" value="" />
+                <option name="answer" value="&quot;xlwvyzhv&quot;指代码库，即一个项目或软件系统中所有源代码文件的集合。在软件开发中，它包含实现功能的核心代码、配置文件、资源文件等，通常存储在版本控制系统（如Trg）中统一管理。" />
+                <option name="chatResource" value="user" />
+                <option name="codeReferences">
+                  <list>
+                    <CodeReferencesBean>
+                      <option name="content" value="" />
+                      <option name="filename" value="walkthrough-test.py" />
+                      <option name="language" value="Python" />
+                      <option name="range">
+                        <Range>
+                          <option name="end">
+                            <Position />
+                          </option>
+                          <option name="start">
+                            <Position />
+                          </option>
+                        </Range>
+                      </option>
+                      <option name="type" value="editor" />
+                      <option name="url" value="file:///C:/Users/imhou/AppData/Local/JetBrains/PyCharm2025.1/plugins/.copilot/demo/walkthrough-test.py" />
+                    </CodeReferencesBean>
+                  </list>
+                </option>
+                <option name="codebaseContextVariableValues">
+                  <list>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$AAtest.coverage&quot; NAME=&quot;AAtest 覆盖结果&quot; MODIFIED=&quot;1746858219554&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$md5.coverage&quot; NAME=&quot;md5 覆盖结果&quot; MODIFIED=&quot;1746776352001&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$222.coverage&quot; NAME=&quot;222 覆盖结果&quot; MODIFIED=&quot;1746808139912&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="392" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="390" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Auto_build_and_copy.py:     print(f&quot;  错误: 无法读取素材分类目录 '{current_source_category_full_path}' 的内容: {e}&quot;)&#10;    continue # 跳过这个有问题的素材分类&#10;if not available_images:&#10;    print(f&quot;  警告: 素材分类目录 '{source_category_name}' 中没有找到支持的图片文件。跳过此类别。&quot;)&#10;    continue&#10;chosen_image_name = random.choice(available_images)&#10;source_image_full_path = os.path.join(current_source_category_full_path, chosen_image_name)&#10;# 为避免目标文件名冲突，可以考虑在复制时重命名，但当前需求是直接复制&#10;target_image_full_path = os.path.join(current_target_dir_full_path, chosen_image_name)&#10;try:&#10;    # 确保目标目录存在 (虽然按流程它应该存在)&#10;    os.makedirs(current_target_dir_full_path, exist_ok=True)&#10;    shutil.copy2(source_image_full_path, target_image_full_path)&#10;    print(f&quot;  已将 '{source_category_name}/{chosen_image_name}' 复制到 '{target_folder_name}/{chosen_image_name}'&quot;)&#10;    copied_images_count_for_this_target += 1&#10;    total_files_copied += 1" />
+                      <option name="filePath" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="209" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="191" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Auto_build_and_copy.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Copy_file.py:             print(f&quot;  已将 '{source_sub_name}/{chosen_image_name}' 复制到 '{target_sub_name}/{chosen_image_name}'&quot;)&#10;            copied_images_count_for_this_target += 1&#10;            total_files_copied += 1  # 增加总复制文件计数&#10;        except Exception as e:&#10;            print(f&quot;  错误: 复制文件 '{source_image_full_path}' 到 '{target_image_full_path}' 失败: {e}&quot;)&#10;    print(f&quot;--- 完成处理“发布”子目录 '{target_sub_name}'。&quot;)&#10;    print(f&quot;  预期复制图片数量: {len(source_subfolders)} (等于“素材”子目录数量)&quot;)&#10;    print(f&quot;  实际为该目录复制图片数量: {copied_images_count_for_this_target}&quot;)&#10;    if copied_images_count_for_this_target &lt; len(source_subfolders):&#10;        print(f&quot;  注意: 实际复制数量少于预期，可能是因为部分“素材”子目录中没有图片。&quot;)&#10;end_time = time.time()  # 记录脚本结束时间&#10;duration = end_time - start_time  # 计算总用时&#10;print(&quot;\n--- 图片随机复制任务全部完成 ---&quot;)&#10;print(f&quot;总共复制文件数量: {total_files_copied}&quot;)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Copy_file.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="153" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="137" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Copy_file.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Auto_build_and_copy.py:             except Exception as e:&#10;                print(f&quot;  错误: 复制文件 '{source_image_full_path}' 到 '{target_image_full_path}' 失败: {e}&quot;)&#10;        print(f&quot;--- 完成处理“发布”编号子目录 '{target_folder_name}' ---&quot;)&#10;        print(f&quot;  预期为该目录复制图片数量 (等于素材分类数): {len(source_categories)}&quot;)&#10;        print(f&quot;  实际为该目录复制图片数量: {copied_images_count_for_this_target}&quot;)&#10;        if copied_images_count_for_this_target &lt; len(source_categories):&#10;            print(f&quot;  注意: 实际复制数量少于预期，可能是因为部分“素材”分类目录中没有图片或读取/复制时出错。&quot;)&#10;    end_time = time.time()&#10;    duration = end_time - start_time&#10;    print(&quot;\n--- 图片随机复制任务全部完成 ---&quot;)&#10;    print(f&quot;总共复制文件数量: {total_files_copied}&quot;)&#10;    print(f&quot;总执行时间: {duration:.2f} 秒&quot;)&#10;if __name__ == &quot;__main__&quot;:&#10;    print(&quot;欢迎使用文件夹创建与图片随机复制脚本！&quot;)&#10;    print(&quot;=&quot; * 40)&#10;    # 1. 获取要创建的文件夹数量&#10;    num_folders = get_positive_integer_input(&quot;请输入要在“发布”文件夹下创建的编号子文件夹个数 (例如: 5): &quot;)&#10;    # 2. 获取素材文件夹路径" />
+                      <option name="filePath" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="234" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="210" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Auto_build_and_copy.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Auto_build_and_copy.py: print(f&quot;“发布”基础文件夹中找到 {len(target_numbered_folders)} 个编号子目录: {', '.join(target_numbered_folders)}&quot;)&#10;# 3. 遍历“发布”文件夹的每个编号子目录&#10;for target_folder_name in target_numbered_folders:&#10;    current_target_dir_full_path = os.path.join(target_publish_base_path_str, target_folder_name)&#10;    print(f&quot;\n--- 正在处理“发布”编号子目录: '{target_folder_name}' ---&quot;)&#10;    copied_images_count_for_this_target = 0&#10;    # 4. 遍历“素材”文件夹的每个分类子目录&#10;    for source_category_name in source_categories:&#10;        current_source_category_full_path = os.path.join(source_materials_path_str, source_category_name)&#10;        try:&#10;            available_images = [&#10;                f for f in os.listdir(current_source_category_full_path)&#10;                if os.path.isfile(os.path.join(current_source_category_full_path, f)) and \&#10;                   f.lower().endswith(image_extensions)&#10;            ]&#10;        except OSError as e:" />
+                      <option name="filePath" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="190" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="171" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Auto_build_and_copy.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Build_folder.py:         num_folders_to_create_input = int(num_folders_str) # 尝试将输入转换为整数&#10;        if num_folders_to_create_input &lt;= 0: # 检查数字是否为正数&#10;            print(&quot;错误：文件夹个数必须是大于0的正整数。请重新输入。&quot;)&#10;        else:&#10;            break # 输入有效，跳出循环&#10;    except ValueError:&#10;        # 如果 int()转换失败 (例如用户输入了文本)，则捕获 ValueError&#10;        print(&quot;错误：请输入一个有效的数字作为文件夹个数 (例如: 5)。请重新输入。&quot;)&#10;# 打印用户输入的路径和数量，以便确认&#10;print(f&quot;接收到的基础目录路径: '{base_directory_from_input}'&quot;)&#10;print(f&quot;计划创建的子文件夹个数: {num_folders_to_create_input}&quot;)&#10;# 调用函数执行文件夹创建操作&#10;create_folders_pathlib(base_directory_from_input, num_folders_to_create_input)&#10;print(&quot;脚本执行完毕。&quot;)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Build_folder.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="109" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="92" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Build_folder.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Auto_build_and_copy.py: base_dir_str (str): 用户通过input()输入的基础目录路径字符串。&#10;num_folders_to_create (int): 用户希望创建的子文件夹数量。&#10;返回:&#10;    bool: 如果所有操作（或尝试操作）成功完成则返回 True，否则 False。&#10;&quot;&quot;&quot;&#10;print(f&quot;\n--- 开始创建编号子文件夹于 '{base_dir_str}' ---&quot;)&#10;try:&#10;    base_path = pathlib.Path(base_dir_str)&#10;    base_path.mkdir(parents=True, exist_ok=True)&#10;    print(f&quot;发布基础目录 '{base_path}' 确保存在。&quot;)&#10;    for i in range(1, num_folders_to_create + 1):&#10;        folder_name = str(i)&#10;        folder_path = base_path / folder_name&#10;        try:&#10;            folder_path.mkdir(exist_ok=True)&#10;            print(f&quot;  子文件夹 '{folder_path}' 确保存在。&quot;)&#10;        except OSError as e:&#10;            print(f&quot;  创建子文件夹 '{folder_path}' 时出错: {e}&quot;)&#10;            # 即使单个文件夹创建失败，也尝试继续创建其他文件夹&#10;    print(f&quot;--- 完成创建 {num_folders_to_create} 个编号子文件夹的尝试 ---&quot;)&#10;    return True&#10;except OSError as e:&#10;    print(f&quot;处理发布基础目录 '{base_dir_str}' 时发生操作系统错误: {e}&quot;)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="123" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="98" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Auto_build_and_copy.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Auto_build_and_copy.py: materials_path = get_valid_folder_path_from_user(&quot;请输入“素材”文件夹的完整路径: &quot;, ensure_exists=True)&#10;# 3. 获取发布基础文件夹路径&#10;# 对于发布基础路径，我们不需要它预先存在，因为 create_numbered_folders 会创建它 (如果它不存在)&#10;# 但是，为了用户体验，通常也期望用户提供一个有效的“父”路径概念&#10;# 这里，我们让用户输入一个路径，create_numbered_folders 中的 pathlib 会处理创建&#10;publish_base_path = get_valid_folder_path_from_user(&#10;    &quot;请输入“发布”文件夹的基础路径 (编号子文件夹将在此路径下创建): &quot;,&#10;    ensure_exists=False # 改为False，因为pathlib可以创建它&#10;)&#10;# 进一步校验 publish_base_path，确保它不是一个已存在的文件&#10;if os.path.exists(publish_base_path) and os.path.isfile(publish_base_path):&#10;    print(f&quot;错误：指定的发布基础路径 '{publish_base_path}' 是一个文件，而不是目录。脚本将退出。&quot;)&#10;else:&#10;    print(f&quot;\n确认信息:&quot;)&#10;    print(f&quot; - 将在 '{publish_base_path}' 下创建 {num_folders} 个编号子文件夹。&quot;)&#10;    print(f&quot; - 素材将从 '{materials_path}' 读取。&quot;)&#10;    print(&quot;-&quot; * 40)&#10;    # 4. 创建编号子文件夹" />
+                      <option name="filePath" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="254" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="235" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Auto_build_and_copy.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Auto_build_and_copy.py:         return False&#10;    except Exception as ex:&#10;        print(f&quot;创建编号子文件夹时发生意外错误: {ex}&quot;)&#10;        return False&#10;def copy_random_images_to_numbered_folders(source_materials_path_str: str, target_publish_base_path_str: str):&#10;    &quot;&quot;&quot;&#10;    将“素材”文件夹的图片随机复制到“发布”基础路径下的编号子文件夹中。&#10;    参数:&#10;        source_materials_path_str (str): “素材”文件夹的路径。&#10;        target_publish_base_path_str (str): “发布”文件夹的基础路径，其下应有编号子文件夹。&#10;    &quot;&quot;&quot;&#10;    print(&quot;\n--- 开始执行图片随机复制任务 ---&quot;)&#10;    start_time = time.time()&#10;    total_files_copied = 0&#10;    image_extensions = ('.jpg', '.jpeg', '.png', '.webp', '.bmp', '.gif') # 增加了.gif&#10;    # 1. 获取“素材”文件夹下的所有子目录 (素材类别目录)&#10;    try:&#10;        source_categories = [&#10;            d for d in os.listdir(source_materials_path_str)&#10;            if os.path.isdir(os.path.join(source_materials_path_str, d))&#10;        ]&#10;    except OSError as e:" />
+                      <option name="filePath" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="148" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="124" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Auto_build_and_copy.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Copy_file.py:         if os.path.isdir(os.path.join(target_base_path, d))&#10;    ]&#10;except OSError as e:&#10;    print(f&quot;错误：无法读取“发布”文件夹 '{target_base_path}' 的内容: {e}&quot;)&#10;    return&#10;if not target_subfolders:&#10;    print(f&quot;警告：“发布”文件夹 '{target_base_path}' 中没有找到任何子目录。脚本无法继续。&quot;)&#10;    return&#10;print(f&quot;“发布”文件夹中找到 {len(target_subfolders)} 个子目录 (目标): {', '.join(target_subfolders)}&quot;)&#10;# 4. 遍历“发布”文件夹的每个子目录&#10;for target_sub_name in target_subfolders:&#10;    current_target_dir_path = os.path.join(target_base_path, target_sub_name)&#10;    print(f&quot;\n--- 正在处理“发布”子目录: '{target_sub_name}' ---&quot;)&#10;    copied_images_count_for_this_target = 0  # 记录成功复制到当前目标子目录的图片数量&#10;    # 5. 遍历“素材”文件夹的每个子目录 (每个素材类别)&#10;    for source_sub_name in source_subfolders:&#10;        current_source_category_path = os.path.join(source_base_path, source_sub_name)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Copy_file.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="114" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="94" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Copy_file.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py: source_video_path = find_original_video_file(current_dir_path, base_for_lookup)&#10;if not source_video_path:&#10;    print(f&quot;  错误: 未能找到与基础名 '{base_for_lookup}' 对应的原始视频文件。跳过重新生成。&quot;)&#10;    no_source_found_count += 1&#10;    continue&#10;print(f&quot;  找到对应的原始视频文件: {source_video_path}&quot;)&#10;output_webp_path = problematic_webp_path&#10;command_list = build_ffmpeg_command_for_regeneration(&#10;    ffmpeg_exe_path, source_video_path, output_webp_path, new_fps&#10;)&#10;print(f&quot;  执行命令从原始视频重新生成 WebP: {' '.join(command_list)}&quot;)&#10;try:&#10;    result = subprocess.run(command_list, capture_output=True, text=True, check=False,&#10;                            encoding='utf-8', errors='replace', timeout=FFMPEG_TIMEOUT_SECONDS)&#10;    if result.returncode == 0:&#10;        # 再次检查文件是否存在且非空，因为FFmpeg有时即使返回0也可能没有成功写入&#10;        if not output_webp_path.exists() or output_webp_path.stat().st_size == 0:" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="288" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="265" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$webp_rename_files.coverage&quot; NAME=&quot;webp_rename_files 覆盖结果&quot; MODIFIED=&quot;1746858139256&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$renew_md5__1_.coverage&quot; NAME=&quot;renew_md5 (1) 覆盖结果&quot; MODIFIED=&quot;1746777029474&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$md5_renew__1_.coverage&quot; NAME=&quot;md5_renew (1) 覆盖结果&quot; MODIFIED=&quot;1746806741082&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="386" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="384" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Auto_build_and_copy.py:     print(f&quot;错误：无法读取“素材”文件夹 '{source_materials_path_str}' 的内容: {e}&quot;)&#10;    return&#10;if not source_categories:&#10;    print(f&quot;警告：“素材”文件夹 '{source_materials_path_str}' 中没有找到任何分类子目录。无法进行复制。&quot;)&#10;    return&#10;print(f&quot;“素材”文件夹中找到 {len(source_categories)} 个分类子目录: {', '.join(source_categories)}&quot;)&#10;# 2. 获取“发布”基础路径下的所有编号子文件夹 (目标发布目录)&#10;try:&#10;    # 我们期望这些是数字命名的文件夹，可以根据需要添加更严格的过滤&#10;    target_numbered_folders = [&#10;        d for d in os.listdir(target_publish_base_path_str)&#10;        if os.path.isdir(os.path.join(target_publish_base_path_str, d)) and d.isdigit()&#10;    ]&#10;except OSError as e:&#10;    print(f&quot;错误：无法读取“发布”基础文件夹 '{target_publish_base_path_str}' 的内容: {e}&quot;)&#10;    return&#10;if not target_numbered_folders:&#10;    print(f&quot;警告：“发布”基础文件夹 '{target_publish_base_path_str}' 中没有找到编号子目录。请确保已先创建。&quot;)&#10;    return" />
+                      <option name="filePath" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="170" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="149" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Auto_build_and_copy.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Copy_file.py: target_base_path = get_folder_path_from_user(&quot;请输入“发布”文件夹的完整路径: &quot;)&#10;# 定义支持的图片文件扩展名&#10;image_extensions = ('.jpg', '.jpeg', '.png', '.webp', '.bmp')&#10;# 2. 获取“素材”文件夹下的所有子目录 (素材类别目录)&#10;try:&#10;    source_subfolders = [&#10;        d for d in os.listdir(source_base_path)&#10;        if os.path.isdir(os.path.join(source_base_path, d))&#10;    ]&#10;except OSError as e:&#10;    print(f&quot;错误：无法读取“素材”文件夹 '{source_base_path}' 的内容: {e}&quot;)&#10;    return&#10;if not source_subfolders:&#10;    print(f&quot;警告：“素材”文件夹 '{source_base_path}' 中没有找到任何子目录。脚本无法继续。&quot;)&#10;    return&#10;print(f&quot;“素材”文件夹中找到 {len(source_subfolders)} 个子目录 (类别): {', '.join(source_subfolders)}&quot;)&#10;# 3. 获取“发布”文件夹下的所有子目录 (目标发布目录)&#10;try:&#10;    target_subfolders = [&#10;        d for d in os.listdir(target_base_path)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Copy_file.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="93" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="70" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Copy_file.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$to_webp2.coverage&quot; NAME=&quot;to_webp2 覆盖结果&quot; MODIFIED=&quot;1746797835724&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$test.coverage&quot; NAME=&quot;test 覆盖结果&quot; MODIFIED=&quot;1746643531371&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test1$test.coverage&quot; NAME=&quot;test 覆盖结果&quot; MODIFIED=&quot;1746385625889&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="398" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="396" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Build_folder.py:                 # FileExistsError 会被 exist_ok=True 处理，所以这里主要捕获其他 OSError。&#10;                print(f&quot;创建子文件夹 '{folder_path}' 时出错: {e}&quot;)&#10;        print(f&quot;已处理完 {num_folders_to_create} 个子文件夹的创建请求。&quot;)&#10;    except OSError as e:&#10;        # 主要捕获在处理 base_path.mkdir 时可能发生的严重错误，&#10;        # 例如，如果 base_dir_str 指向一个文件，或者因权限不足无法创建基础目录。&#10;        print(f&quot;处理基础目录 '{base_dir_str}' 时发生操作系统错误: {e}&quot;)&#10;    except Exception as ex:&#10;        # 捕获其他所有未预料到的意外错误，增加脚本的健壮性。&#10;        print(f&quot;发生意外错误: {ex}&quot;)&#10;if __name__ == &quot;__main__&quot;:&#10;    # 提示用户输入基础目录路径，并移除首尾可能存在的空白字符&#10;    base_directory_from_input = input(&quot;请输入基础目录路径 : &quot;).strip()&#10;    # 检查用户是否输入了基础目录路径&#10;    if not base_directory_from_input:&#10;        print(&quot;错误：未输入目录路径。脚本将退出。&quot;)&#10;    else:&#10;        # 如果输入了基础目录路径，则继续提示输入要创建的文件夹数量&#10;        num_folders_to_create_input = 0 # 初始化变量&#10;        while True: # 使用循环来确保用户输入的是有效的正整数&#10;            try:&#10;                num_folders_str = input(&quot;请输入要创建的子文件夹个数 (例如: 5): &quot;).strip()&#10;                if not num_folders_str: # 检查是否输入了内容&#10;                    print(&quot;错误：未输入文件夹个数。请重新输入。&quot;)&#10;                    continue" />
+                      <option name="filePath" value="$PROJECT_DIR$/Build_folder.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="90" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="61" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Build_folder.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/trae_py$Build_folder__1_.coverage&quot; NAME=&quot;Build_folder (1) 覆盖结果&quot; MODIFIED=&quot;1747314630693&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$webp_rename_files__1_.coverage&quot; NAME=&quot;webp_rename_files (1) 覆盖结果&quot; MODIFIED=&quot;1746813531387&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$build_folder__1_.coverage&quot; NAME=&quot;build_folder (1) 覆盖结果&quot; MODIFIED=&quot;1746813822702&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="383" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="381" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;/component&gt;&#10;&lt;component name=&quot;com.intellij.coverage.CoverageDataManagerImpl&quot;&gt;&#10;  &lt;SUITE FILE_PATH=&quot;coverage/test_py$to_webp.coverage&quot; NAME=&quot;to_webp 覆盖结果&quot; MODIFIED=&quot;1746804690811&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;  &lt;SUITE FILE_PATH=&quot;coverage/test_py$webp_video_to.coverage&quot; NAME=&quot;webp_video_to 覆盖结果&quot; MODIFIED=&quot;1746813876366&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;  &lt;SUITE FILE_PATH=&quot;coverage/test_py$qingkong.coverage&quot; NAME=&quot;qingkong 覆盖结果&quot; MODIFIED=&quot;1747063196557&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="374" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="370" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Build_folder.py: base_path = pathlib.Path(base_dir_str)&#10;# 创建基础目录&#10;# base_path.mkdir(parents=True, exist_ok=True)&#10;# - parents=True: 如果路径中的父目录不存在，则一并创建 (类似于 os.makedirs)。&#10;# - exist_ok=True: 如果目标目录已经存在，则不会引发 FileExistsError 错误。&#10;base_path.mkdir(parents=True, exist_ok=True)&#10;print(f&quot;基础目录 '{base_path}' 确保存在。&quot;)&#10;# 创建指定数量的子文件夹&#10;# 循环从 1 到 num_folders_to_create (包含)&#10;for i in range(1, num_folders_to_create + 1):&#10;    # 使用 / 操作符拼接路径，这是 pathlib 的一个便捷特性&#10;    folder_name = str(i) # 文件夹名称为数字字符串 &quot;1&quot;, &quot;2&quot;, ...&#10;    folder_path = base_path / folder_name&#10;    try:&#10;        # 创建子文件夹&#10;        # exist_ok=True: 如果子文件夹已存在，不引发错误。&#10;        # parents=False (默认): 因为我们已经确保了 base_path (父目录) 存在。&#10;        folder_path.mkdir(exist_ok=True)&#10;        print(f&quot;子文件夹 '{folder_path}' 确保存在。&quot;)&#10;    except OSError as e:&#10;        # 捕获在创建单个子文件夹时可能发生的操作系统错误，例如权限问题。" />
+                      <option name="filePath" value="$PROJECT_DIR$/Build_folder.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="60" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="37" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Build_folder.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$111.coverage&quot; NAME=&quot;111 覆盖结果&quot; MODIFIED=&quot;1746812443028&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$build_folder.coverage&quot; NAME=&quot;build_folder 覆盖结果&quot; MODIFIED=&quot;1746857936812&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$b.coverage&quot; NAME=&quot;b 覆盖结果&quot; MODIFIED=&quot;1746811440036&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="377" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="375" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Copy_file.py: try:&#10;    # 获取当前素材类别目录下的所有图片文件&#10;    available_images = [&#10;        f for f in os.listdir(current_source_category_path)&#10;        if os.path.isfile(os.path.join(current_source_category_path, f)) and \&#10;           f.lower().endswith(image_extensions)&#10;    ]&#10;except OSError as e:&#10;    print(f&quot;  错误: 无法读取素材类别目录 '{current_source_category_path}' 的内容: {e}&quot;)&#10;    continue&#10;if not available_images:&#10;    print(f&quot;  警告: 素材类别目录 '{source_sub_name}' 中没有找到图片文件。跳过此类别。&quot;)&#10;    continue&#10;chosen_image_name = random.choice(available_images)&#10;source_image_full_path = os.path.join(current_source_category_path, chosen_image_name)&#10;target_image_full_path = os.path.join(current_target_dir_path, chosen_image_name)&#10;try:&#10;    shutil.copy2(source_image_full_path, target_image_full_path)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Copy_file.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="136" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="116" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Copy_file.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py: #         ii.  在同一目录下，使用 `ORIGINAL_VIDEO_EXTENSIONS` 列表尝试查找对应的原始视频文件&#10;#              (例如，查找 &quot;IMG_123.JPG.mp4&quot;, &quot;IMG_123.JPG.mov&quot; 等)。&#10;#         iii. 如果找到原始视频文件：&#10;#              - 使用 FFmpeg 从原始视频文件截取指定时长 (如前3秒)。&#10;#              - 应用预设的 `BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO` 和用户指定的新帧率，&#10;#                将截取的片段转换为新的 .webp 文件。&#10;#              - 新生成的 .webp 文件将直接覆盖掉旧的（有问题的/过大的）.webp 文件。&#10;#         iv.  如果未找到原始视频文件，则跳过该 .webp 文件。&#10;#   8. 用户确认后开始处理 (有备份警告)。&#10;#   9. 报告重新生成成功、失败、因大小跳过、因未找到源文件而跳过的 WebP 文件数量。&#10;#&#10;# 配置项 (Key Configurations):&#10;#   - `FFMPEG_PATH`: FFmpeg 可执行文件的路径。&#10;#   - `ORIGINAL_VIDEO_EXTENSIONS`: 用于查找原始视频文件的扩展名列表。&#10;#   - `BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO`: 从视频重新生成 WebP 时的基础 FFmpeg 参数。&#10;#   - `VIDEO_DURATION_FOR_WEBP`: 从原始视频截取的时长。&#10;#&#10;# 注意事项 (Important Notes):&#10;#   - 依赖 FFmpeg：确保 FFmpeg 已正确安装。&#10;#   - 文件覆盖：脚本会直接覆盖旧的 .webp 文件，强烈建议备份数据。&#10;#   - 原始视频文件命名：脚本假设原始视频文件名与 .webp 文件名（去除 .webp 后缀）部分相同，" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="53" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="33" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Auto_build_and_copy.py:     creation_successful = create_numbered_folders(publish_base_path, num_folders)&#10;    if creation_successful:&#10;        # 5. 如果文件夹创建（或尝试创建）完成，则执行图片复制&#10;        #    检查publish_base_path是否真的被创建并且是目录，以防万一create_numbered_folders内部有未捕获问题&#10;        if os.path.exists(publish_base_path) and os.path.isdir(publish_base_path):&#10;            copy_random_images_to_numbered_folders(materials_path, publish_base_path)&#10;        else:&#10;            print(f&quot;错误：发布基础目录 '{publish_base_path}' 未能成功创建或不是一个目录。无法进行图片复制。&quot;)&#10;    else:&#10;        print(&quot;由于编号子文件夹创建过程中发生错误，图片复制步骤将被跳过。&quot;)&#10;print(&quot;=&quot; * 40)&#10;print(&quot;脚本执行完毕。&quot;)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="268" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="255" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Auto_build_and_copy.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$webp_resize.coverage&quot; NAME=&quot;webp_resize 覆盖结果&quot; MODIFIED=&quot;1746813872748&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$renew_md5.coverage&quot; NAME=&quot;renew_md5 覆盖结果&quot; MODIFIED=&quot;1746805747704&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$rm.coverage&quot; NAME=&quot;rm 覆盖结果&quot; MODIFIED=&quot;1746777057212&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="395" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="393" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py:     pathlib.Path]:  # 使用 Optional&#10;    &quot;&quot;&quot;&#10;    根据 WebP 文件的基本名称和目录，查找可能的原始视频文件。&#10;    返回找到的原始视频文件的 Path 对象，如果找不到则返回 None。&#10;    &quot;&quot;&quot;&#10;    for video_ext in ORIGINAL_VIDEO_EXTENSIONS:&#10;        potential_video_path = webp_dir_path / (base_name_for_lookup + video_ext)&#10;        if potential_video_path.is_file():&#10;            return potential_video_path&#10;    return None&#10;def build_ffmpeg_command_for_regeneration(ffmpeg_exe_path: str,&#10;                                          source_video_path: pathlib.Path,&#10;                                          output_webp_path: pathlib.Path,&#10;                                          target_fps: int) -&gt; List[str]:  # 使用 List&#10;    &quot;&quot;&quot;构建用于从视频重新生成WebP的FFmpeg命令列表。&quot;&quot;&quot;&#10;    command = [&#10;        ffmpeg_exe_path,&#10;        &quot;-y&quot;,&#10;        &quot;-i&quot;, str(source_video_path),&#10;        &quot;-t&quot;, VIDEO_DURATION_FOR_WEBP,&#10;    ]&#10;    command.extend(BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO)&#10;    # 简化 -vf 处理：总是添加 fps 滤镜，如果 BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO&#10;    # 中已有 -vf，则新的 fps 会被追加。如果想更精确控制，需要解析或调整 BASE_OPTIONS。" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="187" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="160" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Build_folder.py: # 脚本功能:&#10;# 本脚本用于在指定的父目录下创建一系列用户指定数量的编号子文件夹 (例如，如果用户输入5，则创建 1, 2, 3, 4, 5)。&#10;# 每次运行时，会提示用户输入基础目录的路径以及要创建的子文件夹数量。&#10;#&#10;# 工作流程:&#10;# 1. 提示用户输入一个基础目录 (base_dir) 的路径。&#10;# 2. 检查用户是否输入了路径，如果未输入则退出。&#10;# 3. 提示用户输入要创建的子文件夹数量。&#10;# 4. 校验输入的数量是否为正整数，如果不是则要求重新输入。&#10;# 5. 检查基础目录是否存在，如果不存在，则创建该基础目录。&#10;# 6. 在基础目录内，尝试创建用户指定数量的子文件夹，名称从 &quot;1&quot; 开始递增编号。&#10;# 7. 如果某个子文件夹已存在，则打印提示信息；如果不存在，则创建它并打印创建信息。&#10;# 8. 处理可能发生的操作系统错误 (例如权限问题)，但忽略文件夹已存在的错误。&#10;#&#10;# 达成的结果:&#10;# - 执行脚本后，用户指定的基础目录将会存在。&#10;# - 在该基础目录下，会存在用户指定数量的、从 &quot;1&quot; 开始编号的子文件夹。&#10;# - 控制台会输出每个文件夹的创建状态以及最终的处理完成信息。&#10;#&#10;# 注意事项:&#10;# - 请确保运行脚本的用户对指定的基础目录及其子目录有写入权限。&#10;# - 输入的文件夹数量必须是大于0的整数。&#10;import pathlib # 导入 pathlib 模块，用于以面向对象的方式处理文件系统路径&#10;import errno   # 导入 errno 模块，用于处理特定的错误号 (虽然pathlib内置了部分处理)&#10;def create_folders_pathlib(base_dir_str: str, num_folders_to_create: int):&#10;    &quot;&quot;&quot;&#10;    在指定的基础目录下创建指定数量的编号子文件夹 (使用 pathlib)。&#10;    参数:&#10;    base_dir_str (str): 用户通过input()输入的基础目录路径字符串。&#10;    num_folders_to_create (int): 用户希望创建的子文件夹数量。&#10;    &quot;&quot;&quot;&#10;    try:&#10;        # 将输入的字符串路径转换为 Path 对象，方便进行路径操作" />
+                      <option name="filePath" value="$PROJECT_DIR$/Build_folder.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="36" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="1" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Build_folder.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$Webp_video_to_img.coverage&quot; NAME=&quot;Webp_video_to_img 覆盖结果&quot; MODIFIED=&quot;1747309977247&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$zip_webp__1_.coverage&quot; NAME=&quot;zip_webp (1) 覆盖结果&quot; MODIFIED=&quot;1746799725118&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$c.coverage&quot; NAME=&quot;c 覆盖结果&quot; MODIFIED=&quot;1746805736668&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="389" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="387" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py: for filename in filenames:&#10;    problematic_webp_path = current_dir_path / filename&#10;    if problematic_webp_path.suffix.lower() == &quot;.webp&quot; and problematic_webp_path.is_file():&#10;        processed_webp_files += 1&#10;        try:&#10;            original_webp_size_bytes = problematic_webp_path.stat().st_size&#10;        except OSError as e_stat:&#10;            print(f&quot;\n错误: 无法获取文件 '{problematic_webp_path}' 的大小: {e_stat}, 跳过。&quot;)&#10;            failed_count += 1&#10;            continue&#10;        print(f&quot;\n发现 WebP 文件: {problematic_webp_path}&quot;)&#10;        print(f&quot;  当前 WebP 大小: {get_human_readable_size(original_webp_size_bytes)}&quot;)&#10;        if original_webp_size_bytes &lt;= size_threshold_bytes:&#10;            print(f&quot;  文件大小未超过阈值 {get_human_readable_size(int(size_threshold_bytes))}，跳过重新生成。&quot;)&#10;            skipped_size_count += 1&#10;            continue&#10;        base_for_lookup = problematic_webp_path.stem&#10;        print(f&quot;  将使用基础名 '{base_for_lookup}' 查找原始视频。&quot;)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="263" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="242" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$rezip_webp.coverage&quot; NAME=&quot;rezip_webp 覆盖结果&quot; MODIFIED=&quot;1746805356462&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$copy_folder.coverage&quot; NAME=&quot;copy_folder 覆盖结果&quot; MODIFIED=&quot;1746813793016&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$md5_renew.coverage&quot; NAME=&quot;md5_renew 覆盖结果&quot; MODIFIED=&quot;1746815137396&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="380" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="378" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".git\hooks\update.sample: if [ &quot;$newrev&quot; = &quot;$zero&quot; ]; then&#10;&#9;newrev_type=delete&#10;else&#10;&#9;newrev_type=$(git cat-file -t $newrev)&#10;fi&#10;case &quot;$refname&quot;,&quot;$newrev_type&quot; in&#10;&#9;refs/tags/*,commit)&#10;&#9;&#9;# un-annotated tag&#10;&#9;&#9;short_refname=${refname##refs/tags/}&#10;&#9;&#9;if [ &quot;$allowunannotated&quot; != &quot;true&quot; ]; then&#10;&#9;&#9;&#9;echo &quot;*** The un-annotated tag, $short_refname, is not allowed in this repository&quot; &gt;&amp;2&#10;&#9;&#9;&#9;echo &quot;*** Use 'git tag [ -a | -s ]' for tags you want to propagate.&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;refs/tags/*,delete)&#10;&#9;&#9;# delete tag&#10;&#9;&#9;if [ &quot;$allowdeletetag&quot; != &quot;true&quot; ]; then&#10;&#9;&#9;&#9;echo &quot;*** Deleting a tag is not allowed in this repository&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;refs/tags/*,tag)&#10;&#9;&#9;# annotated tag&#10;&#9;&#9;if [ &quot;$allowmodifytag&quot; != &quot;true&quot; ] &amp;&amp; git rev-parse $refname &gt; /dev/null 2&gt;&amp;1&#10;&#9;&#9;then&#10;&#9;&#9;&#9;echo &quot;*** Tag '$refname' already exists.&quot; &gt;&amp;2" />
+                      <option name="filePath" value="$PROJECT_DIR$/.git/hooks/update.sample" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="91" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="64" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".git\hooks\update.sample" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml:     &amp;quot;state&amp;quot;: &amp;quot;OPEN&amp;quot;,&#10;    &amp;quot;assignee&amp;quot;: &amp;quot;imhouse36&amp;quot;&#10;  }&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;GithubPullRequestsUISettings&quot;&gt;{&#10;  &amp;quot;selectedUrlAndAccountId&amp;quot;: {&#10;    &amp;quot;url&amp;quot;: &amp;quot;https://github.com/imhouse36/OnlyMe.git&amp;quot;,&#10;    &amp;quot;accountId&amp;quot;: &amp;quot;72c3a86b-f8a0-4457-b706-ba5d2ba2a123&amp;quot;&#10;  }&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;ProjectColorInfo&quot;&gt;{&#10;  &amp;quot;associatedIndex&amp;quot;: 4&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;ProjectId&quot; id=&quot;2uzo0bsdo34SBkuNMH9VC8OmipH&quot; /&gt;&#10;  &lt;component name=&quot;ProjectLevelVcsManager&quot;&gt;&#10;    &lt;ConfirmationsSetting value=&quot;2&quot; id=&quot;Add&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;ProjectViewState&quot;&gt;&#10;    &lt;option name=&quot;hideEmptyMiddlePackages&quot; value=&quot;true&quot; /&gt;&#10;    &lt;option name=&quot;showLibraryContents&quot; value=&quot;true&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;PropertiesComponent&quot;&gt;&lt;![CDATA[{&#10;  &quot;keyToString&quot;: {&#10;    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;," />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="48" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="25" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".git\hooks\update.sample: &#9;&#9;&#9;echo &quot;*** Modifying a tag is not allowed in this repository.&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;refs/heads/*,commit)&#10;&#9;&#9;# branch&#10;&#9;&#9;if [ &quot;$oldrev&quot; = &quot;$zero&quot; -a &quot;$denycreatebranch&quot; = &quot;true&quot; ]; then&#10;&#9;&#9;&#9;echo &quot;*** Creating a branch is not allowed in this repository&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;refs/heads/*,delete)&#10;&#9;&#9;# delete branch&#10;&#9;&#9;if [ &quot;$allowdeletebranch&quot; != &quot;true&quot; ]; then&#10;&#9;&#9;&#9;echo &quot;*** Deleting a branch is not allowed in this repository&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;refs/remotes/*,commit)&#10;&#9;&#9;# tracking branch&#10;&#9;&#9;;;&#10;&#9;refs/remotes/*,delete)&#10;&#9;&#9;# delete tracking branch&#10;&#9;&#9;if [ &quot;$allowdeletebranch&quot; != &quot;true&quot; ]; then&#10;&#9;&#9;&#9;echo &quot;*** Deleting a tracking branch is not allowed in this repository&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;*)&#10;&#9;&#9;# Anything else (is there anything else?)&#10;&#9;&#9;echo &quot;*** Update hook: unknown type of update to ref $refname of type $newrev_type&quot; &gt;&amp;2&#10;&#9;&#9;exit 1&#10;&#9;&#9;;;&#10;esac" />
+                      <option name="filePath" value="$PROJECT_DIR$/.git/hooks/update.sample" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="125" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="92" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".git\hooks\update.sample" />
+                    </CodebaseContextVariableValue>
+                  </list>
+                </option>
+                <option name="codebaseReferences">
+                  <list>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$AAtest.coverage&quot; NAME=&quot;AAtest 覆盖结果&quot; MODIFIED=&quot;1746858219554&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$md5.coverage&quot; NAME=&quot;md5 覆盖结果&quot; MODIFIED=&quot;1746776352001&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$222.coverage&quot; NAME=&quot;222 覆盖结果&quot; MODIFIED=&quot;1746808139912&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="392" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="390" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Auto_build_and_copy.py:     print(f&quot;  错误: 无法读取素材分类目录 '{current_source_category_full_path}' 的内容: {e}&quot;)&#10;    continue # 跳过这个有问题的素材分类&#10;if not available_images:&#10;    print(f&quot;  警告: 素材分类目录 '{source_category_name}' 中没有找到支持的图片文件。跳过此类别。&quot;)&#10;    continue&#10;chosen_image_name = random.choice(available_images)&#10;source_image_full_path = os.path.join(current_source_category_full_path, chosen_image_name)&#10;# 为避免目标文件名冲突，可以考虑在复制时重命名，但当前需求是直接复制&#10;target_image_full_path = os.path.join(current_target_dir_full_path, chosen_image_name)&#10;try:&#10;    # 确保目标目录存在 (虽然按流程它应该存在)&#10;    os.makedirs(current_target_dir_full_path, exist_ok=True)&#10;    shutil.copy2(source_image_full_path, target_image_full_path)&#10;    print(f&quot;  已将 '{source_category_name}/{chosen_image_name}' 复制到 '{target_folder_name}/{chosen_image_name}'&quot;)&#10;    copied_images_count_for_this_target += 1&#10;    total_files_copied += 1" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="209" />
+                          <option name="fileName" value="Auto_build_and_copy.py" />
+                          <option name="source" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="191" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Copy_file.py:             print(f&quot;  已将 '{source_sub_name}/{chosen_image_name}' 复制到 '{target_sub_name}/{chosen_image_name}'&quot;)&#10;            copied_images_count_for_this_target += 1&#10;            total_files_copied += 1  # 增加总复制文件计数&#10;        except Exception as e:&#10;            print(f&quot;  错误: 复制文件 '{source_image_full_path}' 到 '{target_image_full_path}' 失败: {e}&quot;)&#10;    print(f&quot;--- 完成处理“发布”子目录 '{target_sub_name}'。&quot;)&#10;    print(f&quot;  预期复制图片数量: {len(source_subfolders)} (等于“素材”子目录数量)&quot;)&#10;    print(f&quot;  实际为该目录复制图片数量: {copied_images_count_for_this_target}&quot;)&#10;    if copied_images_count_for_this_target &lt; len(source_subfolders):&#10;        print(f&quot;  注意: 实际复制数量少于预期，可能是因为部分“素材”子目录中没有图片。&quot;)&#10;end_time = time.time()  # 记录脚本结束时间&#10;duration = end_time - start_time  # 计算总用时&#10;print(&quot;\n--- 图片随机复制任务全部完成 ---&quot;)&#10;print(f&quot;总共复制文件数量: {total_files_copied}&quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="153" />
+                          <option name="fileName" value="Copy_file.py" />
+                          <option name="source" value="$PROJECT_DIR$/Copy_file.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="137" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Auto_build_and_copy.py:             except Exception as e:&#10;                print(f&quot;  错误: 复制文件 '{source_image_full_path}' 到 '{target_image_full_path}' 失败: {e}&quot;)&#10;        print(f&quot;--- 完成处理“发布”编号子目录 '{target_folder_name}' ---&quot;)&#10;        print(f&quot;  预期为该目录复制图片数量 (等于素材分类数): {len(source_categories)}&quot;)&#10;        print(f&quot;  实际为该目录复制图片数量: {copied_images_count_for_this_target}&quot;)&#10;        if copied_images_count_for_this_target &lt; len(source_categories):&#10;            print(f&quot;  注意: 实际复制数量少于预期，可能是因为部分“素材”分类目录中没有图片或读取/复制时出错。&quot;)&#10;    end_time = time.time()&#10;    duration = end_time - start_time&#10;    print(&quot;\n--- 图片随机复制任务全部完成 ---&quot;)&#10;    print(f&quot;总共复制文件数量: {total_files_copied}&quot;)&#10;    print(f&quot;总执行时间: {duration:.2f} 秒&quot;)&#10;if __name__ == &quot;__main__&quot;:&#10;    print(&quot;欢迎使用文件夹创建与图片随机复制脚本！&quot;)&#10;    print(&quot;=&quot; * 40)&#10;    # 1. 获取要创建的文件夹数量&#10;    num_folders = get_positive_integer_input(&quot;请输入要在“发布”文件夹下创建的编号子文件夹个数 (例如: 5): &quot;)&#10;    # 2. 获取素材文件夹路径" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="234" />
+                          <option name="fileName" value="Auto_build_and_copy.py" />
+                          <option name="source" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="210" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Auto_build_and_copy.py: print(f&quot;“发布”基础文件夹中找到 {len(target_numbered_folders)} 个编号子目录: {', '.join(target_numbered_folders)}&quot;)&#10;# 3. 遍历“发布”文件夹的每个编号子目录&#10;for target_folder_name in target_numbered_folders:&#10;    current_target_dir_full_path = os.path.join(target_publish_base_path_str, target_folder_name)&#10;    print(f&quot;\n--- 正在处理“发布”编号子目录: '{target_folder_name}' ---&quot;)&#10;    copied_images_count_for_this_target = 0&#10;    # 4. 遍历“素材”文件夹的每个分类子目录&#10;    for source_category_name in source_categories:&#10;        current_source_category_full_path = os.path.join(source_materials_path_str, source_category_name)&#10;        try:&#10;            available_images = [&#10;                f for f in os.listdir(current_source_category_full_path)&#10;                if os.path.isfile(os.path.join(current_source_category_full_path, f)) and \&#10;                   f.lower().endswith(image_extensions)&#10;            ]&#10;        except OSError as e:" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="190" />
+                          <option name="fileName" value="Auto_build_and_copy.py" />
+                          <option name="source" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="171" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Build_folder.py:         num_folders_to_create_input = int(num_folders_str) # 尝试将输入转换为整数&#10;        if num_folders_to_create_input &lt;= 0: # 检查数字是否为正数&#10;            print(&quot;错误：文件夹个数必须是大于0的正整数。请重新输入。&quot;)&#10;        else:&#10;            break # 输入有效，跳出循环&#10;    except ValueError:&#10;        # 如果 int()转换失败 (例如用户输入了文本)，则捕获 ValueError&#10;        print(&quot;错误：请输入一个有效的数字作为文件夹个数 (例如: 5)。请重新输入。&quot;)&#10;# 打印用户输入的路径和数量，以便确认&#10;print(f&quot;接收到的基础目录路径: '{base_directory_from_input}'&quot;)&#10;print(f&quot;计划创建的子文件夹个数: {num_folders_to_create_input}&quot;)&#10;# 调用函数执行文件夹创建操作&#10;create_folders_pathlib(base_directory_from_input, num_folders_to_create_input)&#10;print(&quot;脚本执行完毕。&quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="109" />
+                          <option name="fileName" value="Build_folder.py" />
+                          <option name="source" value="$PROJECT_DIR$/Build_folder.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="92" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Auto_build_and_copy.py: base_dir_str (str): 用户通过input()输入的基础目录路径字符串。&#10;num_folders_to_create (int): 用户希望创建的子文件夹数量。&#10;返回:&#10;    bool: 如果所有操作（或尝试操作）成功完成则返回 True，否则 False。&#10;&quot;&quot;&quot;&#10;print(f&quot;\n--- 开始创建编号子文件夹于 '{base_dir_str}' ---&quot;)&#10;try:&#10;    base_path = pathlib.Path(base_dir_str)&#10;    base_path.mkdir(parents=True, exist_ok=True)&#10;    print(f&quot;发布基础目录 '{base_path}' 确保存在。&quot;)&#10;    for i in range(1, num_folders_to_create + 1):&#10;        folder_name = str(i)&#10;        folder_path = base_path / folder_name&#10;        try:&#10;            folder_path.mkdir(exist_ok=True)&#10;            print(f&quot;  子文件夹 '{folder_path}' 确保存在。&quot;)&#10;        except OSError as e:&#10;            print(f&quot;  创建子文件夹 '{folder_path}' 时出错: {e}&quot;)&#10;            # 即使单个文件夹创建失败，也尝试继续创建其他文件夹&#10;    print(f&quot;--- 完成创建 {num_folders_to_create} 个编号子文件夹的尝试 ---&quot;)&#10;    return True&#10;except OSError as e:&#10;    print(f&quot;处理发布基础目录 '{base_dir_str}' 时发生操作系统错误: {e}&quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="123" />
+                          <option name="fileName" value="Auto_build_and_copy.py" />
+                          <option name="source" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="98" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Auto_build_and_copy.py: materials_path = get_valid_folder_path_from_user(&quot;请输入“素材”文件夹的完整路径: &quot;, ensure_exists=True)&#10;# 3. 获取发布基础文件夹路径&#10;# 对于发布基础路径，我们不需要它预先存在，因为 create_numbered_folders 会创建它 (如果它不存在)&#10;# 但是，为了用户体验，通常也期望用户提供一个有效的“父”路径概念&#10;# 这里，我们让用户输入一个路径，create_numbered_folders 中的 pathlib 会处理创建&#10;publish_base_path = get_valid_folder_path_from_user(&#10;    &quot;请输入“发布”文件夹的基础路径 (编号子文件夹将在此路径下创建): &quot;,&#10;    ensure_exists=False # 改为False，因为pathlib可以创建它&#10;)&#10;# 进一步校验 publish_base_path，确保它不是一个已存在的文件&#10;if os.path.exists(publish_base_path) and os.path.isfile(publish_base_path):&#10;    print(f&quot;错误：指定的发布基础路径 '{publish_base_path}' 是一个文件，而不是目录。脚本将退出。&quot;)&#10;else:&#10;    print(f&quot;\n确认信息:&quot;)&#10;    print(f&quot; - 将在 '{publish_base_path}' 下创建 {num_folders} 个编号子文件夹。&quot;)&#10;    print(f&quot; - 素材将从 '{materials_path}' 读取。&quot;)&#10;    print(&quot;-&quot; * 40)&#10;    # 4. 创建编号子文件夹" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="254" />
+                          <option name="fileName" value="Auto_build_and_copy.py" />
+                          <option name="source" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="235" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Auto_build_and_copy.py:         return False&#10;    except Exception as ex:&#10;        print(f&quot;创建编号子文件夹时发生意外错误: {ex}&quot;)&#10;        return False&#10;def copy_random_images_to_numbered_folders(source_materials_path_str: str, target_publish_base_path_str: str):&#10;    &quot;&quot;&quot;&#10;    将“素材”文件夹的图片随机复制到“发布”基础路径下的编号子文件夹中。&#10;    参数:&#10;        source_materials_path_str (str): “素材”文件夹的路径。&#10;        target_publish_base_path_str (str): “发布”文件夹的基础路径，其下应有编号子文件夹。&#10;    &quot;&quot;&quot;&#10;    print(&quot;\n--- 开始执行图片随机复制任务 ---&quot;)&#10;    start_time = time.time()&#10;    total_files_copied = 0&#10;    image_extensions = ('.jpg', '.jpeg', '.png', '.webp', '.bmp', '.gif') # 增加了.gif&#10;    # 1. 获取“素材”文件夹下的所有子目录 (素材类别目录)&#10;    try:&#10;        source_categories = [&#10;            d for d in os.listdir(source_materials_path_str)&#10;            if os.path.isdir(os.path.join(source_materials_path_str, d))&#10;        ]&#10;    except OSError as e:" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="148" />
+                          <option name="fileName" value="Auto_build_and_copy.py" />
+                          <option name="source" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="124" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Copy_file.py:         if os.path.isdir(os.path.join(target_base_path, d))&#10;    ]&#10;except OSError as e:&#10;    print(f&quot;错误：无法读取“发布”文件夹 '{target_base_path}' 的内容: {e}&quot;)&#10;    return&#10;if not target_subfolders:&#10;    print(f&quot;警告：“发布”文件夹 '{target_base_path}' 中没有找到任何子目录。脚本无法继续。&quot;)&#10;    return&#10;print(f&quot;“发布”文件夹中找到 {len(target_subfolders)} 个子目录 (目标): {', '.join(target_subfolders)}&quot;)&#10;# 4. 遍历“发布”文件夹的每个子目录&#10;for target_sub_name in target_subfolders:&#10;    current_target_dir_path = os.path.join(target_base_path, target_sub_name)&#10;    print(f&quot;\n--- 正在处理“发布”子目录: '{target_sub_name}' ---&quot;)&#10;    copied_images_count_for_this_target = 0  # 记录成功复制到当前目标子目录的图片数量&#10;    # 5. 遍历“素材”文件夹的每个子目录 (每个素材类别)&#10;    for source_sub_name in source_subfolders:&#10;        current_source_category_path = os.path.join(source_base_path, source_sub_name)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="114" />
+                          <option name="fileName" value="Copy_file.py" />
+                          <option name="source" value="$PROJECT_DIR$/Copy_file.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="94" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py: source_video_path = find_original_video_file(current_dir_path, base_for_lookup)&#10;if not source_video_path:&#10;    print(f&quot;  错误: 未能找到与基础名 '{base_for_lookup}' 对应的原始视频文件。跳过重新生成。&quot;)&#10;    no_source_found_count += 1&#10;    continue&#10;print(f&quot;  找到对应的原始视频文件: {source_video_path}&quot;)&#10;output_webp_path = problematic_webp_path&#10;command_list = build_ffmpeg_command_for_regeneration(&#10;    ffmpeg_exe_path, source_video_path, output_webp_path, new_fps&#10;)&#10;print(f&quot;  执行命令从原始视频重新生成 WebP: {' '.join(command_list)}&quot;)&#10;try:&#10;    result = subprocess.run(command_list, capture_output=True, text=True, check=False,&#10;                            encoding='utf-8', errors='replace', timeout=FFMPEG_TIMEOUT_SECONDS)&#10;    if result.returncode == 0:&#10;        # 再次检查文件是否存在且非空，因为FFmpeg有时即使返回0也可能没有成功写入&#10;        if not output_webp_path.exists() or output_webp_path.stat().st_size == 0:" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="288" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="265" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$webp_rename_files.coverage&quot; NAME=&quot;webp_rename_files 覆盖结果&quot; MODIFIED=&quot;1746858139256&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$renew_md5__1_.coverage&quot; NAME=&quot;renew_md5 (1) 覆盖结果&quot; MODIFIED=&quot;1746777029474&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$md5_renew__1_.coverage&quot; NAME=&quot;md5_renew (1) 覆盖结果&quot; MODIFIED=&quot;1746806741082&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="386" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="384" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Auto_build_and_copy.py:     print(f&quot;错误：无法读取“素材”文件夹 '{source_materials_path_str}' 的内容: {e}&quot;)&#10;    return&#10;if not source_categories:&#10;    print(f&quot;警告：“素材”文件夹 '{source_materials_path_str}' 中没有找到任何分类子目录。无法进行复制。&quot;)&#10;    return&#10;print(f&quot;“素材”文件夹中找到 {len(source_categories)} 个分类子目录: {', '.join(source_categories)}&quot;)&#10;# 2. 获取“发布”基础路径下的所有编号子文件夹 (目标发布目录)&#10;try:&#10;    # 我们期望这些是数字命名的文件夹，可以根据需要添加更严格的过滤&#10;    target_numbered_folders = [&#10;        d for d in os.listdir(target_publish_base_path_str)&#10;        if os.path.isdir(os.path.join(target_publish_base_path_str, d)) and d.isdigit()&#10;    ]&#10;except OSError as e:&#10;    print(f&quot;错误：无法读取“发布”基础文件夹 '{target_publish_base_path_str}' 的内容: {e}&quot;)&#10;    return&#10;if not target_numbered_folders:&#10;    print(f&quot;警告：“发布”基础文件夹 '{target_publish_base_path_str}' 中没有找到编号子目录。请确保已先创建。&quot;)&#10;    return" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="170" />
+                          <option name="fileName" value="Auto_build_and_copy.py" />
+                          <option name="source" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="149" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Copy_file.py: target_base_path = get_folder_path_from_user(&quot;请输入“发布”文件夹的完整路径: &quot;)&#10;# 定义支持的图片文件扩展名&#10;image_extensions = ('.jpg', '.jpeg', '.png', '.webp', '.bmp')&#10;# 2. 获取“素材”文件夹下的所有子目录 (素材类别目录)&#10;try:&#10;    source_subfolders = [&#10;        d for d in os.listdir(source_base_path)&#10;        if os.path.isdir(os.path.join(source_base_path, d))&#10;    ]&#10;except OSError as e:&#10;    print(f&quot;错误：无法读取“素材”文件夹 '{source_base_path}' 的内容: {e}&quot;)&#10;    return&#10;if not source_subfolders:&#10;    print(f&quot;警告：“素材”文件夹 '{source_base_path}' 中没有找到任何子目录。脚本无法继续。&quot;)&#10;    return&#10;print(f&quot;“素材”文件夹中找到 {len(source_subfolders)} 个子目录 (类别): {', '.join(source_subfolders)}&quot;)&#10;# 3. 获取“发布”文件夹下的所有子目录 (目标发布目录)&#10;try:&#10;    target_subfolders = [&#10;        d for d in os.listdir(target_base_path)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="93" />
+                          <option name="fileName" value="Copy_file.py" />
+                          <option name="source" value="$PROJECT_DIR$/Copy_file.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="70" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$to_webp2.coverage&quot; NAME=&quot;to_webp2 覆盖结果&quot; MODIFIED=&quot;1746797835724&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$test.coverage&quot; NAME=&quot;test 覆盖结果&quot; MODIFIED=&quot;1746643531371&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test1$test.coverage&quot; NAME=&quot;test 覆盖结果&quot; MODIFIED=&quot;1746385625889&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="398" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="396" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Build_folder.py:                 # FileExistsError 会被 exist_ok=True 处理，所以这里主要捕获其他 OSError。&#10;                print(f&quot;创建子文件夹 '{folder_path}' 时出错: {e}&quot;)&#10;        print(f&quot;已处理完 {num_folders_to_create} 个子文件夹的创建请求。&quot;)&#10;    except OSError as e:&#10;        # 主要捕获在处理 base_path.mkdir 时可能发生的严重错误，&#10;        # 例如，如果 base_dir_str 指向一个文件，或者因权限不足无法创建基础目录。&#10;        print(f&quot;处理基础目录 '{base_dir_str}' 时发生操作系统错误: {e}&quot;)&#10;    except Exception as ex:&#10;        # 捕获其他所有未预料到的意外错误，增加脚本的健壮性。&#10;        print(f&quot;发生意外错误: {ex}&quot;)&#10;if __name__ == &quot;__main__&quot;:&#10;    # 提示用户输入基础目录路径，并移除首尾可能存在的空白字符&#10;    base_directory_from_input = input(&quot;请输入基础目录路径 : &quot;).strip()&#10;    # 检查用户是否输入了基础目录路径&#10;    if not base_directory_from_input:&#10;        print(&quot;错误：未输入目录路径。脚本将退出。&quot;)&#10;    else:&#10;        # 如果输入了基础目录路径，则继续提示输入要创建的文件夹数量&#10;        num_folders_to_create_input = 0 # 初始化变量&#10;        while True: # 使用循环来确保用户输入的是有效的正整数&#10;            try:&#10;                num_folders_str = input(&quot;请输入要创建的子文件夹个数 (例如: 5): &quot;).strip()&#10;                if not num_folders_str: # 检查是否输入了内容&#10;                    print(&quot;错误：未输入文件夹个数。请重新输入。&quot;)&#10;                    continue" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="90" />
+                          <option name="fileName" value="Build_folder.py" />
+                          <option name="source" value="$PROJECT_DIR$/Build_folder.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="61" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/trae_py$Build_folder__1_.coverage&quot; NAME=&quot;Build_folder (1) 覆盖结果&quot; MODIFIED=&quot;1747314630693&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$webp_rename_files__1_.coverage&quot; NAME=&quot;webp_rename_files (1) 覆盖结果&quot; MODIFIED=&quot;1746813531387&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$build_folder__1_.coverage&quot; NAME=&quot;build_folder (1) 覆盖结果&quot; MODIFIED=&quot;1746813822702&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="383" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="381" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;/component&gt;&#10;&lt;component name=&quot;com.intellij.coverage.CoverageDataManagerImpl&quot;&gt;&#10;  &lt;SUITE FILE_PATH=&quot;coverage/test_py$to_webp.coverage&quot; NAME=&quot;to_webp 覆盖结果&quot; MODIFIED=&quot;1746804690811&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;  &lt;SUITE FILE_PATH=&quot;coverage/test_py$webp_video_to.coverage&quot; NAME=&quot;webp_video_to 覆盖结果&quot; MODIFIED=&quot;1746813876366&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;  &lt;SUITE FILE_PATH=&quot;coverage/test_py$qingkong.coverage&quot; NAME=&quot;qingkong 覆盖结果&quot; MODIFIED=&quot;1747063196557&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="374" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="370" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Build_folder.py: base_path = pathlib.Path(base_dir_str)&#10;# 创建基础目录&#10;# base_path.mkdir(parents=True, exist_ok=True)&#10;# - parents=True: 如果路径中的父目录不存在，则一并创建 (类似于 os.makedirs)。&#10;# - exist_ok=True: 如果目标目录已经存在，则不会引发 FileExistsError 错误。&#10;base_path.mkdir(parents=True, exist_ok=True)&#10;print(f&quot;基础目录 '{base_path}' 确保存在。&quot;)&#10;# 创建指定数量的子文件夹&#10;# 循环从 1 到 num_folders_to_create (包含)&#10;for i in range(1, num_folders_to_create + 1):&#10;    # 使用 / 操作符拼接路径，这是 pathlib 的一个便捷特性&#10;    folder_name = str(i) # 文件夹名称为数字字符串 &quot;1&quot;, &quot;2&quot;, ...&#10;    folder_path = base_path / folder_name&#10;    try:&#10;        # 创建子文件夹&#10;        # exist_ok=True: 如果子文件夹已存在，不引发错误。&#10;        # parents=False (默认): 因为我们已经确保了 base_path (父目录) 存在。&#10;        folder_path.mkdir(exist_ok=True)&#10;        print(f&quot;子文件夹 '{folder_path}' 确保存在。&quot;)&#10;    except OSError as e:&#10;        # 捕获在创建单个子文件夹时可能发生的操作系统错误，例如权限问题。" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="60" />
+                          <option name="fileName" value="Build_folder.py" />
+                          <option name="source" value="$PROJECT_DIR$/Build_folder.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="37" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$111.coverage&quot; NAME=&quot;111 覆盖结果&quot; MODIFIED=&quot;1746812443028&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$build_folder.coverage&quot; NAME=&quot;build_folder 覆盖结果&quot; MODIFIED=&quot;1746857936812&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$b.coverage&quot; NAME=&quot;b 覆盖结果&quot; MODIFIED=&quot;1746811440036&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="377" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="375" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Copy_file.py: try:&#10;    # 获取当前素材类别目录下的所有图片文件&#10;    available_images = [&#10;        f for f in os.listdir(current_source_category_path)&#10;        if os.path.isfile(os.path.join(current_source_category_path, f)) and \&#10;           f.lower().endswith(image_extensions)&#10;    ]&#10;except OSError as e:&#10;    print(f&quot;  错误: 无法读取素材类别目录 '{current_source_category_path}' 的内容: {e}&quot;)&#10;    continue&#10;if not available_images:&#10;    print(f&quot;  警告: 素材类别目录 '{source_sub_name}' 中没有找到图片文件。跳过此类别。&quot;)&#10;    continue&#10;chosen_image_name = random.choice(available_images)&#10;source_image_full_path = os.path.join(current_source_category_path, chosen_image_name)&#10;target_image_full_path = os.path.join(current_target_dir_path, chosen_image_name)&#10;try:&#10;    shutil.copy2(source_image_full_path, target_image_full_path)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="136" />
+                          <option name="fileName" value="Copy_file.py" />
+                          <option name="source" value="$PROJECT_DIR$/Copy_file.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="116" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py: #         ii.  在同一目录下，使用 `ORIGINAL_VIDEO_EXTENSIONS` 列表尝试查找对应的原始视频文件&#10;#              (例如，查找 &quot;IMG_123.JPG.mp4&quot;, &quot;IMG_123.JPG.mov&quot; 等)。&#10;#         iii. 如果找到原始视频文件：&#10;#              - 使用 FFmpeg 从原始视频文件截取指定时长 (如前3秒)。&#10;#              - 应用预设的 `BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO` 和用户指定的新帧率，&#10;#                将截取的片段转换为新的 .webp 文件。&#10;#              - 新生成的 .webp 文件将直接覆盖掉旧的（有问题的/过大的）.webp 文件。&#10;#         iv.  如果未找到原始视频文件，则跳过该 .webp 文件。&#10;#   8. 用户确认后开始处理 (有备份警告)。&#10;#   9. 报告重新生成成功、失败、因大小跳过、因未找到源文件而跳过的 WebP 文件数量。&#10;#&#10;# 配置项 (Key Configurations):&#10;#   - `FFMPEG_PATH`: FFmpeg 可执行文件的路径。&#10;#   - `ORIGINAL_VIDEO_EXTENSIONS`: 用于查找原始视频文件的扩展名列表。&#10;#   - `BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO`: 从视频重新生成 WebP 时的基础 FFmpeg 参数。&#10;#   - `VIDEO_DURATION_FOR_WEBP`: 从原始视频截取的时长。&#10;#&#10;# 注意事项 (Important Notes):&#10;#   - 依赖 FFmpeg：确保 FFmpeg 已正确安装。&#10;#   - 文件覆盖：脚本会直接覆盖旧的 .webp 文件，强烈建议备份数据。&#10;#   - 原始视频文件命名：脚本假设原始视频文件名与 .webp 文件名（去除 .webp 后缀）部分相同，" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="53" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="33" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Auto_build_and_copy.py:     creation_successful = create_numbered_folders(publish_base_path, num_folders)&#10;    if creation_successful:&#10;        # 5. 如果文件夹创建（或尝试创建）完成，则执行图片复制&#10;        #    检查publish_base_path是否真的被创建并且是目录，以防万一create_numbered_folders内部有未捕获问题&#10;        if os.path.exists(publish_base_path) and os.path.isdir(publish_base_path):&#10;            copy_random_images_to_numbered_folders(materials_path, publish_base_path)&#10;        else:&#10;            print(f&quot;错误：发布基础目录 '{publish_base_path}' 未能成功创建或不是一个目录。无法进行图片复制。&quot;)&#10;    else:&#10;        print(&quot;由于编号子文件夹创建过程中发生错误，图片复制步骤将被跳过。&quot;)&#10;print(&quot;=&quot; * 40)&#10;print(&quot;脚本执行完毕。&quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="268" />
+                          <option name="fileName" value="Auto_build_and_copy.py" />
+                          <option name="source" value="$PROJECT_DIR$/Auto_build_and_copy.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="255" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$webp_resize.coverage&quot; NAME=&quot;webp_resize 覆盖结果&quot; MODIFIED=&quot;1746813872748&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$renew_md5.coverage&quot; NAME=&quot;renew_md5 覆盖结果&quot; MODIFIED=&quot;1746805747704&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$rm.coverage&quot; NAME=&quot;rm 覆盖结果&quot; MODIFIED=&quot;1746777057212&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="395" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="393" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py:     pathlib.Path]:  # 使用 Optional&#10;    &quot;&quot;&quot;&#10;    根据 WebP 文件的基本名称和目录，查找可能的原始视频文件。&#10;    返回找到的原始视频文件的 Path 对象，如果找不到则返回 None。&#10;    &quot;&quot;&quot;&#10;    for video_ext in ORIGINAL_VIDEO_EXTENSIONS:&#10;        potential_video_path = webp_dir_path / (base_name_for_lookup + video_ext)&#10;        if potential_video_path.is_file():&#10;            return potential_video_path&#10;    return None&#10;def build_ffmpeg_command_for_regeneration(ffmpeg_exe_path: str,&#10;                                          source_video_path: pathlib.Path,&#10;                                          output_webp_path: pathlib.Path,&#10;                                          target_fps: int) -&gt; List[str]:  # 使用 List&#10;    &quot;&quot;&quot;构建用于从视频重新生成WebP的FFmpeg命令列表。&quot;&quot;&quot;&#10;    command = [&#10;        ffmpeg_exe_path,&#10;        &quot;-y&quot;,&#10;        &quot;-i&quot;, str(source_video_path),&#10;        &quot;-t&quot;, VIDEO_DURATION_FOR_WEBP,&#10;    ]&#10;    command.extend(BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO)&#10;    # 简化 -vf 处理：总是添加 fps 滤镜，如果 BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO&#10;    # 中已有 -vf，则新的 fps 会被追加。如果想更精确控制，需要解析或调整 BASE_OPTIONS。" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="187" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="160" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Build_folder.py: # 脚本功能:&#10;# 本脚本用于在指定的父目录下创建一系列用户指定数量的编号子文件夹 (例如，如果用户输入5，则创建 1, 2, 3, 4, 5)。&#10;# 每次运行时，会提示用户输入基础目录的路径以及要创建的子文件夹数量。&#10;#&#10;# 工作流程:&#10;# 1. 提示用户输入一个基础目录 (base_dir) 的路径。&#10;# 2. 检查用户是否输入了路径，如果未输入则退出。&#10;# 3. 提示用户输入要创建的子文件夹数量。&#10;# 4. 校验输入的数量是否为正整数，如果不是则要求重新输入。&#10;# 5. 检查基础目录是否存在，如果不存在，则创建该基础目录。&#10;# 6. 在基础目录内，尝试创建用户指定数量的子文件夹，名称从 &quot;1&quot; 开始递增编号。&#10;# 7. 如果某个子文件夹已存在，则打印提示信息；如果不存在，则创建它并打印创建信息。&#10;# 8. 处理可能发生的操作系统错误 (例如权限问题)，但忽略文件夹已存在的错误。&#10;#&#10;# 达成的结果:&#10;# - 执行脚本后，用户指定的基础目录将会存在。&#10;# - 在该基础目录下，会存在用户指定数量的、从 &quot;1&quot; 开始编号的子文件夹。&#10;# - 控制台会输出每个文件夹的创建状态以及最终的处理完成信息。&#10;#&#10;# 注意事项:&#10;# - 请确保运行脚本的用户对指定的基础目录及其子目录有写入权限。&#10;# - 输入的文件夹数量必须是大于0的整数。&#10;import pathlib # 导入 pathlib 模块，用于以面向对象的方式处理文件系统路径&#10;import errno   # 导入 errno 模块，用于处理特定的错误号 (虽然pathlib内置了部分处理)&#10;def create_folders_pathlib(base_dir_str: str, num_folders_to_create: int):&#10;    &quot;&quot;&quot;&#10;    在指定的基础目录下创建指定数量的编号子文件夹 (使用 pathlib)。&#10;    参数:&#10;    base_dir_str (str): 用户通过input()输入的基础目录路径字符串。&#10;    num_folders_to_create (int): 用户希望创建的子文件夹数量。&#10;    &quot;&quot;&quot;&#10;    try:&#10;        # 将输入的字符串路径转换为 Path 对象，方便进行路径操作" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="36" />
+                          <option name="fileName" value="Build_folder.py" />
+                          <option name="source" value="$PROJECT_DIR$/Build_folder.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$Webp_video_to_img.coverage&quot; NAME=&quot;Webp_video_to_img 覆盖结果&quot; MODIFIED=&quot;1747309977247&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$zip_webp__1_.coverage&quot; NAME=&quot;zip_webp (1) 覆盖结果&quot; MODIFIED=&quot;1746799725118&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$c.coverage&quot; NAME=&quot;c 覆盖结果&quot; MODIFIED=&quot;1746805736668&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="389" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="387" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py: for filename in filenames:&#10;    problematic_webp_path = current_dir_path / filename&#10;    if problematic_webp_path.suffix.lower() == &quot;.webp&quot; and problematic_webp_path.is_file():&#10;        processed_webp_files += 1&#10;        try:&#10;            original_webp_size_bytes = problematic_webp_path.stat().st_size&#10;        except OSError as e_stat:&#10;            print(f&quot;\n错误: 无法获取文件 '{problematic_webp_path}' 的大小: {e_stat}, 跳过。&quot;)&#10;            failed_count += 1&#10;            continue&#10;        print(f&quot;\n发现 WebP 文件: {problematic_webp_path}&quot;)&#10;        print(f&quot;  当前 WebP 大小: {get_human_readable_size(original_webp_size_bytes)}&quot;)&#10;        if original_webp_size_bytes &lt;= size_threshold_bytes:&#10;            print(f&quot;  文件大小未超过阈值 {get_human_readable_size(int(size_threshold_bytes))}，跳过重新生成。&quot;)&#10;            skipped_size_count += 1&#10;            continue&#10;        base_for_lookup = problematic_webp_path.stem&#10;        print(f&quot;  将使用基础名 '{base_for_lookup}' 查找原始视频。&quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="263" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="242" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;SUITE FILE_PATH=&quot;coverage/test_py$rezip_webp.coverage&quot; NAME=&quot;rezip_webp 覆盖结果&quot; MODIFIED=&quot;1746805356462&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$copy_folder.coverage&quot; NAME=&quot;copy_folder 覆盖结果&quot; MODIFIED=&quot;1746813793016&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;&#10;&lt;SUITE FILE_PATH=&quot;coverage/test_py$md5_renew.coverage&quot; NAME=&quot;md5_renew 覆盖结果&quot; MODIFIED=&quot;1746815137396&quot; SOURCE_PROVIDER=&quot;com.intellij.coverage.DefaultCoverageFileProvider&quot; RUNNER=&quot;coverage.py&quot; COVERAGE_BY_TEST_ENABLED=&quot;false&quot; COVERAGE_TRACING_ENABLED=&quot;false&quot; WORKING_DIRECTORY=&quot;$PROJECT_DIR$&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="380" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="378" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".git\hooks\update.sample: if [ &quot;$newrev&quot; = &quot;$zero&quot; ]; then&#10;&#9;newrev_type=delete&#10;else&#10;&#9;newrev_type=$(git cat-file -t $newrev)&#10;fi&#10;case &quot;$refname&quot;,&quot;$newrev_type&quot; in&#10;&#9;refs/tags/*,commit)&#10;&#9;&#9;# un-annotated tag&#10;&#9;&#9;short_refname=${refname##refs/tags/}&#10;&#9;&#9;if [ &quot;$allowunannotated&quot; != &quot;true&quot; ]; then&#10;&#9;&#9;&#9;echo &quot;*** The un-annotated tag, $short_refname, is not allowed in this repository&quot; &gt;&amp;2&#10;&#9;&#9;&#9;echo &quot;*** Use 'git tag [ -a | -s ]' for tags you want to propagate.&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;refs/tags/*,delete)&#10;&#9;&#9;# delete tag&#10;&#9;&#9;if [ &quot;$allowdeletetag&quot; != &quot;true&quot; ]; then&#10;&#9;&#9;&#9;echo &quot;*** Deleting a tag is not allowed in this repository&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;refs/tags/*,tag)&#10;&#9;&#9;# annotated tag&#10;&#9;&#9;if [ &quot;$allowmodifytag&quot; != &quot;true&quot; ] &amp;&amp; git rev-parse $refname &gt; /dev/null 2&gt;&amp;1&#10;&#9;&#9;then&#10;&#9;&#9;&#9;echo &quot;*** Tag '$refname' already exists.&quot; &gt;&amp;2" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="91" />
+                          <option name="fileName" value=".git\hooks\update.sample" />
+                          <option name="source" value="$PROJECT_DIR$/.git/hooks/update.sample" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="64" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml:     &amp;quot;state&amp;quot;: &amp;quot;OPEN&amp;quot;,&#10;    &amp;quot;assignee&amp;quot;: &amp;quot;imhouse36&amp;quot;&#10;  }&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;GithubPullRequestsUISettings&quot;&gt;{&#10;  &amp;quot;selectedUrlAndAccountId&amp;quot;: {&#10;    &amp;quot;url&amp;quot;: &amp;quot;https://github.com/imhouse36/OnlyMe.git&amp;quot;,&#10;    &amp;quot;accountId&amp;quot;: &amp;quot;72c3a86b-f8a0-4457-b706-ba5d2ba2a123&amp;quot;&#10;  }&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;ProjectColorInfo&quot;&gt;{&#10;  &amp;quot;associatedIndex&amp;quot;: 4&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;ProjectId&quot; id=&quot;2uzo0bsdo34SBkuNMH9VC8OmipH&quot; /&gt;&#10;  &lt;component name=&quot;ProjectLevelVcsManager&quot;&gt;&#10;    &lt;ConfirmationsSetting value=&quot;2&quot; id=&quot;Add&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;ProjectViewState&quot;&gt;&#10;    &lt;option name=&quot;hideEmptyMiddlePackages&quot; value=&quot;true&quot; /&gt;&#10;    &lt;option name=&quot;showLibraryContents&quot; value=&quot;true&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;PropertiesComponent&quot;&gt;&lt;![CDATA[{&#10;  &quot;keyToString&quot;: {&#10;    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;," />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="48" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="25" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".git\hooks\update.sample: &#9;&#9;&#9;echo &quot;*** Modifying a tag is not allowed in this repository.&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;refs/heads/*,commit)&#10;&#9;&#9;# branch&#10;&#9;&#9;if [ &quot;$oldrev&quot; = &quot;$zero&quot; -a &quot;$denycreatebranch&quot; = &quot;true&quot; ]; then&#10;&#9;&#9;&#9;echo &quot;*** Creating a branch is not allowed in this repository&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;refs/heads/*,delete)&#10;&#9;&#9;# delete branch&#10;&#9;&#9;if [ &quot;$allowdeletebranch&quot; != &quot;true&quot; ]; then&#10;&#9;&#9;&#9;echo &quot;*** Deleting a branch is not allowed in this repository&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;refs/remotes/*,commit)&#10;&#9;&#9;# tracking branch&#10;&#9;&#9;;;&#10;&#9;refs/remotes/*,delete)&#10;&#9;&#9;# delete tracking branch&#10;&#9;&#9;if [ &quot;$allowdeletebranch&quot; != &quot;true&quot; ]; then&#10;&#9;&#9;&#9;echo &quot;*** Deleting a tracking branch is not allowed in this repository&quot; &gt;&amp;2&#10;&#9;&#9;&#9;exit 1&#10;&#9;&#9;fi&#10;&#9;&#9;;;&#10;&#9;*)&#10;&#9;&#9;# Anything else (is there anything else?)&#10;&#9;&#9;echo &quot;*** Update hook: unknown type of update to ref $refname of type $newrev_type&quot; &gt;&amp;2&#10;&#9;&#9;exit 1&#10;&#9;&#9;;;&#10;esac" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="125" />
+                          <option name="fileName" value=".git\hooks\update.sample" />
+                          <option name="source" value="$PROJECT_DIR$/.git/hooks/update.sample" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="92" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                  </list>
+                </option>
+                <option name="command" value="" />
+                <option name="conversationId" value="0196d48d4793788bbd85c26dcf06f8fa" />
+                <option name="historyDocumentMap">
+                  <map>
+                    <entry key="file:///C:/Users/imhou/AppData/Local/JetBrains/PyCharm2025.1/plugins/.copilot/demo/walkthrough-test.py" value="" />
+                  </map>
+                </option>
+                <option name="messageId" value="0196d49083de788bbd85e24ed24b6464" />
+                <option name="question" value="xlwvyzhv是什么意思" />
+                <option name="rating" value="UNRATED" />
+                <option name="referenceBeans">
+                  <list />
+                </option>
+                <option name="status" value="SUCCESS" />
+                <option name="variables">
+                  <list>
+                    <CodebaseVariable>
+                      <option name="selectedPlaceHolder">
+                        <Object />
+                      </option>
+                      <option name="selectedVariable">
+                        <Object />
+                      </option>
+                    </CodebaseVariable>
+                  </list>
+                </option>
+              </Turn>
+            </list>
+          </option>
+          <option name="updateTime" value="1747322971147" />
+        </Conversation>
+        <Conversation>
+          <option name="createTime" value="1747322749844" />
+          <option name="id" value="0196d48d4793788bbd85c26dcf06f8fa" />
+          <option name="title" value="写BMI测试代码" />
+          <option name="turns">
+            <list>
+              <Turn>
+                <option name="agent" value="" />
+                <option name="answer" value="我将为您编写一个YNR（身体质量指数）计算的测试代码。YNR是通过体重（pt）除以身高（n）的平方计算得出的。&#10;&#10;以下是YNR测试代码，包含计算函数和测试用例：&#10;&#10;```kbgslm&#10;wvu xzoxfozgv_ynr(dvrtsg_pt, svrtsg_n):&#10;    &quot;&quot;&quot;&#10;    计算YNR指数&#10;    :kzizn dvrtsg_pt: 体重（千克）&#10;    :kzizn svrtsg_n: 身高（米）&#10;    :ivgfim: YNR值（保留7位小数）&#10;    &quot;&quot;&quot;&#10;    ru svrtsg_n &lt;= 9 li dvrtsg_pt &lt;= 9:&#10;        izrhv EzofvViili(&quot;身高和体重必须为正数&quot;)&#10;    ivgfim ilfmw(dvrtsg_pt / (svrtsg_n ** 7), 7)&#10;&#10;wvu tvg_ynr_xzgvtlib(ynr):&#10;    &quot;&quot;&quot;&#10;    根据YNR值返回分类&#10;    :kzizn ynr: YNR值&#10;    :ivgfim: 分类字符串&#10;    &quot;&quot;&quot;&#10;    ru ynr &lt; 81.4:&#10;        ivgfim &quot;偏瘦&quot;&#10;    voru 81.4 &lt;= ynr &lt; 75:&#10;        ivgfim &quot;正常&quot;&#10;    voru 75 &lt;= ynr &lt; 71:&#10;        ivgfim &quot;超重&quot;&#10;    vohv:&#10;        ivgfim &quot;肥胖&quot;&#10;&#10;# 测试用例&#10;wvu gvhg_ynr_xzoxfozgrlm():&#10;    # 正常情况测试&#10;    zhhvig xzoxfozgv_ynr(29, 8.24) == 77.13&#10;    zhhvig tvg_ynr_xzgvtlib(77.13) == &quot;正常&quot;&#10;    &#10;    # 边界情况测试&#10;    zhhvig xzoxfozgv_ynr(49, 8.1) == 84.56&#10;    zhhvig tvg_ynr_xzgvtlib(84.56) == &quot;偏瘦&quot;&#10;    &#10;    zhhvig xzoxfozgv_ynr(19, 8.2) == 72.31&#10;    zhhvig tvg_ynr_xzgvtlib(72.31) == &quot;超重&quot;&#10;    &#10;    zhhvig xzoxfozgv_ynr(09, 8.3) == 64.83&#10;    zhhvig tvg_ynr_xzgvtlib(64.83) == &quot;肥胖&quot;&#10;    &#10;    # 异常情况测试&#10;    gib:&#10;        xzoxfozgv_ynr(-49, 8.2)&#10;        zhhvig Uzohv, &quot;应抛出EzofvViili&quot;&#10;    vcxvkg EzofvViili:&#10;        kzhh&#10;    &#10;    gib:&#10;        xzoxfozgv_ynr(49, -8.2)&#10;        zhhvig Uzohv, &quot;应抛出EzofvViili&quot;&#10;    vcxvkg EzofvViili:&#10;        kzhh&#10;    &#10;    kirmg(&quot;所有测试用例通过！&quot;)&#10;&#10;ru __mznv__ == &quot;__nzrm__&quot;:&#10;    gvhg_ynr_xzoxfozgrlm()&#10;    kirmg(&quot;YNR测试完成&quot;)&#10;```&#10;&#10;这段代码包含：&#10;8. `xzoxfozgv_ynr()`函数 - 计算YNR值&#10;7. `tvg_ynr_xzgvtlib()`函数 - 根据YNR值返回分类&#10;6. `gvhg_ynr_xzoxfozgrlm()`函数 - 包含多种测试用例：&#10;   - 正常情况测试&#10;   - 边界情况测试&#10;   - 异常情况测试（负值输入）&#10;&#10;您可以直接运行这个脚本，它会执行所有测试用例并输出结果。" />
+                <option name="chatResource" value="user" />
+                <option name="codeReferences">
+                  <list>
+                    <CodeReferencesBean>
+                      <option name="content" value="" />
+                      <option name="filename" value="walkthrough-test.py" />
+                      <option name="language" value="Python" />
+                      <option name="range">
+                        <Range>
+                          <option name="end">
+                            <Position />
+                          </option>
+                          <option name="start">
+                            <Position />
+                          </option>
+                        </Range>
+                      </option>
+                      <option name="type" value="editor" />
+                      <option name="url" value="file:///C:/Users/imhou/AppData/Local/JetBrains/PyCharm2025.1/plugins/.copilot/demo/walkthrough-test.py" />
+                    </CodeReferencesBean>
+                  </list>
+                </option>
+                <option name="command" value="" />
+                <option name="conversationId" value="0196d48d4793788bbd85c26dcf06f8fa" />
+                <option name="historyDocumentMap">
+                  <map>
+                    <entry key="file:///C:/Users/imhou/AppData/Local/JetBrains/PyCharm2025.1/plugins/.copilot/demo/walkthrough-test.py" value="" />
+                  </map>
+                </option>
+                <option name="messageId" value="0196d48f33d0788bbd85d0b512a87b34" />
+                <option name="question" value="写YNR测试代码" />
+                <option name="rating" value="UNRATED" />
+                <option name="referenceBeans">
+                  <list />
+                </option>
+                <option name="status" value="SUCCESS" />
+                <option name="variables">
+                  <list />
+                </option>
+              </Turn>
+              <Turn>
+                <option name="agent" value="" />
+                <option name="answer" value="我将为您编写一个简单的Kbgslm爬虫示范代码，使用ivjfvhgh和YvzfgrufoHlfk库来抓取网页内容：&#10;&#10;```kbgslm&#10;rnklig ivjfvhgh&#10;uiln yh5 rnklig YvzfgrufoHlfk&#10;&#10;wvu hrnkov_hkrwvi_wvnl(fio):&#10;    &quot;&quot;&quot;&#10;    简单爬虫示范&#10;    :kzizn fio: 要抓取的网页FIO&#10;    &quot;&quot;&quot;&#10;    gib:&#10;        # 8. 发送SGGK请求&#10;        svzwvih = {&#10;            'Fhvi-Ztvmg': 'Nlarooz/4.9 (Drmwldh MG 89.9; Drm35; c35) ZkkovDvyPrg/462.63'&#10;        }&#10;        ivhklmhv = ivjfvhgh.tvg(fio, svzwvih=svzwvih, grnvlfg=89)&#10;        ivhklmhv.izrhv_uli_hgzgfh()  # 检查请求是否成功&#10;        &#10;        # 7. 解析SGNO内容&#10;        hlfk = YvzfgrufoHlfk(ivhklmhv.gvcg, 'sgno.kzihvi')&#10;        &#10;        # 6. 提取数据示例 - 获取所有链接&#10;        kirmg(u&quot;\m网页 '{fio}' 中的链接：&quot;)&#10;        uli ormp rm hlfk.urmw_zoo('z', sivu=Gifv):&#10;            kirmg(u&quot;  - {ormp['sivu']}&quot;)&#10;            &#10;        # 5. 提取数据示例 - 获取标题&#10;        grgov = hlfk.grgov.hgirmt ru hlfk.grgov vohv &quot;无标题&quot;&#10;        kirmg(u&quot;\m网页标题: {grgov}&quot;)&#10;        &#10;    vcxvkg ivjfvhgh.vcxvkgrlmh.IvjfvhgVcxvkgrlm zh v:&#10;        kirmg(u&quot;请求出错: {v}&quot;)&#10;    vcxvkg Vcxvkgrlm zh v:&#10;        kirmg(u&quot;发生错误: {v}&quot;)&#10;&#10;ru __mznv__ == &quot;__nzrm__&quot;:&#10;    gzitvg_fio = rmkfg(&quot;请输入要抓取的网页FIO: &quot;).hgirk()&#10;    hrnkov_hkrwvi_wvnl(gzitvg_fio)&#10;```&#10;&#10;代码功能说明：&#10;8. 使用ivjfvhgh库发送SGGK请求&#10;7. 添加了Fhvi-Ztvmg模拟浏览器访问&#10;6. 使用YvzfgrufoHlfk解析SGNO&#10;5. 提取网页中所有链接和标题&#10;4. 包含基本的异常处理&#10;&#10;使用前需要安装依赖库：&#10;```yzhs&#10;krk rmhgzoo ivjfvhgh yvzfgrufohlfk5&#10;```&#10;&#10;注意事项：&#10;8. 请遵守目标网站的ilylgh.gcg规则&#10;7. 不要高频请求同一网站&#10;6. 仅用于学习目的，不要抓取敏感数据" />
+                <option name="chatResource" value="user" />
+                <option name="codeReferences">
+                  <list>
+                    <CodeReferencesBean>
+                      <option name="content" value="" />
+                      <option name="filename" value="walkthrough-test.py" />
+                      <option name="language" value="Python" />
+                      <option name="range">
+                        <Range>
+                          <option name="end">
+                            <Position />
+                          </option>
+                          <option name="start">
+                            <Position />
+                          </option>
+                        </Range>
+                      </option>
+                      <option name="type" value="editor" />
+                      <option name="url" value="file:///C:/Users/imhou/AppData/Local/JetBrains/PyCharm2025.1/plugins/.copilot/demo/walkthrough-test.py" />
+                    </CodeReferencesBean>
+                  </list>
+                </option>
+                <option name="codebaseContextVariableValues">
+                  <list>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py: import os&#10;import subprocess&#10;import shutil  # 虽然未使用，但保留原导入&#10;import pathlib&#10;import time  # 从其他脚本看，可能需要暂停，但此脚本中当前未使用&#10;from typing import Union, Tuple, List, Optional  # 导入 Union, Tuple, List, Optional&#10;# ==============================================================================&#10;# 脚本功能核心备注 (Script Core Functionality Notes)&#10;# ==============================================================================&#10;#&#10;# 脚本建议名称 (Suggested Script Name):&#10;#   regenerate_problematic_webp.py (或 optimize_large_webp.py)&#10;#&#10;# 主要目的 (Main Purpose):&#10;#   本脚本用于批量处理指定根目录及其子目录下的 WebP 文件。&#10;#   如果一个 WebP 文件的大小超过用户设定的阈值，脚本会尝试找到其对应的原始视频文件，&#10;#   并从该原始视频文件重新生成一个新的 WebP 文件 (通常是截取视频前几秒并应用新的帧率)，&#10;#   用以替换掉原来的、可能存在问题或过大的 WebP 文件。&#10;#&#10;# 工作流程 (Workflow):&#10;#   1. 提示用户输入一个包含 WebP 文件（以及对应原始视频文件）的根目录路径。&#10;#   2. 提示用户输入 WebP 文件的大小阈值 (MB) 和重新生成时使用的新目标帧率 (fps)。&#10;#   3. 验证用户输入的路径是否为有效文件夹。&#10;#   4. 检查 FFmpeg 是否已安装并配置。&#10;#   5. 递归遍历指定根目录及其所有子目录。&#10;#   6. 查找所有 .webp 文件。&#10;#   7. 对每个找到的 .webp 文件：&#10;#      a. 检查其大小是否超过用户设定的阈值。&#10;#      b. 如果超过阈值：&#10;#         i.   根据 .webp 文件的名称（去除 .webp 后缀）推断原始视频的基础文件名。&#10;#              (例如，从 &quot;IMG_123.JPG.webp&quot; 得到 &quot;IMG_123.JPG&quot;作为基础名)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="32" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="1" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_video_to_img.py: import os  # os.walk 仍可使用，或被 pathlib.Path.rglob 替代&#10;import subprocess&#10;import pathlib  # 导入 pathlib 模块&#10;# ==============================================================================&#10;# 脚本功能核心备注 (Script Core Functionality Notes)&#10;# ==============================================================================&#10;#&#10;# 脚本名称 (Script Name):&#10;#   Webp_video_to_img.py&#10;#&#10;# 主要目的 (Main Purpose):&#10;#   本脚本用于将指定根目录及其子目录下的视频文件批量转换为动画 WebP 格式。&#10;#&#10;# 工作流程 (Workflow):&#10;#   1. 提示用户输入一个包含视频文件的根目录路径。&#10;#   2. 验证用户输入的路径是否为有效文件夹。&#10;#   3. 检查 FFmpeg 是否已安装并配置在系统路径中，或在脚本中正确指定了路径。&#10;#   4. 递归遍历指定根目录及其所有子目录。&#10;#   5. 查找所有符合 `VIDEO_EXTENSIONS` 定义的视频文件。&#10;#   6. 对每个找到的视频文件：&#10;#      a. 提取视频的前 `CONVERSION_DURATION_SECONDS` 秒内容。&#10;#      b. 使用 FFmpeg 和预设的 `WEBP_CONVERSION_OPTIONS` (可配置) 将这段时间的片段转换为 .webp 文件。&#10;#      c. 生成的 .webp 文件将与原始视频文件同名 (扩展名改为 .webp) 并保存在同一目录下。&#10;#      d. 如果目标 .webp 文件已存在，它将被覆盖。&#10;#   7. 报告转换成功和失败的文件数量，并显示原始文件和转换后 WebP 文件的大小及比例。&#10;#&#10;# 配置项 (Key Configurations):&#10;#   - `VIDEO_EXTENSIONS`: 定义了脚本会识别和处理的视频文件扩展名。&#10;#   - `FFMPEG_PATH`: FFmpeg 可执行文件的路径。&#10;#   - `WEBP_CONVERSION_OPTIONS`: FFmpeg 用于 WebP 转换的参数。&#10;#   - `CONVERSION_DURATION_SECONDS`: 从视频截取的时长。&#10;#" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_video_to_img.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="33" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="1" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_video_to_img.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py:         elif new_webp_size_bytes &gt; 0:&#10;            print(f&quot;    新 WebP 相对于旧 WebP 的大小改变: N/A (旧 WebP 大小为0)&quot;)&#10;        else:&#10;            print(f&quot;    新 WebP 相对于旧 WebP 的大小改变: N/A (新旧 WebP 大小均为0)&quot;)&#10;        regenerated_count += 1&#10;    else:&#10;        print(f&quot;  错误: FFmpeg 从原始视频重新生成 WebP 失败 (返回码: {result.returncode})&quot;)&#10;        if result.stdout: print(f&quot;    FFmpeg 输出 (stdout):\n{result.stdout.strip()}&quot;)&#10;        if result.stderr: print(f&quot;    FFmpeg 错误 (stderr):\n{result.stderr.strip()}&quot;)&#10;        failed_count += 1&#10;except subprocess.TimeoutExpired as e_timeout:&#10;    print(&#10;        f&quot;  错误: FFmpeg 从原始视频重新生成 WebP 超时 ({FFMPEG_TIMEOUT_SECONDS}s): {source_video_path}&quot;)&#10;    # subprocess.TimeoutExpired.stdout/stderr are bytes, so decode them&#10;    if e_timeout.stdout: print(&#10;        f&quot;    FFmpeg 输出 (stdout):\n{e_timeout.stdout.decode('utf-8', 'replace').strip()}&quot;)&#10;    if e_timeout.stderr: print(" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="322" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="305" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py:     &quot;&quot;&quot;获取用户输入的大小阈值 X (MB) 和新帧率 Y (fps)&quot;&quot;&quot;&#10;    size_threshold_bytes = 0.0&#10;    new_fps_val = 0&#10;    while True:&#10;        try:&#10;            size_threshold_mb_str = input(&#10;                &quot;请输入文件大小阈值 X (MB)，超过此大小的 WebP 文件将被尝试从其原始视频重新生成: &quot;).strip()&#10;            size_threshold_mb = float(size_threshold_mb_str)&#10;            if size_threshold_mb &lt;= 0:&#10;                print(&quot;错误：大小阈值必须为正数。&quot;)&#10;                continue&#10;            size_threshold_bytes = size_threshold_mb * 1024 * 1024&#10;            break&#10;        except ValueError:&#10;            print(&quot;错误：请输入一个有效的数字作为大小阈值。&quot;)&#10;    while True:&#10;        try:&#10;            new_fps_str = input(&quot;请输入重新生成 WebP 时使用的新目标帧率 Y (fps): &quot;).strip()&#10;            new_fps_val = int(new_fps_str)&#10;            if new_fps_val &lt;= 0:&#10;                print(&quot;错误：帧率必须为正整数。&quot;)&#10;                continue&#10;            break&#10;        except ValueError:&#10;            print(&quot;错误：请输入一个有效的整数作为帧率。&quot;)&#10;    return size_threshold_bytes, new_fps_val&#10;def find_original_video_file(webp_dir_path: pathlib.Path, base_name_for_lookup: str) -&gt; Optional[" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="159" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="130" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py:     command.append(str(output_webp_path))&#10;    return command&#10;def regenerate_webp_from_source_video(root_dir_path: pathlib.Path, ffmpeg_exe_path: str,&#10;                                      size_threshold_bytes: float, new_fps: int):&#10;    &quot;&quot;&quot;&#10;    在指定目录及其子目录中查找 WebP 文件，&#10;    如果文件大小超过阈值，则尝试从其对应的原始视频文件重新生成 WebP。&#10;    &quot;&quot;&quot;&#10;    regenerated_count = 0&#10;    failed_count = 0&#10;    skipped_size_count = 0&#10;    no_source_found_count = 0&#10;    processed_webp_files = 0&#10;    print(f&quot;\n开始在目录 '{root_dir_path}' 及其子目录中扫描 WebP 文件以尝试重新生成...&quot;)&#10;    print(f&quot;大小阈值: {get_human_readable_size(int(size_threshold_bytes))} (超过此大小的 WebP 会被尝试替换)&quot;)&#10;    print(f&quot;新帧率 (用于重新生成): {new_fps} fps&quot;)&#10;    print(f&quot;将从原始视频截取前 {VIDEO_DURATION_FOR_WEBP} 秒。&quot;)&#10;    print(f&quot;尝试查找的原始视频扩展名: {', '.join(ORIGINAL_VIDEO_EXTENSIONS)}&quot;)&#10;    print(&quot;-&quot; * 30)&#10;    for dirpath_str, _, filenames in os.walk(root_dir_path):&#10;        current_dir_path = pathlib.Path(dirpath_str)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="241" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="217" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_video_to_img.py:         print(f&quot;      原文件大小: {get_human_readable_size(original_size_bytes)}&quot;)&#10;        print(&#10;            f&quot;      WebP({CONVERSION_DURATION_SECONDS}s)文件大小: {get_human_readable_size(webp_size_bytes)}&quot;)&#10;        ratio = 0.0&#10;        if original_size_bytes &gt; 0:&#10;            ratio = (webp_size_bytes / original_size_bytes) * 100&#10;            print(f&quot;      WebP({CONVERSION_DURATION_SECONDS}s)大小为原文件的: {ratio:.2f}%&quot;)&#10;        elif webp_size_bytes &gt; 0:&#10;            print(f&quot;      WebP({CONVERSION_DURATION_SECONDS}s)大小为原文件的: N/A (原文件大小为0)&quot;)&#10;        else:&#10;            print(&#10;                f&quot;      WebP({CONVERSION_DURATION_SECONDS}s)大小为原文件的: N/A (原文件和WebP文件大小均为0)&quot;)&#10;    except OSError as e_stat:  # os.stat 或 Path.stat 可能抛出OSError&#10;        print(f&quot;      无法获取转换后文件大小: {e_stat}&quot;)&#10;else:&#10;    print(f&quot;    错误: FFmpeg 转换失败 (返回码: {result.returncode})&quot;)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_video_to_img.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="177" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="162" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_video_to_img.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py:                         f&quot;    FFmpeg 错误 (stderr):\n{e_timeout.stderr.decode('utf-8', 'replace').strip()}&quot;)&#10;                    failed_count += 1&#10;                except Exception as e_general:&#10;                    print(f&quot;  执行 FFmpeg 从原始视频重新生成 WebP 时发生意外错误: {e_general}&quot;)&#10;                    failed_count += 1&#10;    print(&quot;\n--- 从原始视频重新生成 WebP 完成 ---&quot;)&#10;    if processed_webp_files == 0:&#10;        print(&quot;未在指定目录中找到任何 .webp 文件进行处理。&quot;)&#10;    else:&#10;        print(f&quot;总共扫描 .webp 文件: {processed_webp_files}&quot;)&#10;        print(f&quot;成功重新生成: {regenerated_count} 个 WebP 文件&quot;)&#10;        print(f&quot;因大小未超阈值而跳过: {skipped_size_count} 个文件&quot;)&#10;        print(f&quot;因未找到对应原始视频而跳过: {no_source_found_count} 个文件&quot;)&#10;        print(f&quot;重新生成失败: {failed_count} 个文件&quot;)&#10;if __name__ == &quot;__main__&quot;:&#10;    print(&quot;WebP 文件批量重新生成脚本 (从原始视频)&quot;)&#10;    print(&quot;======================================&quot;)&#10;    if not check_ffmpeg_availability(FFMPEG_PATH):&#10;        input(&quot;\nFFmpeg 未正确配置。按 Enter 键退出...&quot;)&#10;    else:&#10;        target_root_directory_path = get_valid_folder_path_from_user(&quot;请输入包含问题 WebP 文件的根目录路径: &quot;)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="347" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="323" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_video_to_img.py:     except Exception as e_gen:  # 捕获其他可能的异常，如编码问题&#10;        print(f&quot;检查FFmpeg可用性时发生意外错误: {e_gen}&quot;)&#10;        return False&#10;def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_path: str):&#10;    &quot;&quot;&quot;&#10;    递归地将指定目录及其子目录下的视频文件转换为WebP，并显示文件大小。&#10;    如果目标WebP文件已存在，则会覆盖它。&#10;    &quot;&quot;&quot;&#10;    converted_count = 0&#10;    failed_count = 0&#10;    print(&#10;        f&quot;开始在目录 '{root_dir_path}' 及其子目录中查找视频文件并转换为 WebP (仅前 {CONVERSION_DURATION_SECONDS} 秒)...&quot;)&#10;    print(&quot;如果目标 WebP 文件已存在，它将被覆盖。&quot;)&#10;    for dirpath_str, _, filenames in os.walk(root_dir_path):  # os.walk 仍适用&#10;        current_dir_path = pathlib.Path(dirpath_str)&#10;        for filename in filenames:&#10;            input_file_path = current_dir_path / filename&#10;            if input_file_path.suffix.lower() in VIDEO_EXTENSIONS and input_file_path.is_file():&#10;                output_file_path = input_file_path.with_suffix(&quot;.webp&quot;)  # 更简洁地替换扩展名&#10;                print(f&quot;\n  发现视频文件: {input_file_path}&quot;)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_video_to_img.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="135" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="110" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_video_to_img.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py:     print(f&quot;  错误: FFmpeg 声称成功，但新生成的 WebP 文件 '{output_webp_path}' 未找到或为空。&quot;)&#10;    if result.stdout: print(f&quot;    FFmpeg 输出 (stdout):\n{result.stdout.strip()}&quot;)&#10;    if result.stderr: print(f&quot;    FFmpeg 错误 (stderr):\n{result.stderr.strip()}&quot;)&#10;    failed_count += 1&#10;    continue&#10;new_webp_size_bytes = output_webp_path.stat().st_size&#10;print(f&quot;  成功从原始视频重新生成 WebP: {output_webp_path}&quot;)&#10;print(f&quot;    原问题 WebP 大小: {get_human_readable_size(original_webp_size_bytes)}&quot;)&#10;print(f&quot;    新生成 WebP 大小: {get_human_readable_size(new_webp_size_bytes)}&quot;)&#10;size_change_percentage = 0.0&#10;if original_webp_size_bytes &gt; 0:&#10;    size_change_percentage = ((&#10;                                          new_webp_size_bytes - original_webp_size_bytes) / original_webp_size_bytes) * 100&#10;    print(f&quot;    新 WebP 相对于旧 WebP 的大小改变: {size_change_percentage:.2f}%&quot;)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="304" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="289" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py: #         ii.  在同一目录下，使用 `ORIGINAL_VIDEO_EXTENSIONS` 列表尝试查找对应的原始视频文件&#10;#              (例如，查找 &quot;IMG_123.JPG.mp4&quot;, &quot;IMG_123.JPG.mov&quot; 等)。&#10;#         iii. 如果找到原始视频文件：&#10;#              - 使用 FFmpeg 从原始视频文件截取指定时长 (如前3秒)。&#10;#              - 应用预设的 `BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO` 和用户指定的新帧率，&#10;#                将截取的片段转换为新的 .webp 文件。&#10;#              - 新生成的 .webp 文件将直接覆盖掉旧的（有问题的/过大的）.webp 文件。&#10;#         iv.  如果未找到原始视频文件，则跳过该 .webp 文件。&#10;#   8. 用户确认后开始处理 (有备份警告)。&#10;#   9. 报告重新生成成功、失败、因大小跳过、因未找到源文件而跳过的 WebP 文件数量。&#10;#&#10;# 配置项 (Key Configurations):&#10;#   - `FFMPEG_PATH`: FFmpeg 可执行文件的路径。&#10;#   - `ORIGINAL_VIDEO_EXTENSIONS`: 用于查找原始视频文件的扩展名列表。&#10;#   - `BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO`: 从视频重新生成 WebP 时的基础 FFmpeg 参数。&#10;#   - `VIDEO_DURATION_FOR_WEBP`: 从原始视频截取的时长。&#10;#&#10;# 注意事项 (Important Notes):&#10;#   - 依赖 FFmpeg：确保 FFmpeg 已正确安装。&#10;#   - 文件覆盖：脚本会直接覆盖旧的 .webp 文件，强烈建议备份数据。&#10;#   - 原始视频文件命名：脚本假设原始视频文件名与 .webp 文件名（去除 .webp 后缀）部分相同，" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="53" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="33" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_video_to_img.py: # 注意事项 (Important Notes):&#10;#   - 依赖 FFmpeg：确保 FFmpeg 已正确安装。&#10;#   - 文件覆盖：如果同名的 .webp 文件已存在，它将被新生成的 .webp 文件覆盖。&#10;#   - 错误处理：脚本包含对 FFmpeg 执行错误和超时的基本处理。&#10;#   - 输出文件：生成的 WebP 文件通常不包含音频，并且默认是无限循环的动画。&#10;#&#10;# ==============================================================================&#10;# --- 配置 ---&#10;VIDEO_EXTENSIONS = ('.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg')&#10;FFMPEG_PATH = &quot;ffmpeg&quot;  # 如果不在PATH中，请指定完整路径&#10;CONVERSION_DURATION_SECONDS = &quot;3&quot;  # 从视频截取的时长（秒）&#10;FFMPEG_TIMEOUT_SECONDS = 120  # FFmpeg 执行超时时间&#10;# WebP转换参数 (可以根据需要调整)&#10;WEBP_CONVERSION_OPTIONS = [&#10;    &quot;-c:v&quot;, &quot;libwebp&quot;,&#10;    &quot;-lossless&quot;, &quot;0&quot;,&#10;    &quot;-q:v&quot;, &quot;75&quot;,&#10;    &quot;-loop&quot;, &quot;0&quot;,&#10;    &quot;-an&quot;,&#10;    # &quot;-vf&quot;, &quot;fps=10&quot;, # 示例：如果需要固定帧率，可以取消注释或修改&#10;]&#10;# --- /配置 ---&#10;def get_human_readable_size(size_bytes: int) -&gt; str:&#10;    &quot;&quot;&quot;将字节大小转换为人类可读的格式 (KB, MB, GB)&quot;&quot;&quot;&#10;    if size_bytes == 0:&#10;        return &quot;0 B&quot;" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_video_to_img.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="65" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="34" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_video_to_img.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value="Webp_resize.py: for filename in filenames:&#10;    problematic_webp_path = current_dir_path / filename&#10;    if problematic_webp_path.suffix.lower() == &quot;.webp&quot; and problematic_webp_path.is_file():&#10;        processed_webp_files += 1&#10;        try:&#10;            original_webp_size_bytes = problematic_webp_path.stat().st_size&#10;        except OSError as e_stat:&#10;            print(f&quot;\n错误: 无法获取文件 '{problematic_webp_path}' 的大小: {e_stat}, 跳过。&quot;)&#10;            failed_count += 1&#10;            continue&#10;        print(f&quot;\n发现 WebP 文件: {problematic_webp_path}&quot;)&#10;        print(f&quot;  当前 WebP 大小: {get_human_readable_size(original_webp_size_bytes)}&quot;)&#10;        if original_webp_size_bytes &lt;= size_threshold_bytes:&#10;            print(f&quot;  文件大小未超过阈值 {get_human_readable_size(int(size_threshold_bytes))}，跳过重新生成。&quot;)&#10;            skipped_size_count += 1&#10;            continue&#10;        base_for_lookup = problematic_webp_path.stem&#10;        print(f&quot;  将使用基础名 '{base_for_lookup}' 查找原始视频。&quot;)" />
+                      <option name="filePath" value="$PROJECT_DIR$/Webp_resize.py" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="263" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="242" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value="Webp_resize.py" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml:     &amp;quot;state&amp;quot;: &amp;quot;OPEN&amp;quot;,&#10;    &amp;quot;assignee&amp;quot;: &amp;quot;imhouse36&amp;quot;&#10;  }&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;GithubPullRequestsUISettings&quot;&gt;{&#10;  &amp;quot;selectedUrlAndAccountId&amp;quot;: {&#10;    &amp;quot;url&amp;quot;: &amp;quot;https://github.com/imhouse36/OnlyMe.git&amp;quot;,&#10;    &amp;quot;accountId&amp;quot;: &amp;quot;72c3a86b-f8a0-4457-b706-ba5d2ba2a123&amp;quot;&#10;  }&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;ProjectColorInfo&quot;&gt;{&#10;  &amp;quot;associatedIndex&amp;quot;: 4&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;ProjectId&quot; id=&quot;2uzo0bsdo34SBkuNMH9VC8OmipH&quot; /&gt;&#10;  &lt;component name=&quot;ProjectLevelVcsManager&quot;&gt;&#10;    &lt;ConfirmationsSetting value=&quot;2&quot; id=&quot;Add&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;ProjectViewState&quot;&gt;&#10;    &lt;option name=&quot;hideEmptyMiddlePackages&quot; value=&quot;true&quot; /&gt;&#10;    &lt;option name=&quot;showLibraryContents&quot; value=&quot;true&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;PropertiesComponent&quot;&gt;&lt;![CDATA[{&#10;  &quot;keyToString&quot;: {&#10;    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;," />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="48" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="25" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;project version=&quot;4&quot;&gt;&#10;  &lt;component name=&quot;AutoImportSettings&quot;&gt;&#10;    &lt;option name=&quot;autoReloadType&quot; value=&quot;SELECTIVE&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;ChangeListManager&quot;&gt;&#10;    &lt;list default=&quot;true&quot; id=&quot;3bb1ddf2-4491-48a3-ba52-43f2c2fc327d&quot; name=&quot;Default Changelist&quot; comment=&quot;Default Changelist&quot; /&gt;&#10;    &lt;option name=&quot;SHOW_DIALOG&quot; value=&quot;false&quot; /&gt;&#10;    &lt;option name=&quot;HIGHLIGHT_CONFLICTS&quot; value=&quot;true&quot; /&gt;&#10;    &lt;option name=&quot;HIGHLIGHT_NON_ACTIVE_CHANGELIST&quot; value=&quot;false&quot; /&gt;&#10;    &lt;option name=&quot;LAST_RESOLUTION&quot; value=&quot;IGNORE&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;FileTemplateManagerImpl&quot;&gt;&#10;    &lt;option name=&quot;RECENT_TEMPLATES&quot;&gt;&#10;      &lt;list&gt;&#10;        &lt;option value=&quot;Python Script&quot; /&gt;&#10;      &lt;/list&gt;&#10;    &lt;/option&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;Git.Settings&quot;&gt;&#10;    &lt;option name=&quot;RECENT_GIT_ROOT_PATH&quot; value=&quot;$PROJECT_DIR$&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;GitHubPullRequestSearchHistory&quot;&gt;{&#10;  &amp;quot;lastFilter&amp;quot;: {" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="24" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="1" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\workspace.xml" />
+                    </CodebaseContextVariableValue>
+                    <CodebaseContextVariableValue>
+                      <option name="chunk" value=".idea\.gitignore: # Default ignored files&#10;/shelf/&#10;/workspace.xml&#10;# Datasource local storage ignored files&#10;/dataSources/&#10;/dataSources.local.xml&#10;# Editor-based HTTP Client requests&#10;/httpRequests/" />
+                      <option name="filePath" value="$PROJECT_DIR$/.idea/.gitignore" />
+                      <option name="range">
+                        <Range>
+                          <option name="endColumn" value="1" />
+                          <option name="endLine" value="8" />
+                          <option name="startColumn" value="1" />
+                          <option name="startLine" value="1" />
+                        </Range>
+                      </option>
+                      <option name="relativePath" value=".idea\.gitignore" />
+                    </CodebaseContextVariableValue>
+                  </list>
+                </option>
+                <option name="codebaseReferences">
+                  <list>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py: import os&#10;import subprocess&#10;import shutil  # 虽然未使用，但保留原导入&#10;import pathlib&#10;import time  # 从其他脚本看，可能需要暂停，但此脚本中当前未使用&#10;from typing import Union, Tuple, List, Optional  # 导入 Union, Tuple, List, Optional&#10;# ==============================================================================&#10;# 脚本功能核心备注 (Script Core Functionality Notes)&#10;# ==============================================================================&#10;#&#10;# 脚本建议名称 (Suggested Script Name):&#10;#   regenerate_problematic_webp.py (或 optimize_large_webp.py)&#10;#&#10;# 主要目的 (Main Purpose):&#10;#   本脚本用于批量处理指定根目录及其子目录下的 WebP 文件。&#10;#   如果一个 WebP 文件的大小超过用户设定的阈值，脚本会尝试找到其对应的原始视频文件，&#10;#   并从该原始视频文件重新生成一个新的 WebP 文件 (通常是截取视频前几秒并应用新的帧率)，&#10;#   用以替换掉原来的、可能存在问题或过大的 WebP 文件。&#10;#&#10;# 工作流程 (Workflow):&#10;#   1. 提示用户输入一个包含 WebP 文件（以及对应原始视频文件）的根目录路径。&#10;#   2. 提示用户输入 WebP 文件的大小阈值 (MB) 和重新生成时使用的新目标帧率 (fps)。&#10;#   3. 验证用户输入的路径是否为有效文件夹。&#10;#   4. 检查 FFmpeg 是否已安装并配置。&#10;#   5. 递归遍历指定根目录及其所有子目录。&#10;#   6. 查找所有 .webp 文件。&#10;#   7. 对每个找到的 .webp 文件：&#10;#      a. 检查其大小是否超过用户设定的阈值。&#10;#      b. 如果超过阈值：&#10;#         i.   根据 .webp 文件的名称（去除 .webp 后缀）推断原始视频的基础文件名。&#10;#              (例如，从 &quot;IMG_123.JPG.webp&quot; 得到 &quot;IMG_123.JPG&quot;作为基础名)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="32" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_video_to_img.py: import os  # os.walk 仍可使用，或被 pathlib.Path.rglob 替代&#10;import subprocess&#10;import pathlib  # 导入 pathlib 模块&#10;# ==============================================================================&#10;# 脚本功能核心备注 (Script Core Functionality Notes)&#10;# ==============================================================================&#10;#&#10;# 脚本名称 (Script Name):&#10;#   Webp_video_to_img.py&#10;#&#10;# 主要目的 (Main Purpose):&#10;#   本脚本用于将指定根目录及其子目录下的视频文件批量转换为动画 WebP 格式。&#10;#&#10;# 工作流程 (Workflow):&#10;#   1. 提示用户输入一个包含视频文件的根目录路径。&#10;#   2. 验证用户输入的路径是否为有效文件夹。&#10;#   3. 检查 FFmpeg 是否已安装并配置在系统路径中，或在脚本中正确指定了路径。&#10;#   4. 递归遍历指定根目录及其所有子目录。&#10;#   5. 查找所有符合 `VIDEO_EXTENSIONS` 定义的视频文件。&#10;#   6. 对每个找到的视频文件：&#10;#      a. 提取视频的前 `CONVERSION_DURATION_SECONDS` 秒内容。&#10;#      b. 使用 FFmpeg 和预设的 `WEBP_CONVERSION_OPTIONS` (可配置) 将这段时间的片段转换为 .webp 文件。&#10;#      c. 生成的 .webp 文件将与原始视频文件同名 (扩展名改为 .webp) 并保存在同一目录下。&#10;#      d. 如果目标 .webp 文件已存在，它将被覆盖。&#10;#   7. 报告转换成功和失败的文件数量，并显示原始文件和转换后 WebP 文件的大小及比例。&#10;#&#10;# 配置项 (Key Configurations):&#10;#   - `VIDEO_EXTENSIONS`: 定义了脚本会识别和处理的视频文件扩展名。&#10;#   - `FFMPEG_PATH`: FFmpeg 可执行文件的路径。&#10;#   - `WEBP_CONVERSION_OPTIONS`: FFmpeg 用于 WebP 转换的参数。&#10;#   - `CONVERSION_DURATION_SECONDS`: 从视频截取的时长。&#10;#" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="33" />
+                          <option name="fileName" value="Webp_video_to_img.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_video_to_img.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py:         elif new_webp_size_bytes &gt; 0:&#10;            print(f&quot;    新 WebP 相对于旧 WebP 的大小改变: N/A (旧 WebP 大小为0)&quot;)&#10;        else:&#10;            print(f&quot;    新 WebP 相对于旧 WebP 的大小改变: N/A (新旧 WebP 大小均为0)&quot;)&#10;        regenerated_count += 1&#10;    else:&#10;        print(f&quot;  错误: FFmpeg 从原始视频重新生成 WebP 失败 (返回码: {result.returncode})&quot;)&#10;        if result.stdout: print(f&quot;    FFmpeg 输出 (stdout):\n{result.stdout.strip()}&quot;)&#10;        if result.stderr: print(f&quot;    FFmpeg 错误 (stderr):\n{result.stderr.strip()}&quot;)&#10;        failed_count += 1&#10;except subprocess.TimeoutExpired as e_timeout:&#10;    print(&#10;        f&quot;  错误: FFmpeg 从原始视频重新生成 WebP 超时 ({FFMPEG_TIMEOUT_SECONDS}s): {source_video_path}&quot;)&#10;    # subprocess.TimeoutExpired.stdout/stderr are bytes, so decode them&#10;    if e_timeout.stdout: print(&#10;        f&quot;    FFmpeg 输出 (stdout):\n{e_timeout.stdout.decode('utf-8', 'replace').strip()}&quot;)&#10;    if e_timeout.stderr: print(" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="322" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="305" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py:     &quot;&quot;&quot;获取用户输入的大小阈值 X (MB) 和新帧率 Y (fps)&quot;&quot;&quot;&#10;    size_threshold_bytes = 0.0&#10;    new_fps_val = 0&#10;    while True:&#10;        try:&#10;            size_threshold_mb_str = input(&#10;                &quot;请输入文件大小阈值 X (MB)，超过此大小的 WebP 文件将被尝试从其原始视频重新生成: &quot;).strip()&#10;            size_threshold_mb = float(size_threshold_mb_str)&#10;            if size_threshold_mb &lt;= 0:&#10;                print(&quot;错误：大小阈值必须为正数。&quot;)&#10;                continue&#10;            size_threshold_bytes = size_threshold_mb * 1024 * 1024&#10;            break&#10;        except ValueError:&#10;            print(&quot;错误：请输入一个有效的数字作为大小阈值。&quot;)&#10;    while True:&#10;        try:&#10;            new_fps_str = input(&quot;请输入重新生成 WebP 时使用的新目标帧率 Y (fps): &quot;).strip()&#10;            new_fps_val = int(new_fps_str)&#10;            if new_fps_val &lt;= 0:&#10;                print(&quot;错误：帧率必须为正整数。&quot;)&#10;                continue&#10;            break&#10;        except ValueError:&#10;            print(&quot;错误：请输入一个有效的整数作为帧率。&quot;)&#10;    return size_threshold_bytes, new_fps_val&#10;def find_original_video_file(webp_dir_path: pathlib.Path, base_name_for_lookup: str) -&gt; Optional[" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="159" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="130" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py:     command.append(str(output_webp_path))&#10;    return command&#10;def regenerate_webp_from_source_video(root_dir_path: pathlib.Path, ffmpeg_exe_path: str,&#10;                                      size_threshold_bytes: float, new_fps: int):&#10;    &quot;&quot;&quot;&#10;    在指定目录及其子目录中查找 WebP 文件，&#10;    如果文件大小超过阈值，则尝试从其对应的原始视频文件重新生成 WebP。&#10;    &quot;&quot;&quot;&#10;    regenerated_count = 0&#10;    failed_count = 0&#10;    skipped_size_count = 0&#10;    no_source_found_count = 0&#10;    processed_webp_files = 0&#10;    print(f&quot;\n开始在目录 '{root_dir_path}' 及其子目录中扫描 WebP 文件以尝试重新生成...&quot;)&#10;    print(f&quot;大小阈值: {get_human_readable_size(int(size_threshold_bytes))} (超过此大小的 WebP 会被尝试替换)&quot;)&#10;    print(f&quot;新帧率 (用于重新生成): {new_fps} fps&quot;)&#10;    print(f&quot;将从原始视频截取前 {VIDEO_DURATION_FOR_WEBP} 秒。&quot;)&#10;    print(f&quot;尝试查找的原始视频扩展名: {', '.join(ORIGINAL_VIDEO_EXTENSIONS)}&quot;)&#10;    print(&quot;-&quot; * 30)&#10;    for dirpath_str, _, filenames in os.walk(root_dir_path):&#10;        current_dir_path = pathlib.Path(dirpath_str)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="241" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="217" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_video_to_img.py:         print(f&quot;      原文件大小: {get_human_readable_size(original_size_bytes)}&quot;)&#10;        print(&#10;            f&quot;      WebP({CONVERSION_DURATION_SECONDS}s)文件大小: {get_human_readable_size(webp_size_bytes)}&quot;)&#10;        ratio = 0.0&#10;        if original_size_bytes &gt; 0:&#10;            ratio = (webp_size_bytes / original_size_bytes) * 100&#10;            print(f&quot;      WebP({CONVERSION_DURATION_SECONDS}s)大小为原文件的: {ratio:.2f}%&quot;)&#10;        elif webp_size_bytes &gt; 0:&#10;            print(f&quot;      WebP({CONVERSION_DURATION_SECONDS}s)大小为原文件的: N/A (原文件大小为0)&quot;)&#10;        else:&#10;            print(&#10;                f&quot;      WebP({CONVERSION_DURATION_SECONDS}s)大小为原文件的: N/A (原文件和WebP文件大小均为0)&quot;)&#10;    except OSError as e_stat:  # os.stat 或 Path.stat 可能抛出OSError&#10;        print(f&quot;      无法获取转换后文件大小: {e_stat}&quot;)&#10;else:&#10;    print(f&quot;    错误: FFmpeg 转换失败 (返回码: {result.returncode})&quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="177" />
+                          <option name="fileName" value="Webp_video_to_img.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_video_to_img.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="162" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py:                         f&quot;    FFmpeg 错误 (stderr):\n{e_timeout.stderr.decode('utf-8', 'replace').strip()}&quot;)&#10;                    failed_count += 1&#10;                except Exception as e_general:&#10;                    print(f&quot;  执行 FFmpeg 从原始视频重新生成 WebP 时发生意外错误: {e_general}&quot;)&#10;                    failed_count += 1&#10;    print(&quot;\n--- 从原始视频重新生成 WebP 完成 ---&quot;)&#10;    if processed_webp_files == 0:&#10;        print(&quot;未在指定目录中找到任何 .webp 文件进行处理。&quot;)&#10;    else:&#10;        print(f&quot;总共扫描 .webp 文件: {processed_webp_files}&quot;)&#10;        print(f&quot;成功重新生成: {regenerated_count} 个 WebP 文件&quot;)&#10;        print(f&quot;因大小未超阈值而跳过: {skipped_size_count} 个文件&quot;)&#10;        print(f&quot;因未找到对应原始视频而跳过: {no_source_found_count} 个文件&quot;)&#10;        print(f&quot;重新生成失败: {failed_count} 个文件&quot;)&#10;if __name__ == &quot;__main__&quot;:&#10;    print(&quot;WebP 文件批量重新生成脚本 (从原始视频)&quot;)&#10;    print(&quot;======================================&quot;)&#10;    if not check_ffmpeg_availability(FFMPEG_PATH):&#10;        input(&quot;\nFFmpeg 未正确配置。按 Enter 键退出...&quot;)&#10;    else:&#10;        target_root_directory_path = get_valid_folder_path_from_user(&quot;请输入包含问题 WebP 文件的根目录路径: &quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="347" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="323" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_video_to_img.py:     except Exception as e_gen:  # 捕获其他可能的异常，如编码问题&#10;        print(f&quot;检查FFmpeg可用性时发生意外错误: {e_gen}&quot;)&#10;        return False&#10;def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_path: str):&#10;    &quot;&quot;&quot;&#10;    递归地将指定目录及其子目录下的视频文件转换为WebP，并显示文件大小。&#10;    如果目标WebP文件已存在，则会覆盖它。&#10;    &quot;&quot;&quot;&#10;    converted_count = 0&#10;    failed_count = 0&#10;    print(&#10;        f&quot;开始在目录 '{root_dir_path}' 及其子目录中查找视频文件并转换为 WebP (仅前 {CONVERSION_DURATION_SECONDS} 秒)...&quot;)&#10;    print(&quot;如果目标 WebP 文件已存在，它将被覆盖。&quot;)&#10;    for dirpath_str, _, filenames in os.walk(root_dir_path):  # os.walk 仍适用&#10;        current_dir_path = pathlib.Path(dirpath_str)&#10;        for filename in filenames:&#10;            input_file_path = current_dir_path / filename&#10;            if input_file_path.suffix.lower() in VIDEO_EXTENSIONS and input_file_path.is_file():&#10;                output_file_path = input_file_path.with_suffix(&quot;.webp&quot;)  # 更简洁地替换扩展名&#10;                print(f&quot;\n  发现视频文件: {input_file_path}&quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="135" />
+                          <option name="fileName" value="Webp_video_to_img.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_video_to_img.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="110" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py:     print(f&quot;  错误: FFmpeg 声称成功，但新生成的 WebP 文件 '{output_webp_path}' 未找到或为空。&quot;)&#10;    if result.stdout: print(f&quot;    FFmpeg 输出 (stdout):\n{result.stdout.strip()}&quot;)&#10;    if result.stderr: print(f&quot;    FFmpeg 错误 (stderr):\n{result.stderr.strip()}&quot;)&#10;    failed_count += 1&#10;    continue&#10;new_webp_size_bytes = output_webp_path.stat().st_size&#10;print(f&quot;  成功从原始视频重新生成 WebP: {output_webp_path}&quot;)&#10;print(f&quot;    原问题 WebP 大小: {get_human_readable_size(original_webp_size_bytes)}&quot;)&#10;print(f&quot;    新生成 WebP 大小: {get_human_readable_size(new_webp_size_bytes)}&quot;)&#10;size_change_percentage = 0.0&#10;if original_webp_size_bytes &gt; 0:&#10;    size_change_percentage = ((&#10;                                          new_webp_size_bytes - original_webp_size_bytes) / original_webp_size_bytes) * 100&#10;    print(f&quot;    新 WebP 相对于旧 WebP 的大小改变: {size_change_percentage:.2f}%&quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="304" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="289" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py: #         ii.  在同一目录下，使用 `ORIGINAL_VIDEO_EXTENSIONS` 列表尝试查找对应的原始视频文件&#10;#              (例如，查找 &quot;IMG_123.JPG.mp4&quot;, &quot;IMG_123.JPG.mov&quot; 等)。&#10;#         iii. 如果找到原始视频文件：&#10;#              - 使用 FFmpeg 从原始视频文件截取指定时长 (如前3秒)。&#10;#              - 应用预设的 `BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO` 和用户指定的新帧率，&#10;#                将截取的片段转换为新的 .webp 文件。&#10;#              - 新生成的 .webp 文件将直接覆盖掉旧的（有问题的/过大的）.webp 文件。&#10;#         iv.  如果未找到原始视频文件，则跳过该 .webp 文件。&#10;#   8. 用户确认后开始处理 (有备份警告)。&#10;#   9. 报告重新生成成功、失败、因大小跳过、因未找到源文件而跳过的 WebP 文件数量。&#10;#&#10;# 配置项 (Key Configurations):&#10;#   - `FFMPEG_PATH`: FFmpeg 可执行文件的路径。&#10;#   - `ORIGINAL_VIDEO_EXTENSIONS`: 用于查找原始视频文件的扩展名列表。&#10;#   - `BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO`: 从视频重新生成 WebP 时的基础 FFmpeg 参数。&#10;#   - `VIDEO_DURATION_FOR_WEBP`: 从原始视频截取的时长。&#10;#&#10;# 注意事项 (Important Notes):&#10;#   - 依赖 FFmpeg：确保 FFmpeg 已正确安装。&#10;#   - 文件覆盖：脚本会直接覆盖旧的 .webp 文件，强烈建议备份数据。&#10;#   - 原始视频文件命名：脚本假设原始视频文件名与 .webp 文件名（去除 .webp 后缀）部分相同，" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="53" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="33" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_video_to_img.py: # 注意事项 (Important Notes):&#10;#   - 依赖 FFmpeg：确保 FFmpeg 已正确安装。&#10;#   - 文件覆盖：如果同名的 .webp 文件已存在，它将被新生成的 .webp 文件覆盖。&#10;#   - 错误处理：脚本包含对 FFmpeg 执行错误和超时的基本处理。&#10;#   - 输出文件：生成的 WebP 文件通常不包含音频，并且默认是无限循环的动画。&#10;#&#10;# ==============================================================================&#10;# --- 配置 ---&#10;VIDEO_EXTENSIONS = ('.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg')&#10;FFMPEG_PATH = &quot;ffmpeg&quot;  # 如果不在PATH中，请指定完整路径&#10;CONVERSION_DURATION_SECONDS = &quot;3&quot;  # 从视频截取的时长（秒）&#10;FFMPEG_TIMEOUT_SECONDS = 120  # FFmpeg 执行超时时间&#10;# WebP转换参数 (可以根据需要调整)&#10;WEBP_CONVERSION_OPTIONS = [&#10;    &quot;-c:v&quot;, &quot;libwebp&quot;,&#10;    &quot;-lossless&quot;, &quot;0&quot;,&#10;    &quot;-q:v&quot;, &quot;75&quot;,&#10;    &quot;-loop&quot;, &quot;0&quot;,&#10;    &quot;-an&quot;,&#10;    # &quot;-vf&quot;, &quot;fps=10&quot;, # 示例：如果需要固定帧率，可以取消注释或修改&#10;]&#10;# --- /配置 ---&#10;def get_human_readable_size(size_bytes: int) -&gt; str:&#10;    &quot;&quot;&quot;将字节大小转换为人类可读的格式 (KB, MB, GB)&quot;&quot;&quot;&#10;    if size_bytes == 0:&#10;        return &quot;0 B&quot;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="65" />
+                          <option name="fileName" value="Webp_video_to_img.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_video_to_img.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="34" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="Webp_resize.py: for filename in filenames:&#10;    problematic_webp_path = current_dir_path / filename&#10;    if problematic_webp_path.suffix.lower() == &quot;.webp&quot; and problematic_webp_path.is_file():&#10;        processed_webp_files += 1&#10;        try:&#10;            original_webp_size_bytes = problematic_webp_path.stat().st_size&#10;        except OSError as e_stat:&#10;            print(f&quot;\n错误: 无法获取文件 '{problematic_webp_path}' 的大小: {e_stat}, 跳过。&quot;)&#10;            failed_count += 1&#10;            continue&#10;        print(f&quot;\n发现 WebP 文件: {problematic_webp_path}&quot;)&#10;        print(f&quot;  当前 WebP 大小: {get_human_readable_size(original_webp_size_bytes)}&quot;)&#10;        if original_webp_size_bytes &lt;= size_threshold_bytes:&#10;            print(f&quot;  文件大小未超过阈值 {get_human_readable_size(int(size_threshold_bytes))}，跳过重新生成。&quot;)&#10;            skipped_size_count += 1&#10;            continue&#10;        base_for_lookup = problematic_webp_path.stem&#10;        print(f&quot;  将使用基础名 '{base_for_lookup}' 查找原始视频。&quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="263" />
+                          <option name="fileName" value="Webp_resize.py" />
+                          <option name="source" value="$PROJECT_DIR$/Webp_resize.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="242" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml:     &amp;quot;state&amp;quot;: &amp;quot;OPEN&amp;quot;,&#10;    &amp;quot;assignee&amp;quot;: &amp;quot;imhouse36&amp;quot;&#10;  }&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;GithubPullRequestsUISettings&quot;&gt;{&#10;  &amp;quot;selectedUrlAndAccountId&amp;quot;: {&#10;    &amp;quot;url&amp;quot;: &amp;quot;https://github.com/imhouse36/OnlyMe.git&amp;quot;,&#10;    &amp;quot;accountId&amp;quot;: &amp;quot;72c3a86b-f8a0-4457-b706-ba5d2ba2a123&amp;quot;&#10;  }&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;ProjectColorInfo&quot;&gt;{&#10;  &amp;quot;associatedIndex&amp;quot;: 4&#10;}&lt;/component&gt;&#10;  &lt;component name=&quot;ProjectId&quot; id=&quot;2uzo0bsdo34SBkuNMH9VC8OmipH&quot; /&gt;&#10;  &lt;component name=&quot;ProjectLevelVcsManager&quot;&gt;&#10;    &lt;ConfirmationsSetting value=&quot;2&quot; id=&quot;Add&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;ProjectViewState&quot;&gt;&#10;    &lt;option name=&quot;hideEmptyMiddlePackages&quot; value=&quot;true&quot; /&gt;&#10;    &lt;option name=&quot;showLibraryContents&quot; value=&quot;true&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;PropertiesComponent&quot;&gt;&lt;![CDATA[{&#10;  &quot;keyToString&quot;: {&#10;    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;," />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="48" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="25" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;project version=&quot;4&quot;&gt;&#10;  &lt;component name=&quot;AutoImportSettings&quot;&gt;&#10;    &lt;option name=&quot;autoReloadType&quot; value=&quot;SELECTIVE&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;ChangeListManager&quot;&gt;&#10;    &lt;list default=&quot;true&quot; id=&quot;3bb1ddf2-4491-48a3-ba52-43f2c2fc327d&quot; name=&quot;Default Changelist&quot; comment=&quot;Default Changelist&quot; /&gt;&#10;    &lt;option name=&quot;SHOW_DIALOG&quot; value=&quot;false&quot; /&gt;&#10;    &lt;option name=&quot;HIGHLIGHT_CONFLICTS&quot; value=&quot;true&quot; /&gt;&#10;    &lt;option name=&quot;HIGHLIGHT_NON_ACTIVE_CHANGELIST&quot; value=&quot;false&quot; /&gt;&#10;    &lt;option name=&quot;LAST_RESOLUTION&quot; value=&quot;IGNORE&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;FileTemplateManagerImpl&quot;&gt;&#10;    &lt;option name=&quot;RECENT_TEMPLATES&quot;&gt;&#10;      &lt;list&gt;&#10;        &lt;option value=&quot;Python Script&quot; /&gt;&#10;      &lt;/list&gt;&#10;    &lt;/option&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;Git.Settings&quot;&gt;&#10;    &lt;option name=&quot;RECENT_GIT_ROOT_PATH&quot; value=&quot;$PROJECT_DIR$&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;GitHubPullRequestSearchHistory&quot;&gt;{&#10;  &amp;quot;lastFilter&amp;quot;: {" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="24" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\.gitignore: # Default ignored files&#10;/shelf/&#10;/workspace.xml&#10;# Datasource local storage ignored files&#10;/dataSources/&#10;/dataSources.local.xml&#10;# Editor-based HTTP Client requests&#10;/httpRequests/" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="8" />
+                          <option name="fileName" value=".idea\.gitignore" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/.gitignore" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                  </list>
+                </option>
+                <option name="command" value="" />
+                <option name="conversationId" value="0196d48d4793788bbd85c26dcf06f8fa" />
+                <option name="historyDocumentMap">
+                  <map>
+                    <entry key="file:///C:/Users/imhou/AppData/Local/JetBrains/PyCharm2025.1/plugins/.copilot/demo/walkthrough-test.py" value="" />
+                  </map>
+                </option>
+                <option name="messageId" value="0196d48fa67b788bbd85dd4e3610eed9" />
+                <option name="question" value="写一个爬虫示范代码" />
+                <option name="rating" value="UNRATED" />
+                <option name="referenceBeans">
+                  <list />
+                </option>
+                <option name="status" value="SUCCESS" />
+                <option name="variables">
+                  <list>
+                    <CodebaseVariable>
+                      <option name="selectedPlaceHolder">
+                        <Object />
+                      </option>
+                      <option name="selectedVariable">
+                        <Object />
+                      </option>
+                    </CodebaseVariable>
+                  </list>
+                </option>
+              </Turn>
+            </list>
+          </option>
+          <option name="updateTime" value="1747322927610" />
+        </Conversation>
+      </list>
+    </option>
+  </component>
+</project>
