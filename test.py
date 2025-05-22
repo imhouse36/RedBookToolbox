@@ -1,217 +1,168 @@
 # -*- coding: UTF-8 -*-
 """
-文件及文件夹内文件MD5校验工具
-
-主要功能：
-1. 计算指定单个文件的MD5哈希值。
-2. 如果输入的是文件夹路径，则计算该文件夹下所有直接子文件的MD5哈希值（不递归子文件夹）。
-
-工作过程：
-1. 提示用户输入要校验的文件或文件夹的完整路径。
-2. 将输入路径转换为绝对路径，以确保路径的规范性。
-3. 检查转换后的路径是否存在。
-4. 如果路径指向一个文件：
-   a. 打印开始计算该文件的提示信息。
-   b. 以二进制读取模式（"rb"）打开文件。
-   c. 为了高效处理大文件并避免内存问题，分块读取文件内容。
-   d. 对每个读取的数据块，更新MD5哈希对象。
-   e. 文件读取完毕后，获取最终的MD5哈希值（十六进制字符串）。
-   f. 打印文件的完整路径和其对应的MD5值。
-   g. 打印计算完成的总结性信息和边框。
-5. 如果路径指向一个文件夹：
-   a. 打印开始扫描文件夹的提示信息。
-   b. 使用 os.listdir() 获取文件夹内的所有条目（文件名和子文件夹名）。
-   c. 遍历这些条目，对每一个条目，使用 os.path.join() 构建其完整路径。
-   d. 使用 os.path.isfile() 判断该条目是否为文件。
-   e. 如果是文件，则将其加入待处理文件列表。
-   f. 打印找到的直接文件总数。
-   g. 遍历待处理文件列表，对每个文件：
-      i.  打印当前处理进度（例如 "[1/10]"）和文件名。
-      ii. 调用MD5计算逻辑（与处理单个文件时类似）。
-      iii. 记录计算成功或失败的状态。
-   h. 打印文件夹扫描完成的总结信息，包括成功和失败的文件数量。
-6. 如果路径无效（不存在、既不是文件也不是文件夹等）或在处理过程中发生IO错误等其他异常，
-   则会打印相应的错误提示信息。
-
-达成结果：
-- 对于单个文件输入：清晰地输出该文件的MD5哈希值。
-- 对于文件夹输入：为文件夹内每个直接子文件输出其MD5哈希值，并在最后提供一个包含成功和失败计数的摘要。
-
-注意事项：
-- 请确保输入的是有效的文件或文件夹路径。相对路径也会被尝试解析为绝对路径。
-- 对于非常大的文件，MD5计算过程可能需要一些时间，请耐心等待。
-- 当前版本在处理文件夹时，仅处理其直接包含的文件，不会递归进入子文件夹进行校验。
-  如果需要递归校验，脚本需要进一步修改（例如使用 os.walk()）。
-- 此脚本依赖 Python 3.7 及以上版本的 `hashlib` (用于MD5计算) 和 `os` (用于路径操作和文件系统交互) 模块。
+========================================================================================================================
+== 文件名称: rename_subfolders_replace_substring.py
+== 功能描述: 本脚本用于扫描指定根目录下的所有子目录，如果子目录的名称中包含特定的子字符串（例如 "-一刻"），
+==           则将其替换为另一个子字符串（例如 "_一刻"）。
+== 工作过程:
+==   1. 提示用户输入一个根目录路径。
+==   2. 校验用户输入的路径是否存在且为目录。
+==   3. 定义要查找的子字符串 target_substring = "-一刻"。
+==   4. 定义替换后的子字符串 replacement_substring = "_一刻"。
+==   5. 使用 os.walk(root_path, topdown=False) 递归遍历指定根目录下的所有子目录。
+==      - topdown=False 确保从最深层目录开始处理，这对于重命名操作更安全。
+==   6. 对于 os.walk() 返回的每一级目录 (dirpath) 及其包含的子目录名列表 (dirnames):
+==      a. 遍历 dirnames 中的每一个子目录名 (current_sub_dir_name)。
+==      b. 如果 current_sub_dir_name 包含 target_substring:
+==         i.  通过将 target_substring 替换为 replacement_substring，生成新的子目录名。
+==         ii. 构造该子目录的旧完整路径和新完整路径。
+==         iii.将这个计划中的重命名操作（旧路径、新路径）添加到一个列表中。
+==   7. 在实际执行任何重命名之前，会列出所有计划中的重命名操作，并请求用户最终确认。
+==   8. 用户确认后，脚本将逐个执行列表中的重命名操作 (os.rename())。
+==      - 在执行前会再次检查源路径是否存在，目标路径是否已存在，以增加安全性。
+==   9. 处理可能发生的错误，如权限不足、新名称已存在等。
+==   10. 输出操作结果，包括成功重命名的数量和失败的列表（如有）。
+== 达成结果:
+==   - 指定根目录下，名称中含有 "-一刻" 的子目录，其名称中的 "-一刻" 部分将被替换为 "_一刻"。
+==   - 例如：D:\\Data\\Folder-一刻-Backup 将被重命名为 D:\\Data\\Folder_一刻-Backup。
+== 注意事项:
+==   - 文件夹重命名是敏感操作，请务必在操作前备份重要数据！
+==   - 建议先在非重要数据的测试目录中运行本脚本，熟悉其行为。
+==   - 如果新的文件夹名称在同一目录下已存在，脚本会跳过该重命名以避免冲突。
+==   - 替换是针对子字符串的，如果一个目录名多次出现 "-一刻"，所有匹配项都会被替换。
+==   - 请确保执行脚本的用户对相关目录有读、写、修改权限。
+== Python 版本: 3.7
+========================================================================================================================
 """
-
-import hashlib
 import os
 
 
-def calculate_file_md5(file_path):
+def rename_subdirectories_replace_string(root_folder_path):
     """
-    计算并打印指定文件的MD5哈希值。
+    重命名指定根目录下的子目录，将名称中的 "-一刻" 替换为 "_一刻"。
 
     参数:
-    file_path (str): 文件的完整路径。
-
-    返回:
-    str: 文件的MD5哈希值 (十六进制字符串)。如果文件无效或计算过程中发生错误，则返回 None。
+    root_folder_path (str): 要操作的根目录路径。
     """
-    # 再次检查路径是否为文件以及文件是否存在
-    # 虽然调用此函数前通常已经进行了检查，但作为独立函数，这样做可以增强其健壮性
-    if not os.path.isfile(file_path):
-        print(f"  错误: 路径 '{file_path}' 不是一个有效的文件或文件不存在。")
-        return None
+    target_substring = "-一刻"
+    replacement_substring = "_一刻"
 
-    md5_hash = hashlib.md5()
-    # 定义读取缓冲区大小，例如 8KB。这个大小可以根据实际情况调整，
-    # 对于大多数情况，8KB到64KB是一个合理的范围。
-    buffer_size = 8192
+    print(f"\n{'=' * 25} 开始批量重命名子目录 (替换子字符串) {'=' * 25}")
+    print(f"[*] 目标根目录: {root_folder_path}")
+    print(f"[*] 查找规则: 子目录名中包含 \"{target_substring}\"")
+    print(f"[*] 替换规则: 将 \"{target_substring}\" 替换为 \"{replacement_substring}\"")
 
-    try:
-        # 以二进制读取模式("rb")打开文件，这是计算哈希值的标准做法
-        with open(file_path, "rb") as f:
-            while True:
-                # 分块读取文件内容
-                data_chunk = f.read(buffer_size)
-                if not data_chunk:
-                    # 当read()返回空字节串时，表示已到达文件末尾
-                    break
-                # 更新MD5哈希对象
-                md5_hash.update(data_chunk)
-
-        # 获取计算得到的MD5值的十六进制表示
-        hex_digest = md5_hash.hexdigest()
-
-        # 打印文件的详细信息和其MD5值
-        print(f"  文件路径: {file_path}")
-        print(f"  MD5 哈希: {hex_digest}")
-        return hex_digest
-    except IOError as e:
-        # 处理文件读取过程中可能发生的IO错误
-        print(f"  错误: 读取文件 '{os.path.basename(file_path)}' 时发生IO错误: {e}")
-        return None
-    except Exception as e:
-        # 处理计算过程中可能发生的其他未知错误
-        print(f"  错误: 计算MD5时发生未知错误: {e}")
-        return None
-
-
-def process_directory_files(dir_path):
-    """
-    处理指定的文件夹，计算其中所有直接子文件的MD5值。
-    此函数不递归进入子文件夹。
-
-    参数:
-    dir_path (str): 文件夹的完整路径。
-    """
-    print(f"\n>>> 开始扫描文件夹: '{dir_path}'")
-    print("==================================================")
-
-    files_to_process = []  # 用于存储文件夹内找到的直接文件路径
-    try:
-        # 遍历目录中的所有条目（文件名和子文件夹名）
-        for item_name in os.listdir(dir_path):
-            # 构建条目的完整路径
-            item_path = os.path.join(dir_path, item_name)
-            # 检查该完整路径是否指向一个文件
-            if os.path.isfile(item_path):
-                files_to_process.append(item_path)
-    except OSError as e:
-        # 处理访问文件夹时可能发生的OS错误（如权限问题）
-        print(f"  错误: 访问文件夹 '{dir_path}' 时发生错误: {e}")
-        print("==================================================")
+    # 校验路径是否为有效目录
+    if not os.path.isdir(root_folder_path):
+        print(f"[!] 错误: 路径 '{root_folder_path}' 不是一个有效的目录或不存在。")
+        print(f"{'=' * 30} 处理结束 {'=' * 30}\n")
         return
 
-    if not files_to_process:
-        # 如果文件夹为空或不包含任何直接文件
-        print(f"  提示: 文件夹 '{os.path.basename(dir_path)}' 为空或不包含任何直接文件。")
-        print("==================================================")
+    planned_renames = []  # 存储计划进行的重命名操作 (old_path, new_path)
+
+    print("\n[*] 正在扫描子目录并预分析重命名操作 (从深层目录开始)...")
+    # 使用 os.walk 遍历，topdown=False 表示从最深层目录开始向上遍历
+    for dirpath, dirnames, filenames in os.walk(root_folder_path, topdown=False):
+        # dirnames 是 dirpath 目录下的子目录名列表
+        for sub_dir_name in dirnames:
+            if target_substring in sub_dir_name:
+                new_sub_dir_name = sub_dir_name.replace(target_substring, replacement_substring)
+
+                # 如果替换后名称没有变化（例如，原名就是 "Folder_一刻" 而 target 是 "-一刻"），则跳过
+                if new_sub_dir_name == sub_dir_name:
+                    continue
+
+                old_full_path = os.path.join(dirpath, sub_dir_name)
+                new_full_path = os.path.join(dirpath, new_sub_dir_name)
+
+                # 预检查新路径是否已存在
+                if os.path.exists(new_full_path):
+                    print(
+                        f"    [!] 警告: 计划将 '{old_full_path}' 重命名为 '{new_full_path}', 但目标路径已存在。此重命名将被跳过。")
+                    continue
+
+                planned_renames.append((old_full_path, new_full_path))
+                print(f"    计划重命名: '{old_full_path}'  ==>  '{new_full_path}'")
+
+    if not planned_renames:
+        print(f"\n[*] 未找到名称中包含 \"{target_substring}\" 的可重命名子目录，或所有潜在目标新名称已存在。")
+        print(f"\n{'=' * 30} 处理结束 {'=' * 30}\n")
         return
 
-    total_files = len(files_to_process)
-    print(f"  在文件夹 '{os.path.basename(dir_path)}' 中找到 {total_files} 个直接文件。开始计算MD5...")
-    print("--------------------------------------------------")
+    print(f"\n[*] 共计划进行 {len(planned_renames)} 个重命名操作。")
+    print("\n" + "=" * 70)
+    print("== 重要提示: 以下文件夹将被重命名。请仔细核对！                 ==")
+    print("==          此操作具有一定风险，建议提前备份数据。               ==")
+    print("=" * 70)
+    for i, (old, new) in enumerate(planned_renames):
+        print(f"  {i + 1}. 从: {old}")
+        print(f"     至: {new}")
 
-    success_count = 0  # 记录成功计算MD5的文件数量
-    failure_count = 0  # 记录计算MD5失败的文件数量
+    confirm = input(
+        f"\n===> 是否确认执行这 {len(planned_renames)} 个重命名操作? (请输入 'yes' 确认, 其他任意键取消): ").strip().lower()
 
-    # 遍历找到的所有文件，并计算它们的MD5值
-    for i, file_path_in_dir in enumerate(files_to_process):
-        # 打印当前处理进度和文件名，使用 os.path.basename 获取纯文件名
-        print(f"\n  处理中 [{i + 1}/{total_files}]: '{os.path.basename(file_path_in_dir)}'")
-        if calculate_file_md5(file_path_in_dir):
-            success_count += 1
-        else:
-            failure_count += 1
+    if confirm != 'yes':
+        print("\n[*] 用户取消了操作。没有文件夹被重命名。")
+        print(f"\n{'=' * 30} 处理结束 {'=' * 30}\n")
+        return
 
-        # 在每个文件处理信息后添加一个小的分隔，除非是最后一个文件，以增强可读性
-        if i < total_files - 1:
-            print("  ------------------------------------------------")  # 注意缩进与上方信息对齐
+    print("\n[*] 开始执行重命名操作...")
+    successful_renames = 0
+    failed_renames_details = []  # 存储 (old_path, new_path, error_message)
 
-    # 打印文件夹处理的总结信息
-    print("\n--------------------------------------------------")  # 与上方分隔符对应
-    print(f"文件夹 '{os.path.basename(dir_path)}' 扫描完成。")
-    print(f"  总计文件数: {total_files}")
-    print(f"  成功计算MD5: {success_count} 个")
-    print(f"  计算MD5失败: {failure_count} 个")
-    print("==================================================")
+    for old_path, new_path in planned_renames:
+        try:
+            # 在执行前再次检查条件
+            if not os.path.exists(old_path):
+                print(f"    [!] 跳过 (源不存在): '{old_path}' 在执行前已不存在。")
+                failed_renames_details.append((old_path, new_path, "源路径在执行前消失"))
+                continue
+            if os.path.exists(new_path):
+                print(f"    [!] 跳过 (目标已存在): '{new_path}' 在执行前已存在。")
+                failed_renames_details.append((old_path, new_path, "目标路径在执行前已存在"))
+                continue
+
+            os.rename(old_path, new_path)
+            print(f"    [✓] 成功: '{old_path}'  ==>  '{new_path}'")
+            successful_renames += 1
+        except OSError as e:
+            error_msg = f"重命名 '{old_path}' 到 '{new_path}' 失败: {e}"
+            print(f"    [!] 错误: {error_msg}")
+            failed_renames_details.append((old_path, new_path, str(e)))
+        except Exception as e:
+            error_msg = f"重命名 '{old_path}' 到 '{new_path}' 时发生未知错误: {e}"
+            print(f"    [!] 错误: {error_msg}")
+            failed_renames_details.append((old_path, new_path, str(e)))
+
+    # 输出操作总结
+    print("\n" + "*" * 30 + " 操作总结 " + "*" * 30)
+    print(f"[*] 计划重命名操作总数: {len(planned_renames)}")
+    print(f"[*] 成功重命名文件夹数量: {successful_renames}")
+    if failed_renames_details:
+        print(f"[!] 未能成功重命名/跳过的操作数量: {len(failed_renames_details)}")
+        print("[!] 详情:")
+        for old, new, reason in failed_renames_details:
+            print(f"    - 操作: '{old}' -> '{new}'")
+            print(f"      原因: {reason}")
+    elif len(planned_renames) > 0 and confirm == 'yes':
+        print("[*] 所有计划的重命名操作均已成功处理。")
+
+    print(f"\n{'=' * 30} 处理结束 {'=' * 30}\n")
 
 
 if __name__ == "__main__":
-    # 打印美观的欢迎标题
-    print("╔══════════════════════════════════════════════════════════════╗")
-    print("║          欢迎使用文件/文件夹MD5值校验工具 (Python 3.7)         ║")
-    print("╚══════════════════════════════════════════════════════════════╝")
+    print("+" + "-" * 78 + "+")
+    print("|" + " " * 12 + "批量重命名子目录 (替换特定子字符串) 工具 (Python 3.7)" + " " * 11 + "|")
+    print("+" + "-" * 78 + "+")
+    print(f"| 功能: 将指定根目录下所有子目录名中的 \"-一刻\" 替换为 \"_一刻\"。             |")
+    print("| 警告: 文件夹重命名操作有风险，请务必提前备份重要数据！               |")
+    print("|       建议先在测试目录中运行以熟悉脚本行为。                         |")
+    print("+" + "-" * 78 + "+")
 
-    try:
-        # 获取用户输入的路径，并去除首尾可能存在的空白字符
-        raw_path = input(
-            "\n请输入要校验MD5值的文件或文件夹完整路径：\n(例如: D:\\downloads\\setup.exe 或 D:\\my_documents)\n> ").strip()
-
-        if not raw_path:
-            # 处理用户未输入任何内容的情况
-            print("\n错误: 输入的路径不能为空。请重新运行脚本并提供有效路径。")
+    while True:
+        target_root_directory = input("\n请输入要操作的根目录完整路径 (例如 D:\\MyProjects): \n>>> ").strip()
+        if target_root_directory:
+            rename_subdirectories_replace_string(target_root_directory)
+            break
         else:
-            # 将用户输入的路径（可能是相对路径）转换为绝对路径
-            # 这样可以确保后续操作基于一个明确的、唯一的路径
-            target_path = os.path.abspath(raw_path)
-            print(f"  [INFO] 您输入的路径是: '{raw_path}', 程序将处理绝对路径: '{target_path}'")
-
-            # 首先检查目标路径是否存在于文件系统中
-            if not os.path.exists(target_path):
-                print(f"\n错误: 路径 '{target_path}' 不存在。请检查路径是否正确。")
-            # 如果路径存在，则判断它是文件还是文件夹
-            elif os.path.isfile(target_path):
-                # 如果是文件，则进行单个文件MD5计算
-                print(f"\n>>> 开始处理单个文件: '{os.path.basename(target_path)}'")
-                print("==================================================")
-                print(f"  正在计算文件 '{os.path.basename(target_path)}' 的MD5值，请稍候...")
-                if calculate_file_md5(target_path):
-                    # MD5值已在 calculate_file_md5 函数内部打印
-                    print("  MD5计算完成。")
-                else:
-                    # 如果 calculate_file_md5 返回None，表示计算失败
-                    print(f"  未能计算文件 '{os.path.basename(target_path)}' 的MD5值。")
-                print("==================================================")
-            elif os.path.isdir(target_path):
-                # 如果是文件夹，则调用处理文件夹的函数
-                process_directory_files(target_path)
-            else:
-                # 这种情况比较少见：路径存在，但既不是文件也不是常规意义上的文件夹
-                # (例如某些特殊的系统设备文件或损坏的快捷方式等)
-                print(f"\n错误: 路径 '{target_path}' 不是一个常规的文件或文件夹。请检查路径类型。")
-
-    except KeyboardInterrupt:
-        # 优雅地处理用户通过 Ctrl+C 中断程序执行的情况
-        print("\n\n操作已由用户取消。程序即将退出。")
-    except Exception as e:
-        # 捕获在主程序流程中其他所有未明确预料到的异常
-        print(f"\n发生严重错误: {e}")
-        print("程序执行遇到问题，请检查上述错误信息。")
-
-    # 打印友好的结束语
-    print("\n感谢使用本工具！祝您一切顺利！")
-    print("==================================================")
+            print("[!] 输入的路径不能为空，请重新输入。")
