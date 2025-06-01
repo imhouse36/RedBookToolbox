@@ -314,22 +314,29 @@ def main():
     script_start_time = time.time()
     
     try:
-        # 1. 获取用户输入：要创建的子文件夹数量
-        num_folders = get_positive_integer_input(
-            "请输入要在发布文件夹下创建的编号子文件夹数量: "
-        )
-        
-        # 2. 获取用户输入：素材文件夹路径
-        source_path = get_valid_folder_path_from_user(
-            "请输入素材文件夹的完整路径: ", 
-            ensure_exists=True
-        )
-        
-        # 3. 获取用户输入：发布基础文件夹路径
-        publish_base_path = get_valid_folder_path_from_user(
-            "请输入发布文件夹的基础路径（编号子文件夹将在此创建）: ", 
-            ensure_exists=False
-        )
+        # 从标准输入读取参数（适用于Web环境）
+        try:
+            # 从标准输入读取参数（按服务器传递顺序：base_path, count, source_path）
+            base_path_str = input().strip()
+            count_str = input().strip()
+            source_path_str = input().strip()
+            
+            # 1. 获取发布基础文件夹路径
+            publish_base_path = pathlib.Path(base_path_str)
+            
+            # 2. 获取要创建的子文件夹数量
+            num_folders = int(count_str)
+            if num_folders <= 0:
+                raise ValueError("数量必须是正整数")
+            
+            # 3. 获取素材文件夹路径
+            source_path = pathlib.Path(source_path_str)
+            if not source_path.exists() or not source_path.is_dir():
+                raise ValueError(f"素材文件夹路径不存在或不是目录: {source_path}")
+            
+        except (ValueError, EOFError) as e:
+            print(f"参数读取错误: {e}")
+            return
         
         print(f"\n配置确认:")
         print(f"- 创建子文件夹数量: {num_folders}")
@@ -359,4 +366,4 @@ def main():
         print("请检查输入参数和文件权限后重试。")
 
 if __name__ == "__main__":
-    main()                
+    main()

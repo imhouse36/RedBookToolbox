@@ -5,7 +5,7 @@
 # ==============================================================================
 #
 # 脚本名称 (Script Name):
-#   Unzip_Claude4.py (Claude4优化版)
+#   Unzip.py
 #
 # 主要目的 (Main Purpose):
 #   本脚本用于自动解压缩指定文件夹内所有顶层的 .zip 压缩文件。
@@ -253,23 +253,48 @@ def extract_zip_file(zip_path: Path, extract_to: Path) -> Tuple[bool, Optional[s
 def process_zip_files_batch() -> Tuple[bool, int, int, int]:
     """
     批量处理ZIP文件的主函数。
+    支持两种输入模式：
+    1. 交互式输入模式（命令行直接运行）
+    2. 标准输入模式（Web环境或管道输入）
     
     返回:
         tuple: (是否全部成功, 成功处理的文件数, 失败的文件数, 总解压文件数)
     """
-    print("ZIP文件批量解压工具 (Claude4优化版)")
+    print("🔧 ZIP文件批量解压工具")
     print("=" * 60)
     
     start_time = time.time()
     
     try:
-        # 1. 获取用户输入的文件夹路径
+        # 1. 智能检测输入模式并获取文件夹路径
         print("\n步骤 1: 获取文件夹路径")
-        folder_path = get_valid_folder_path_from_user(
-            "请输入包含ZIP文件并作为解压目标的文件夹路径: "
-        )
         
-        print(f"\n配置确认:")
+        # 检测是否为非交互模式（Web环境或管道输入）
+        is_non_interactive = hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty()
+        
+        if is_non_interactive:
+            # 非交互模式：从标准输入读取参数（适用于Web环境）
+            print("🌐 检测到Web环境，使用标准输入模式")
+            try:
+                path_str = input().strip()
+                folder_path = Path(path_str)
+                
+                if not folder_path.exists():
+                    raise ValueError(f"路径不存在: {path_str}")
+                if not folder_path.is_dir():
+                    raise ValueError(f"路径不是目录: {path_str}")
+                    
+            except (ValueError, EOFError) as e:
+                print(f"❌ 参数读取错误: {e}")
+                return False, 0, 0, 0
+        else:
+            # 交互模式：使用原有的交互式输入函数
+            print("💻 检测到命令行环境，使用交互式输入模式")
+            folder_path = get_valid_folder_path_from_user(
+                "请输入包含ZIP文件的文件夹路径: "
+            )
+        
+        print(f"\n✅ 配置确认:")
         print(f"- 目标文件夹: {folder_path}")
         print(f"- 支持的压缩格式: {', '.join(sorted(SUPPORTED_ARCHIVE_EXTENSIONS))}")
         print(f"- 解压目标: 同一文件夹内")
@@ -280,7 +305,7 @@ def process_zip_files_batch() -> Tuple[bool, int, int, int]:
         zip_files = scan_zip_files(folder_path)
         
         if not zip_files:
-            print(f"警告：在文件夹 '{folder_path}' 中没有找到任何ZIP文件")
+            print(f"⚠️ 警告：在文件夹 '{folder_path}' 中没有找到任何ZIP文件")
             print(f"支持的格式: {', '.join(sorted(SUPPORTED_ARCHIVE_EXTENSIONS))}")
             return False, 0, 0, 0
         
@@ -294,25 +319,12 @@ def process_zip_files_batch() -> Tuple[bool, int, int, int]:
             except Exception:
                 pass
         
-        total_size_formatted = get_file_size_formatted(Path('dummy').__class__(str(total_size)))
-        print(f"\n总文件大小: {get_file_size_formatted(type('MockPath', (), {'stat': lambda: type('MockStat', (), {'st_size': total_size})()})())}")
-        
-        # 3. 用户确认
-        print(f"\n步骤 3: 确认处理")
-        print("ℹ️  注意：原ZIP文件将保留，解压内容将放置在同一文件夹内。")
-        
-        try:
-            confirm = input(f"\n确认解压这 {len(zip_files)} 个ZIP文件吗？(y/N): ").strip().lower()
-            if confirm not in ['y', 'yes', '是']:
-                print("操作已取消")
-                return False, 0, 0, 0
-        except KeyboardInterrupt:
-            print("\n操作已由用户中止")
-            return False, 0, 0, 0
+        # 3. 自动开始处理（Web环境下不需要用户确认）
+        print(f"\n步骤 3: 开始批量解压 {len(zip_files)} 个ZIP文件")
+        print("ℹ️ 注意：原ZIP文件将保留，解压内容将放置在同一文件夹内。")
         
         # 4. 开始批量处理
-        print(f"\n步骤 4: 开始批量解压")
-        print("=" * 60)
+        print("\n" + "=" * 60)
         
         processed_files_count = 0
         error_files_count = 0
@@ -395,7 +407,7 @@ def main():
         if success and processed_count > 0:
             print("\n🎉 所有ZIP文件解压成功！")
         elif processed_count > 0:
-            print(f"\n⚠️  部分ZIP文件解压完成，{error_count} 个文件处理失败")
+            print(f"\n⚠️ 部分ZIP文件解压完成，{error_count} 个文件处理失败")
         else:
             print("\n❌ 没有ZIP文件被成功解压")
             
@@ -404,9 +416,8 @@ def main():
     except Exception as e:
         print(f"\n💥 程序运行时发生未预期的错误: {e}")
         print("请检查环境配置或联系技术支持")
-    finally:
-        input("\n按 Enter 键退出...")
-        print("\n程序结束")
+    
+    print("\n程序结束")
 
 
 if __name__ == "__main__":

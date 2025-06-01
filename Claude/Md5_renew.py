@@ -8,13 +8,13 @@
 #   Md5_renew_Claude4.py (Claude4优化版)
 #
 # 主要目的 (Main Purpose):
-#   本脚本用于批量修改指定文件夹内图片文件的MD5值，通过在文件末尾附加随机字节来实现。
+#   本脚本用于批量修改指定文件夹及其所有子目录内图片文件的MD5值，通过在文件末尾附加随机字节来实现。
 #   这种方法不会影响图片的显示效果，但会改变文件的MD5哈希值。
 #
 # 工作流程 (Workflow):
 #   1. 提示用户输入包含图片文件的文件夹路径
 #   2. 验证用户输入的路径是否为有效文件夹
-#   3. 扫描文件夹中的所有支持的图片文件
+#   3. 递归扫描文件夹及其所有子目录中的支持的图片文件
 #   4. 对每个图片文件在末尾附加随机字节
 #   5. 显示详细的处理进度和统计信息
 #   6. 生成最终的处理报告，包括MD5值变化对比
@@ -36,6 +36,7 @@
 #   - 改进了文件验证和安全性检查
 #   - 添加了MD5值变化对比功能
 #   - 支持自定义随机字节数量
+#   - 支持递归扫描所有子目录，自动发现深层文件夹中的图片
 #
 # 注意事项 (Important Notes):
 #   - 此操作会直接修改原始图片文件，请确保在操作前备份重要数据
@@ -106,10 +107,18 @@ def get_valid_folder_path_from_user(prompt_message: str) -> Path:
     """
     while True:
         try:
-            user_input = input(prompt_message).strip()
+            # 检查是否有预先准备的输入（用于Web服务器调用）
+            if hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty():
+                # 从stdin读取输入（非交互模式）
+                user_input = sys.stdin.readline().strip()
+            else:
+                # 交互模式，使用input函数
+                user_input = input(prompt_message).strip()
             
             if not user_input:
                 print("错误：未输入路径，请重新输入。")
+                if hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty():
+                    sys.exit(1)  # 非交互模式下直接退出
                 continue
                 
             # 处理引号包围的路径
@@ -122,10 +131,14 @@ def get_valid_folder_path_from_user(prompt_message: str) -> Path:
             
             if not folder_path.exists():
                 print(f"错误：路径 '{folder_path}' 不存在。请重新输入。")
+                if hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty():
+                    sys.exit(1)  # 非交互模式下直接退出
                 continue
                 
             if not folder_path.is_dir():
                 print(f"错误：路径 '{folder_path}' 不是一个有效的文件夹。请重新输入。")
+                if hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty():
+                    sys.exit(1)  # 非交互模式下直接退出
                 continue
                 
             return folder_path
@@ -135,6 +148,8 @@ def get_valid_folder_path_from_user(prompt_message: str) -> Path:
             sys.exit(0)
         except Exception as e:
             print(f"错误：处理路径时发生异常: {e}。请重新输入。")
+            if hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty():
+                sys.exit(1)  # 非交互模式下直接退出
 
 
 def get_random_bytes_count() -> int:
@@ -146,7 +161,13 @@ def get_random_bytes_count() -> int:
     """
     while True:
         try:
-            user_input = input(f"请输入要附加的随机字节数量 (默认: {DEFAULT_RANDOM_BYTES}, 范围: 1-1024): ").strip()
+            # 检查是否有预先准备的输入（用于Web服务器调用）
+            if hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty():
+                # 从stdin读取输入（非交互模式）
+                user_input = sys.stdin.readline().strip()
+            else:
+                # 交互模式，使用input函数
+                user_input = input(f"请输入要附加的随机字节数量 (默认: {DEFAULT_RANDOM_BYTES}, 范围: 1-1024): ").strip()
             
             if not user_input:
                 return DEFAULT_RANDOM_BYTES
@@ -155,17 +176,23 @@ def get_random_bytes_count() -> int:
             
             if bytes_count < 1 or bytes_count > 1024:
                 print("错误：随机字节数量必须在1-1024之间。请重新输入。")
+                if hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty():
+                    sys.exit(1)  # 非交互模式下直接退出
                 continue
                 
             return bytes_count
             
         except ValueError:
             print("错误：请输入有效的数字。")
+            if hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty():
+                sys.exit(1)  # 非交互模式下直接退出
         except KeyboardInterrupt:
             print("\n操作已由用户中止。")
             sys.exit(0)
         except Exception as e:
             print(f"错误：处理输入时发生异常: {e}。请重新输入。")
+            if hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty():
+                sys.exit(1)  # 非交互模式下直接退出
 
 
 def modify_image_md5(file_path: Path, random_bytes_count: int = DEFAULT_RANDOM_BYTES) -> Tuple[bool, Optional[str], Optional[str]]:
@@ -247,7 +274,7 @@ def modify_image_md5(file_path: Path, random_bytes_count: int = DEFAULT_RANDOM_B
 
 def scan_image_files(folder_path: Path) -> list:
     """
-    扫描文件夹中的图片文件。
+    递归扫描文件夹及其所有子目录中的图片文件。
     
     参数:
         folder_path (Path): 文件夹路径。
@@ -258,13 +285,29 @@ def scan_image_files(folder_path: Path) -> list:
     image_files = []
     
     try:
-        for file_path in folder_path.iterdir():
-            if file_path.is_file():
-                # 检查文件是否是支持的图片格式（忽略大小写）
-                if file_path.suffix.lower() in SUPPORTED_IMAGE_EXTENSIONS:
+        print(f"正在递归扫描文件夹: {folder_path}")
+        
+        # 使用rglob递归搜索所有子目录
+        for extension in SUPPORTED_IMAGE_EXTENSIONS:
+            # 搜索每种支持的图片格式（忽略大小写）
+            pattern = f"**/*{extension}"
+            for file_path in folder_path.rglob(pattern):
+                if file_path.is_file():
                     image_files.append(file_path)
+            
+            # 同时搜索大写扩展名
+            pattern_upper = f"**/*{extension.upper()}"
+            for file_path in folder_path.rglob(pattern_upper):
+                if file_path.is_file() and file_path not in image_files:
+                    image_files.append(file_path)
+        
+        # 按文件路径排序，便于查看
+        image_files.sort()
+        
+        print(f"递归扫描完成，共找到 {len(image_files)} 个图片文件")
+        
     except Exception as e:
-        print(f"扫描文件夹时发生错误: {e}")
+        print(f"递归扫描文件夹时发生错误: {e}")
     
     return image_files
 
@@ -272,6 +315,9 @@ def scan_image_files(folder_path: Path) -> list:
 def process_images_batch() -> Tuple[bool, int, int, int]:
     """
     批量处理图片文件的主函数。
+    支持两种输入模式：
+    1. 交互式输入模式（命令行直接运行）
+    2. 标准输入模式（Web环境或管道输入）
     
     返回:
         tuple: (是否全部成功, 成功处理的文件数, 失败的文件数, 总字节增加量)
@@ -282,49 +328,80 @@ def process_images_batch() -> Tuple[bool, int, int, int]:
     start_time = time.time()
     
     try:
-        # 1. 获取用户输入的文件夹路径
+        # 1. 智能检测输入模式并获取参数
         print("\n步骤 1: 获取文件夹路径")
-        folder_path = get_valid_folder_path_from_user(
-            "请输入包含图片文件的文件夹目录路径: "
-        )
         
-        # 2. 获取随机字节数量
-        print("\n步骤 2: 配置随机字节数量")
-        random_bytes_count = get_random_bytes_count()
+        # 检测是否为非交互模式（Web环境或管道输入）
+        is_non_interactive = hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty()
         
-        print(f"\n配置确认:")
+        if is_non_interactive:
+            # 非交互模式：从标准输入读取参数（适用于Web环境）
+            print("🌐 检测到Web环境，使用标准输入模式")
+            try:
+                # 从标准输入读取参数（按服务器传递顺序：path, bytes_count）
+                path_str = input().strip()
+                bytes_count_str = input().strip()
+                
+                folder_path = Path(path_str)
+                if not folder_path.exists() or not folder_path.is_dir():
+                    raise ValueError(f"路径不存在或不是目录: {path_str}")
+                
+                # 处理随机字节数量
+                if bytes_count_str:
+                    random_bytes_count = int(bytes_count_str)
+                    if random_bytes_count < 1 or random_bytes_count > 1024:
+                        raise ValueError(f"随机字节数量必须在1-1024之间: {random_bytes_count}")
+                else:
+                    random_bytes_count = DEFAULT_RANDOM_BYTES
+                    
+            except (ValueError, EOFError) as e:
+                print(f"❌ 参数读取错误: {e}")
+                return False, 0, 0, 0
+        else:
+            # 交互模式：使用原有的交互式输入函数
+            print("💻 检测到命令行环境，使用交互式输入模式")
+            folder_path = get_valid_folder_path_from_user(
+                "请输入包含图片文件的文件夹目录路径: "
+            )
+            random_bytes_count = get_random_bytes_count()
+        
+        print(f"\n✅ 配置确认:")
         print(f"- 目标文件夹: {folder_path}")
+        print(f"- 扫描模式: 递归扫描所有子目录")
         print(f"- 支持的图片格式: {', '.join(sorted(SUPPORTED_IMAGE_EXTENSIONS))}")
         print(f"- 随机字节数量: {random_bytes_count} 字节")
         print(f"- 操作内容: 在每个图片文件末尾附加随机字节以修改MD5值")
         
-        # 3. 扫描图片文件
-        print("\n步骤 3: 扫描图片文件")
+        # 2. 扫描图片文件
+        print("\n步骤 2: 扫描图片文件")
         image_files = scan_image_files(folder_path)
         
         if not image_files:
-            print(f"警告：在文件夹 '{folder_path}' 中没有找到任何支持的图片文件")
-            print(f"支持的格式: {', '.join(sorted(SUPPORTED_IMAGE_EXTENSIONS))}")
+            print(f"⚠️ 警告：在文件夹 '{folder_path}' 中没有找到任何支持的图片文件")
             return False, 0, 0, 0
         
         print(f"找到 {len(image_files)} 个图片文件:")
         for i, file_path in enumerate(image_files, 1):
-            file_size = file_path.stat().st_size
-            print(f"  {i}. {file_path.name} ({file_size:,} 字节)")
+            print(f"  {i}. {file_path.name}")
         
-        # 4. 用户确认
-        print(f"\n步骤 4: 确认处理")
-        print("⚠️  警告：此操作将直接修改图片文件内容，建议先备份重要数据！")
-        print(f"每个文件将增加 {random_bytes_count} 字节，总计将增加 {len(image_files) * random_bytes_count:,} 字节")
-        
-        try:
-            confirm = input(f"\n确认处理这 {len(image_files)} 个文件吗？(y/N): ").strip().lower()
-            if confirm not in ['y', 'yes', '是']:
-                print("操作已取消")
+        # 3. 用户确认（仅在交互模式下）
+        if not is_non_interactive:
+            print(f"\n步骤 3: 确认处理")
+            print("⚠️ 警告：此操作将直接修改图片文件内容，建议先备份重要数据！")
+            
+            try:
+                confirm = input(f"\n确认处理这 {len(image_files)} 个文件吗？(y/N): ").strip().lower()
+                if confirm not in ['y', 'yes', '是']:
+                    print("操作已取消")
+                    return False, 0, 0, 0
+            except KeyboardInterrupt:
+                print("\n操作已由用户中止")
                 return False, 0, 0, 0
-        except KeyboardInterrupt:
-            print("\n操作已由用户中止")
-            return False, 0, 0, 0
+        else:
+            print(f"\n步骤 3: 自动开始处理（Web环境模式）")
+            print("⚠️ 警告：此操作将直接修改图片文件内容！")
+        
+        print(f"每个文件将增加 {random_bytes_count} 字节，总计将增加 {len(image_files) * random_bytes_count:,} 字节")
         
         # 5. 开始批量处理
         print(f"\n步骤 5: 开始批量处理")

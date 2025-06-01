@@ -3,596 +3,490 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小红书工具箱 - Web界面</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            padding: 30px;
-        }
-
-        .tool-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 25px;
-            border: 2px solid #e9ecef;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            border-color: #667eea;
-        }
-
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-        }
-
-        .tool-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-        }
-
-        .tool-title::before {
-            content: '🛠️';
-            margin-right: 10px;
-            font-size: 1.2em;
-        }
-
-        .tool-description {
-            color: #6c757d;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: #495057;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #dee2e6;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .output-area {
-            background: #f8f9fa;
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 30px;
-            min-height: 200px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            white-space: pre-wrap;
-            overflow-y: auto;
-            max-height: 400px;
-        }
-
-        .output-title {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #2c3e50;
-            margin: 20px 30px 10px;
-            display: flex;
-            align-items: center;
-        }
-
-        .output-title::before {
-            content: '📋';
-            margin-right: 10px;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            color: #667eea;
-            font-weight: 500;
-        }
-
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .success {
-            color: #28a745;
-            font-weight: 500;
-        }
-
-        .error {
-            color: #dc3545;
-            font-weight: 500;
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input-wrapper input[type=file] {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .file-input-label {
-            display: block;
-            padding: 10px;
-            border: 2px dashed #dee2e6;
-            border-radius: 5px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        .file-input-label:hover {
-            border-color: #667eea;
-            background: #e7f3ff;
-        }
-
-        .file-path {
-            background: #e9ecef;
-            padding: 8px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 12px;
-            margin-top: 5px;
-            word-break: break-all;
-        }
-    </style>
+    <title>小红书工具箱 - 智能文件处理平台</title>
+    <link rel="stylesheet" href="environment/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>小红书工具箱</h1>
-            <p>一站式文件处理工具集合，让您的工作更高效</p>
-        </div>
-
-        <div class="tools-grid">
-            <!-- 文件夹创建工具 -->
-            <div class="tool-card">
-                <div class="tool-title">批量创建文件夹</div>
-                <div class="tool-description">在指定目录下创建指定数量的编号文件夹</div>
-                <div class="form-group">
-                    <label>目标目录路径:</label>
-                    <input type="text" id="build-folder-path" placeholder="请输入文件夹路径">
-                </div>
-                <div class="form-group">
-                    <label>文件夹数量:</label>
-                    <input type="number" id="build-folder-count" min="1" value="5" placeholder="请输入要创建的文件夹数量">
-                </div>
-                <button class="btn" onclick="runScript('build_folder')">开始创建</button>
-            </div>
-
-            <!-- 文件重命名工具 -->
-            <div class="tool-card">
-                <div class="tool-title">批量重命名文件</div>
-                <div class="tool-description">递归重命名文件夹内所有文件为"文件夹名_编号.扩展名"格式</div>
-                <div class="form-group">
-                    <label>目标目录路径:</label>
-                    <input type="text" id="rename-files-path" placeholder="请输入文件夹路径">
-                </div>
-                <button class="btn" onclick="runScript('rename_files')">开始重命名</button>
-            </div>
-
-            <!-- 视频转WebP工具 -->
-            <div class="tool-card">
-                <div class="tool-title">视频转WebP动图</div>
-                <div class="tool-description">批量将视频文件转换为WebP动画格式</div>
-                <div class="form-group">
-                    <label>视频目录路径:</label>
-                    <input type="text" id="webp-video-path" placeholder="请输入包含视频文件的文件夹路径">
-                </div>
-                <div class="form-group">
-                    <label>转换时长(秒):</label>
-                    <input type="number" id="webp-duration" min="1" max="10" value="3" placeholder="从视频开始截取的时长">
-                </div>
-                <div class="form-group">
-                    <label>覆盖已存在文件:</label>
-                    <select id="webp-overwrite">
-                        <option value="false">否</option>
-                        <option value="true">是</option>
-                    </select>
-                </div>
-                <button class="btn" onclick="runScript('webp_video')">开始转换</button>
-            </div>
-
-            <!-- 文件复制工具 -->
-            <div class="tool-card">
-                <div class="tool-title">智能文件复制</div>
-                <div class="tool-description">将素材文件夹的图片随机分配到发布文件夹的各个子目录</div>
-                <div class="form-group">
-                    <label>素材文件夹路径:</label>
-                    <input type="text" id="copy-source-path" placeholder="请输入素材文件夹路径">
-                </div>
-                <div class="form-group">
-                    <label>发布文件夹路径:</label>
-                    <input type="text" id="copy-target-path" placeholder="请输入发布文件夹路径">
-                </div>
-                <button class="btn" onclick="runScript('copy_files')">开始复制</button>
-            </div>
-
-            <!-- 解压缩工具 -->
-            <div class="tool-card">
-                <div class="tool-title">批量解压缩</div>
-                <div class="tool-description">自动解压指定文件夹内的所有ZIP压缩文件</div>
-                <div class="form-group">
-                    <label>压缩文件目录:</label>
-                    <input type="text" id="unzip-path" placeholder="请输入包含ZIP文件的文件夹路径">
-                </div>
-                <div class="form-group">
-                    <label>覆盖已存在文件:</label>
-                    <select id="unzip-overwrite">
-                        <option value="false">否</option>
-                        <option value="true">是</option>
-                    </select>
-                </div>
-                <button class="btn" onclick="runScript('unzip')">开始解压</button>
-            </div>
-
-            <!-- MD5修改工具 -->
-            <div class="tool-card">
-                <div class="tool-title">MD5值修改</div>
-                <div class="tool-description">通过在图片文件末尾添加随机字节改变MD5值</div>
-                <div class="form-group">
-                    <label>图片目录路径:</label>
-                    <input type="text" id="md5-path" placeholder="请输入包含图片文件的文件夹路径">
-                </div>
-                <div class="form-group">
-                    <label>随机字节数:</label>
-                    <input type="number" id="md5-bytes" min="1" max="100" value="10" placeholder="添加的随机字节数量">
-                </div>
-                <button class="btn" onclick="runScript('md5_renew')">开始修改</button>
-            </div>
-
-            <!-- 自动创建并复制工具 -->
-            <div class="tool-card">
-                <div class="tool-title">自动创建并复制</div>
-                <div class="tool-description">自动创建编号文件夹并从素材库随机复制图片</div>
-                <div class="form-group">
-                    <label>基础目录路径:</label>
-                    <input type="text" id="auto-base-path" placeholder="请输入基础目录路径">
-                </div>
-                <div class="form-group">
-                    <label>素材目录路径:</label>
-                    <input type="text" id="auto-source-path" placeholder="请输入素材目录路径">
-                </div>
-                <div class="form-group">
-                    <label>文件夹数量:</label>
-                    <input type="number" id="auto-folder-count" min="1" value="5" placeholder="要创建的文件夹数量">
-                </div>
-                <button class="btn" onclick="runScript('auto_build_copy')">开始执行</button>
-            </div>
-
-            <!-- WebP重新生成工具 -->
-            <div class="tool-card">
-                <div class="tool-title">WebP重新生成</div>
-                <div class="tool-description">从原始视频重新生成超过阈值的WebP文件</div>
-                <div class="form-group">
-                    <label>目录路径:</label>
-                    <input type="text" id="webp-resize-path" placeholder="请输入目录路径">
-                </div>
-                <div class="form-group">
-                    <label>文件大小阈值(MB):</label>
-                    <input type="number" id="webp-threshold" min="0.1" step="0.1" value="2.0" placeholder="超过此大小的WebP文件将被重新生成">
-                </div>
-                <button class="btn" onclick="runScript('webp_resize')">开始重新生成</button>
-            </div>
-        </div>
-
-        <div class="output-title">执行输出</div>
-        <div class="output-area" id="output">
-            <div class="loading" id="loading">正在执行脚本，请稍候...</div>
-            <div id="output-content">点击上方任意工具开始执行...</div>
-        </div>
+    <!-- 背景装饰 -->
+    <div class="bg-decoration">
+        <div class="bg-grid"></div>
+        <div class="bg-gradient"></div>
     </div>
 
-    <script>
-        // 全局变量
-        let currentProcess = null;
-        
-        // 运行脚本函数
-        async function runScript(scriptType) {
-            const outputDiv = document.getElementById('output-content');
-            const loadingDiv = document.getElementById('loading');
-            
-            // 获取参数
-            const params = getScriptParams(scriptType);
-            if (!params) {
-                return;
-            }
-            
-            // 显示加载状态
-            loadingDiv.style.display = 'block';
-            outputDiv.innerHTML = '正在启动脚本...';
-            
-            // 禁用所有按钮
-            const buttons = document.querySelectorAll('.btn');
-            buttons.forEach(btn => btn.disabled = true);
-            
-            try {
-                const response = await fetch('/api/run-script', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        script: scriptType,
-                        params: params
-                    })
-                });
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 顶部导航栏 -->
+        <header class="top-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>小红书工具箱</h1>
+                        <span class="tagline">智能文件处理平台</span>
+                    </div>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-badge">
+                        <i class="fas fa-tools"></i>
+                        <span id="tool-count">10个工具</span>
+                    </div>
+                    <div class="stat-badge">
+                        <i class="fas fa-zap"></i>
+                        <span>高效处理</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 输出面板 -->
+            <div class="output-panel">
+                <div class="panel-header">
+                    <div class="header-left">
+                        <h2>执行输出</h2>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>就绪</span>
+                        </div>
+                    </div>
+                    <div class="panel-controls">
+                        <button class="control-btn stop-btn" id="stop-btn" title="终止执行" style="display: none;">
+                            <i class="fas fa-stop"></i>
+                        </button>
+                        <button class="control-btn" onclick="copyOutput()" title="复制输出内容">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="control-btn" onclick="clearOutput()" title="清空输出">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="control-btn" onclick="toggleFullscreen()" title="全屏模式">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                <div class="output-container">
+                    <div class="output-content" id="output-content">
+                        <!-- 输出内容将在这里显示 -->
+                    </div>
+                    
+                    <div class="loading-overlay" id="loading-overlay">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">正在执行中...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工具面板 -->
+            <div class="tools-panel">
+                <div class="panel-header">
+                    <h2>工具列表</h2>
+                    <p>选择需要使用的工具</p>
+                </div>
                 
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                
-                outputDiv.innerHTML = '';
-                
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
-                    
-                    for (const line of lines) {
-                        if (line.trim()) {
-                            try {
-                                const data = JSON.parse(line);
-                                if (data.type === 'output') {
-                                    outputDiv.innerHTML += data.content + '\n';
-                                } else if (data.type === 'error') {
-                                    outputDiv.innerHTML += `<span class="error">错误: ${data.content}</span>\n`;
-                                } else if (data.type === 'success') {
-                                    outputDiv.innerHTML += `<span class="success">${data.content}</span>\n`;
-                                }
-                                outputDiv.scrollTop = outputDiv.scrollHeight;
-                            } catch (e) {
-                                // 如果不是JSON格式，直接显示
-                                outputDiv.innerHTML += line + '\n';
-                                outputDiv.scrollTop = outputDiv.scrollHeight;
-                            }
-                        }
-                    }
-                }
-                
-            } catch (error) {
-                outputDiv.innerHTML += `<span class="error">连接错误: ${error.message}</span>\n`;
-                outputDiv.innerHTML += `<span class="error">请确保后端服务器正在运行</span>\n`;
-            } finally {
-                // 隐藏加载状态
-                loadingDiv.style.display = 'none';
-                
-                // 重新启用所有按钮
-                buttons.forEach(btn => btn.disabled = false);
-            }
-        }
-        
-        // 获取脚本参数
-        function getScriptParams(scriptType) {
-            switch (scriptType) {
-                case 'build_folder':
-                    const buildPath = document.getElementById('build-folder-path').value.trim();
-                    const buildCount = document.getElementById('build-folder-count').value;
-                    if (!buildPath) {
-                        alert('请输入目标目录路径');
-                        return null;
-                    }
-                    if (!buildCount || buildCount < 1) {
-                        alert('请输入有效的文件夹数量');
-                        return null;
-                    }
-                    return { path: buildPath, count: parseInt(buildCount) };
-                    
-                case 'rename_files':
-                    const renamePath = document.getElementById('rename-files-path').value.trim();
-                    if (!renamePath) {
-                        alert('请输入目标目录路径');
-                        return null;
-                    }
-                    return { path: renamePath };
-                    
-                case 'webp_video':
-                    const webpPath = document.getElementById('webp-video-path').value.trim();
-                    const duration = document.getElementById('webp-duration').value;
-                    const overwrite = document.getElementById('webp-overwrite').value === 'true';
-                    if (!webpPath) {
-                        alert('请输入视频目录路径');
-                        return null;
-                    }
-                    return { path: webpPath, duration: parseInt(duration), overwrite: overwrite };
-                    
-                case 'copy_files':
-                    const sourcePath = document.getElementById('copy-source-path').value.trim();
-                    const targetPath = document.getElementById('copy-target-path').value.trim();
-                    if (!sourcePath || !targetPath) {
-                        alert('请输入素材文件夹和发布文件夹路径');
-                        return null;
-                    }
-                    return { source_path: sourcePath, target_path: targetPath };
-                    
-                case 'unzip':
-                    const unzipPath = document.getElementById('unzip-path').value.trim();
-                    const unzipOverwrite = document.getElementById('unzip-overwrite').value === 'true';
-                    if (!unzipPath) {
-                        alert('请输入压缩文件目录路径');
-                        return null;
-                    }
-                    return { path: unzipPath, overwrite: unzipOverwrite };
-                    
-                case 'md5_renew':
-                    const md5Path = document.getElementById('md5-path').value.trim();
-                    const md5Bytes = document.getElementById('md5-bytes').value;
-                    if (!md5Path) {
-                        alert('请输入图片目录路径');
-                        return null;
-                    }
-                    return { path: md5Path, bytes: parseInt(md5Bytes) };
-                    
-                case 'auto_build_copy':
-                    const autoBasePath = document.getElementById('auto-base-path').value.trim();
-                    const autoSourcePath = document.getElementById('auto-source-path').value.trim();
-                    const autoCount = document.getElementById('auto-folder-count').value;
-                    if (!autoBasePath || !autoSourcePath) {
-                        alert('请输入基础目录和素材目录路径');
-                        return null;
-                    }
-                    return { base_path: autoBasePath, source_path: autoSourcePath, count: parseInt(autoCount) };
-                    
-                case 'webp_resize':
-                    const resizePath = document.getElementById('webp-resize-path').value.trim();
-                    const threshold = document.getElementById('webp-threshold').value;
-                    if (!resizePath) {
-                        alert('请输入目录路径');
-                        return null;
-                    }
-                    return { path: resizePath, threshold: parseFloat(threshold) };
-                    
-                default:
-                    alert('未知的脚本类型');
-                    return null;
-            }
-        }
-        
-        // 页面加载完成后的初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 检查后端服务器状态
-            checkServerStatus();
-        });
-        
-        // 检查服务器状态
-        async function checkServerStatus() {
-            try {
-                const response = await fetch('/api/status');
-                if (response.ok) {
-                    const data = await response.json();
-                    document.getElementById('output-content').innerHTML = 
-                        `<span class="success">✅ 后端服务器已连接 (${data.message})</span>\n` +
-                        `<span class="success">📁 工作目录: ${data.working_directory}</span>\n` +
-                        `<span class="success">🐍 Python版本: ${data.python_version}</span>\n\n` +
-                        '请选择上方工具开始使用...';
-                } else {
-                    throw new Error('服务器响应异常');
-                }
-            } catch (error) {
-                document.getElementById('output-content').innerHTML = 
-                    `<span class="error">❌ 无法连接到后端服务器</span>\n` +
-                    `<span class="error">请确保运行了 server.py 文件</span>\n` +
-                    `<span class="error">错误信息: ${error.message}</span>`;
-            }
-        }
-    </script>
+                <div class="tools-list">
+                    <!-- 自动创建并复制工具 -->
+                    <div class="tool-item" data-tool="auto_build_copy">
+                        <div class="tool-header">
+                            <div class="tool-number">01</div>
+                            <div class="tool-icon automation">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>自动创建并复制</h3>
+                                <p>创建文件夹并随机复制图片</p>
+                            </div>
+                            <div class="expand-indicator">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="tool-form">
+                            <div class="input-group">
+                                <label>基础目录路径</label>
+                                <input type="text" id="auto-base-path" name="base_path" placeholder="请输入基础目录路径">
+                            </div>
+                            <div class="input-group">
+                                <label>素材目录路径</label>
+                                <input type="text" id="auto-source-path" name="source_path" placeholder="请输入素材目录路径">
+                            </div>
+                            <div class="input-group">
+                                <label>文件夹数量</label>
+                                <input type="number" id="auto-folder-count" name="count" min="1" value="5">
+                            </div>
+                            <div class="button-group">
+                                <button class="execute-btn" data-script="auto_build_copy">
+                                    <i class="fas fa-play"></i>
+                                    开始执行
+                                </button>
+                                <button class="stop-btn-inline" data-script="auto_build_copy" style="display: none;">
+                                    <i class="fas fa-stop"></i>
+                                    终止执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MD5修改工具 -->
+                    <div class="tool-item" data-tool="md5_renew">
+                        <div class="tool-header">
+                            <div class="tool-number">02</div>
+                            <div class="tool-icon security">
+                                <i class="fas fa-fingerprint"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>MD5值修改</h3>
+                                <p>通过添加随机字节改变MD5值</p>
+                            </div>
+                            <div class="expand-indicator">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="tool-form">
+                            <div class="input-group">
+                                <label>图片目录路径</label>
+                                <input type="text" id="md5-path" name="path" placeholder="请输入图片文件夹路径">
+                            </div>
+                            <div class="input-group">
+                                <label>随机字节数</label>
+                                <input type="number" id="md5-bytes" name="bytes" min="1" max="100" value="10">
+                            </div>
+                            <div class="button-group">
+                                <button class="execute-btn" data-script="md5_renew">
+                                    <i class="fas fa-play"></i>
+                                    开始执行
+                                </button>
+                                <button class="stop-btn-inline" data-script="md5_renew" style="display: none;">
+                                    <i class="fas fa-stop"></i>
+                                    终止执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 解压缩工具 -->
+                    <div class="tool-item" data-tool="unzip">
+                        <div class="tool-header">
+                            <div class="tool-number">03</div>
+                            <div class="tool-icon archive">
+                                <i class="fas fa-file-archive"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>批量解压缩</h3>
+                                <p>自动解压所有ZIP压缩文件</p>
+                            </div>
+                            <div class="expand-indicator">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="tool-form">
+                            <div class="input-group">
+                                <label>ZIP文件夹路径</label>
+                                <input type="text" id="unzip-path" name="path" placeholder="请输入ZIP文件夹路径">
+                            </div>
+                            <div class="input-group">
+                                <label>覆盖已存在文件</label>
+                                <select id="unzip-overwrite" name="overwrite">
+                                    <option value="false">否</option>
+                                    <option value="true">是</option>
+                                </select>
+                            </div>
+                            <div class="button-group">
+                                <button class="execute-btn" data-script="unzip">
+                                    <i class="fas fa-play"></i>
+                                    开始执行
+                                </button>
+                                <button class="stop-btn-inline" data-script="unzip" style="display: none;">
+                                    <i class="fas fa-stop"></i>
+                                    终止执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 视频转WebP工具 -->
+                    <div class="tool-item" data-tool="webp_video">
+                        <div class="tool-header">
+                            <div class="tool-number">04</div>
+                            <div class="tool-icon media">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>视频转WebP动图</h3>
+                                <p>批量将视频文件转换为WebP格式</p>
+                            </div>
+                            <div class="expand-indicator">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="tool-form">
+                            <div class="input-group">
+                                <label>视频目录路径</label>
+                                <input type="text" id="webp-video-path" name="path" placeholder="请输入视频文件夹路径">
+                            </div>
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label>转换时长(秒)</label>
+                                    <input type="number" id="webp-duration" name="duration" min="1" max="10" value="3">
+                                </div>
+                                <div class="input-group">
+                                    <label>覆盖已存在文件</label>
+                                    <select id="webp-overwrite" name="overwrite">
+                                        <option value="false">否</option>
+                                        <option value="true">是</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="button-group">
+                                <button class="execute-btn" data-script="webp_video">
+                                    <i class="fas fa-play"></i>
+                                    开始执行
+                                </button>
+                                <button class="stop-btn-inline" data-script="webp_video" style="display: none;">
+                                    <i class="fas fa-stop"></i>
+                                    终止执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WebP重新生成工具 -->
+                    <div class="tool-item" data-tool="webp_resize">
+                        <div class="tool-header">
+                            <div class="tool-number">05</div>
+                            <div class="tool-icon media">
+                                <i class="fas fa-sync-alt"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>WebP重新生成</h3>
+                                <p>重新生成超过阈值的WebP文件</p>
+                            </div>
+                            <div class="expand-indicator">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="tool-form">
+                            <div class="input-group">
+                                <label>目录路径</label>
+                                <input type="text" id="webp-resize-path" name="path" placeholder="请输入目录路径">
+                            </div>
+                            <div class="input-group">
+                                <label>文件大小阈值(MB)</label>
+                                <input type="number" id="webp-threshold" name="size_threshold" min="0.1" step="0.1" value="2.0">
+                            </div>
+                            <div class="input-group">
+                                <label>目标帧率(fps)</label>
+                                <input type="number" id="webp-fps" name="fps" min="1" step="1" value="15">
+                            </div>
+                            <div class="button-group">
+                                <button class="execute-btn" data-script="webp_resize">
+                                    <i class="fas fa-play"></i>
+                                    开始执行
+                                </button>
+                                <button class="stop-btn-inline" data-script="webp_resize" style="display: none;">
+                                    <i class="fas fa-stop"></i>
+                                    终止执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文件重命名工具 -->
+                    <div class="tool-item" data-tool="rename_files">
+                        <div class="tool-header">
+                            <div class="tool-number">06</div>
+                            <div class="tool-icon file">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>批量重命名文件</h3>
+                                <p>重命名为"文件夹名_编号.扩展名"格式</p>
+                            </div>
+                            <div class="expand-indicator">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="tool-form">
+                            <div class="input-group">
+                                <label>目标目录路径</label>
+                                <input type="text" id="rename-files-path" name="path" placeholder="请输入文件夹路径">
+                            </div>
+                            <div class="button-group">
+                                <button class="execute-btn" data-script="rename_files">
+                                    <i class="fas fa-play"></i>
+                                    开始执行
+                                </button>
+                                <button class="stop-btn-inline" data-script="rename_files" style="display: none;">
+                                    <i class="fas fa-stop"></i>
+                                    终止执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Excel批量处理工具 -->
+                    <div class="tool-item" data-tool="excel_renew">
+                        <div class="tool-header">
+                            <div class="tool-number">07</div>
+                            <div class="tool-icon file">
+                                <i class="fas fa-file-excel"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>Excel批量处理</h3>
+                                <p>批量清空Excel文件的K2单元格和C列内容</p>
+                            </div>
+                            <div class="expand-indicator">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="tool-form">
+                            <div class="input-group">
+                                <label>Excel文件夹路径</label>
+                                <input type="text" id="excel-folder-path" name="path" placeholder="请输入包含Excel文件的文件夹路径">
+                            </div>
+                            <div class="input-group">
+                                <label>处理说明</label>
+                                <div class="info-text">
+                                    <p>• 清空所有工作表的K2单元格</p>
+                                    <p>• 清空第一个工作表的C列内容（保留C1）</p>
+                                    <p>• 仅处理.xlsx文件，跳过临时文件</p>
+                                </div>
+                            </div>
+                            <div class="button-group">
+                                <button class="execute-btn" data-script="excel_renew">
+                                    <i class="fas fa-play"></i>
+                                    开始执行
+                                </button>
+                                <button class="stop-btn-inline" data-script="excel_renew" style="display: none;">
+                                    <i class="fas fa-stop"></i>
+                                    终止执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文件夹创建工具 -->
+                    <div class="tool-item" data-tool="build_folder">
+                        <div class="tool-header">
+                            <div class="tool-number">08</div>
+                            <div class="tool-icon folder">
+                                <i class="fas fa-folder-plus"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>批量创建文件夹</h3>
+                                <p>在指定目录下创建编号文件夹</p>
+                            </div>
+                            <div class="expand-indicator">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="tool-form">
+                            <div class="input-group">
+                                <label>目标目录路径</label>
+                                <input type="text" id="build-folder-path" name="path" placeholder="请输入文件夹路径">
+                            </div>
+                            <div class="input-group">
+                                <label>文件夹数量</label>
+                                <input type="number" id="build-folder-count" name="count" min="1" value="5" placeholder="数量">
+                            </div>
+                            <div class="button-group">
+                                <button class="execute-btn" data-script="build_folder">
+                                    <i class="fas fa-play"></i>
+                                    开始执行
+                                </button>
+                                <button class="stop-btn-inline" data-script="build_folder" style="display: none;">
+                                    <i class="fas fa-stop"></i>
+                                    终止执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文件复制工具 -->
+                    <div class="tool-item" data-tool="copy_files">
+                        <div class="tool-header">
+                            <div class="tool-number">09</div>
+                            <div class="tool-icon file">
+                                <i class="fas fa-copy"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>智能文件复制</h3>
+                                <p>随机分配图片到各个子目录</p>
+                            </div>
+                            <div class="expand-indicator">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="tool-form">
+                            <div class="input-group">
+                                <label>素材文件夹路径</label>
+                                <input type="text" id="copy-source-path" name="source_path" placeholder="请输入素材文件夹路径">
+                            </div>
+                            <div class="input-group">
+                                <label>发布文件夹路径</label>
+                                <input type="text" id="copy-target-path" name="target_path" placeholder="请输入发布文件夹路径">
+                            </div>
+                            <div class="button-group">
+                                <button class="execute-btn" data-script="copy_files">
+                                    <i class="fas fa-play"></i>
+                                    开始执行
+                                </button>
+                                <button class="stop-btn-inline" data-script="copy_files" style="display: none;">
+                                    <i class="fas fa-stop"></i>
+                                    终止执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 终止按钮测试工具 -->
+                    <div class="tool-item" data-tool="test_stop_button">
+                        <div class="tool-header">
+                            <div class="tool-number">10</div>
+                            <div class="tool-icon testing">
+                                <i class="fas fa-bug"></i>
+                            </div>
+                            <div class="tool-info">
+                                <h3>终止按钮测试</h3>
+                                <p>测试Web界面终止按钮功能</p>
+                            </div>
+                            <div class="expand-indicator">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="tool-form">
+                            <div class="info-box">
+                                <div class="info-content">
+                                    <i class="fas fa-info-circle"></i>
+                                    <div>
+                                        <h4>测试说明</h4>
+                                        <p>此工具专门用于测试终止按钮功能。脚本将运行30步（约60秒），您可以在执行过程中点击"终止执行"按钮来测试终止功能是否正常工作。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="button-group">
+                                <button class="execute-btn" data-script="test_stop_button">
+                                    <i class="fas fa-play"></i>
+                                    开始测试
+                                </button>
+                                <button class="stop-btn-inline" data-script="test_stop_button" style="display: none;">
+                                    <i class="fas fa-stop"></i>
+                                    终止执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </main>
+    </div>
+
+    <script src="environment/script.js"></script>
 </body>
 </html>

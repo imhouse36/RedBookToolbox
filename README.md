@@ -52,7 +52,7 @@ pip install openpyxl
 
 1. **启动Web服务器**：
    - 双击运行 `start_server.bat` 文件
-   - 或在命令行中运行：`python server.py`
+   - 或在命令行中运行：`python environment/server.py`
 
 2. **打开Web界面**：
    - 在浏览器中访问：`http://localhost:8000`
@@ -107,6 +107,7 @@ python Gemini/Webp_video_to_img_Gemini2.5pro.py
 - **后端**：Python HTTP服务器
 - **通信**：RESTful API + 流式数据传输
 - **兼容性**：支持所有现代浏览器
+- **架构**：前后端分离，模块化设计
 
 ### 文件结构
 ```
@@ -124,8 +125,11 @@ python Gemini/Webp_video_to_img_Gemini2.5pro.py
 ├── Gemini/                   # Gemini优化版本工具脚本
 │   ├── Webp_resize_Gemini2.5pro.py      # WebP重新生成工具(Gemini版)
 │   └── Webp_video_to_img_Gemini2.5pro.py # 视频转WebP工具(Gemini版)
+├── environment/              # Web环境文件夹
+│   ├── server.py                 # Web服务器后端
+│   ├── script.js                 # 前端JavaScript逻辑
+│   └── styles.css                # 前端CSS样式
 ├── index.html            # Web界面主页
-├── server.py             # Web服务器后端
 ├── start_server.bat      # 一键启动脚本
 └── README.md             # 项目说明文档
 ```

@@ -5,7 +5,7 @@
 # ==============================================================================
 #
 # 脚本名称 (Script Name):
-#   Rename_files_Claude4.py (Claude4优化版)
+#   Rename_files.py
 #
 # 主要目的 (Main Purpose):
 #   本脚本用于递归地重命名指定顶层文件夹及其所有子文件夹内的文件。
@@ -271,6 +271,9 @@ def process_stage_two_final_rename(dirpath: str, folder_prefix: str) -> Tuple[in
 def rename_files_recursively_optimized() -> Tuple[bool, int, int, int]:
     """
     主函数：执行递归的两阶段文件重命名逻辑（优化版）。
+    支持两种输入模式：
+    1. 交互式输入模式（命令行直接运行）
+    2. 标准输入模式（Web环境或管道输入）
     
     返回:
         tuple: (是否全部成功, 成功处理的文件数, 失败的文件数, 处理的文件夹数)
@@ -281,33 +284,43 @@ def rename_files_recursively_optimized() -> Tuple[bool, int, int, int]:
     start_time = time.time()
     
     try:
-        # 1. 获取用户输入的文件夹路径
+        # 1. 智能检测输入模式并获取文件夹路径
         print("\n步骤 1: 获取文件夹路径")
-        top_level_folder_path = get_valid_folder_path_from_user(
-            "请输入要重命名文件的顶层文件夹路径: "
-        )
         
-        print(f"\n配置确认:")
+        # 检测是否为非交互模式（Web环境或管道输入）
+        is_non_interactive = hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty()
+        
+        if is_non_interactive:
+            # 非交互模式：从标准输入读取参数（适用于Web环境）
+            print("🌐 检测到Web环境，使用标准输入模式")
+            try:
+                path_str = input().strip()
+                top_level_folder_path = Path(path_str)
+                
+                if not top_level_folder_path.exists():
+                    raise ValueError(f"路径不存在: {path_str}")
+                if not top_level_folder_path.is_dir():
+                    raise ValueError(f"路径不是目录: {path_str}")
+                    
+            except (ValueError, EOFError) as e:
+                print(f"❌ 参数读取错误: {e}")
+                return False, 0, 0, 0
+        else:
+            # 交互模式：使用原有的交互式输入函数
+            print("💻 检测到命令行环境，使用交互式输入模式")
+            top_level_folder_path = get_valid_folder_path_from_user(
+                "请输入要重命名文件的根文件夹路径: "
+            )
+        
+        print(f"\n✅ 配置确认:")
         print(f"- 目标文件夹: {top_level_folder_path}")
         print(f"- 重命名规则: {{文件夹名称}}_{{序号}}{{原扩展名}}")
         print(f"- 处理方式: 递归处理所有子文件夹")
         print(f"- 临时后缀: {TEMP_SUFFIX}")
         
-        # 2. 用户确认
-        print(f"\n步骤 2: 确认处理")
-        print("⚠️  警告：此操作将直接修改文件名，操作不可逆！建议先备份重要数据。")
-        
-        try:
-            confirm = input("\n确认开始重命名操作吗？(y/N): ").strip().lower()
-            if confirm not in ['y', 'yes', '是']:
-                print("操作已取消")
-                return False, 0, 0, 0
-        except KeyboardInterrupt:
-            print("\n操作已由用户中止")
-            return False, 0, 0, 0
-        
-        # 3. 开始递归处理
-        print(f"\n步骤 3: 开始递归处理")
+        # 2. 自动开始处理（Web环境下不需要用户确认）
+        print(f"\n步骤 2: 开始递归处理")
+        print("⚠️ 警告：此操作将直接修改文件名，操作不可逆！")
         print("=" * 60)
         
         total_renamed_files = 0

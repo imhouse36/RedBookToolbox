@@ -9,7 +9,7 @@ echo.
 echo Starting server, please wait...
 echo.
 
-python server.py
+python environment/server.py
 
 echo.
 echo Server closed, press any key to exit...

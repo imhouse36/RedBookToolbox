@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import sys
 import subprocess
 import pathlib  # 导入 pathlib 模块
+import signal
+import threading
+import platform
 
 # ==============================================================================
 # 脚本功能核心备注 (Script Core Functionality Notes)
@@ -44,6 +48,11 @@ import pathlib  # 导入 pathlib 模块
 
 
 # --- 配置 ---
+
+# 全局变量用于跟踪当前运行的进程
+current_ffmpeg_process = None
+process_lock = threading.Lock()
+
 VIDEO_EXTENSIONS = ('.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg')
 FFMPEG_PATH = "ffmpeg"  # 如果不在PATH中，请指定完整路径
 CONVERSION_DURATION_SECONDS = "3"  # 从视频截取的时长（秒）
@@ -61,6 +70,31 @@ WEBP_CONVERSION_OPTIONS = [
 
 
 # --- /配置 ---
+
+def signal_handler(signum, frame):
+    """处理中断信号，终止当前运行的FFmpeg进程"""
+    global current_ffmpeg_process
+    print("\n\n⚠️ 收到中断信号，正在终止当前进程...")
+    
+    with process_lock:
+        if current_ffmpeg_process and current_ffmpeg_process.poll() is None:
+            try:
+                print("正在终止FFmpeg进程...")
+                current_ffmpeg_process.terminate()
+                # 等待进程终止，如果超时则强制杀死
+                try:
+                    current_ffmpeg_process.wait(timeout=5)
+                    print("FFmpeg进程已成功终止")
+                except subprocess.TimeoutExpired:
+                    print("FFmpeg进程未在5秒内终止，强制杀死进程")
+                    current_ffmpeg_process.kill()
+                    current_ffmpeg_process.wait()
+                    print("FFmpeg进程已被强制终止")
+            except Exception as e:
+                print(f"终止FFmpeg进程时发生错误: {e}")
+    
+    print("操作已被用户中断")
+    sys.exit(0)
 
 def get_human_readable_size(size_bytes: int) -> str:
     """将字节大小转换为人类可读的格式 (KB, MB, GB)"""
@@ -200,7 +234,7 @@ def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_pat
                 current_file += 1
                 output_file_path = input_file_path.with_suffix(".webp")
 
-                print(f"\n[{current_file}/{total_found}] 处理视频文件: {input_file_path}")
+                print(f"\n[{current_file}/{total_found}] 处理视频文件: {input_file_path}", flush=True)
 
                 # 根据覆盖模式决定是否处理
                 if not should_process_file(output_file_path, overwrite_mode, input_file_path):
@@ -211,7 +245,7 @@ def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_pat
                     ffmpeg_exe_path,
                     "-y",  # 覆盖输出文件而不询问
                     "-i", str(input_file_path),
-                    "-t", CONVERSION_DURATION_SECONDS,
+                    "-t", str(CONVERSION_DURATION_SECONDS),
                 ]
                 command.extend(WEBP_CONVERSION_OPTIONS)
                 command.append(str(output_file_path))
@@ -219,17 +253,27 @@ def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_pat
                 print(f"    执行命令: {' '.join(command)}")
 
                 try:
-                    result = subprocess.run(command, capture_output=True, text=True, check=False,
-                                            encoding='utf-8', errors='replace', timeout=FFMPEG_TIMEOUT_SECONDS)
+                    # 使用Popen来获取进程对象，以便可以在信号处理中终止
+                    with process_lock:
+                        current_ffmpeg_process = subprocess.Popen(command, stdout=subprocess.PIPE, 
+                                                                 stderr=subprocess.PIPE, text=True,
+                                                                 encoding='utf-8', errors='replace')
+                    
+                    try:
+                        stdout, stderr = current_ffmpeg_process.communicate(timeout=FFMPEG_TIMEOUT_SECONDS)
+                        returncode = current_ffmpeg_process.returncode
+                    finally:
+                        with process_lock:
+                            current_ffmpeg_process = None
 
-                    if result.returncode == 0:
-                        print(f"    ✓ 成功转换 (前 {CONVERSION_DURATION_SECONDS} 秒): {output_file_path.name}")
+                    if returncode == 0:
+                        print(f"    ✓ 成功转换 (前 {CONVERSION_DURATION_SECONDS} 秒): {output_file_path.name}", flush=True)
                         converted_count += 1
                         try:
                             original_size_bytes = input_file_path.stat().st_size
                             webp_size_bytes = output_file_path.stat().st_size
-                            print(f"      原文件大小: {get_human_readable_size(original_size_bytes)}")
-                            print(f"      WebP({CONVERSION_DURATION_SECONDS}s)文件大小: {get_human_readable_size(webp_size_bytes)}")
+                            print(f"      原文件大小: {get_human_readable_size(original_size_bytes)}", flush=True)
+                            print(f"      WebP({CONVERSION_DURATION_SECONDS}s)文件大小: {get_human_readable_size(webp_size_bytes)}", flush=True)
                             ratio = 0.0
                             if original_size_bytes > 0:
                                 ratio = (webp_size_bytes / original_size_bytes) * 100
@@ -241,11 +285,11 @@ def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_pat
                         except OSError as e_stat:
                             print(f"      无法获取转换后文件大小: {e_stat}")
                     else:
-                        print(f"    ✗ 错误: FFmpeg 转换失败 (返回码: {result.returncode})")
-                        if result.stdout: 
-                            print(f"      FFmpeg 输出 (stdout):\n{result.stdout.strip()}")
-                        if result.stderr: 
-                            print(f"      FFmpeg 错误 (stderr):\n{result.stderr.strip()}")
+                        print(f"    ✗ 错误: FFmpeg 转换失败 (返回码: {returncode})")
+                        if stdout: 
+                            print(f"      FFmpeg 输出 (stdout):\n{stdout.strip()}")
+                        if stderr: 
+                            print(f"      FFmpeg 错误 (stderr):\n{stderr.strip()}")
                         failed_count += 1
                         if output_file_path.exists():
                             try:
@@ -253,12 +297,18 @@ def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_pat
                                 print(f"      已删除不完整的输出文件: {output_file_path}")
                             except OSError as e_del:
                                 print(f"      删除不完整的输出文件失败: {e_del}")
-                except subprocess.TimeoutExpired as e_timeout:
+                except subprocess.TimeoutExpired:
                     print(f"    ✗ 错误: FFmpeg 转换超时 ({FFMPEG_TIMEOUT_SECONDS}s): {input_file_path.name}")
-                    if e_timeout.stdout: 
-                        print(f"      FFmpeg 输出 (stdout):\n{e_timeout.stdout.decode('utf-8', 'replace').strip()}")
-                    if e_timeout.stderr: 
-                        print(f"      FFmpeg 错误 (stderr):\n{e_timeout.stderr.decode('utf-8', 'replace').strip()}")
+                    # 终止超时的进程
+                    with process_lock:
+                        if current_ffmpeg_process and current_ffmpeg_process.poll() is None:
+                            current_ffmpeg_process.terminate()
+                            try:
+                                current_ffmpeg_process.wait(timeout=5)
+                            except subprocess.TimeoutExpired:
+                                current_ffmpeg_process.kill()
+                                current_ffmpeg_process.wait()
+                        current_ffmpeg_process = None
                     failed_count += 1
                     if output_file_path.exists():
                         try:
@@ -289,41 +339,76 @@ def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_pat
     print("=" * 60)
 
 
+import argparse # 导入 argparse 模块
+
 def main():
-    """主函数"""
-    print("视频转WebP工具 - 批量转换器")
-    print("=" * 60)
-    print("支持格式: " + ", ".join(VIDEO_EXTENSIONS))
-    print(f"转换时长: 前 {CONVERSION_DURATION_SECONDS} 秒")
-    print(f"压缩参数: 质量75，有损压缩，无限循环")
-    print("=" * 60)
+    """主函数，执行脚本的核心逻辑"""
+    global CONVERSION_DURATION_SECONDS # 在函数开始就声明全局变量
     
-    # 检查FFmpeg
+    # 注册信号处理程序
+    signal.signal(signal.SIGINT, signal_handler)
+    if platform.system() == "Windows":
+        signal.signal(signal.SIGBREAK, signal_handler) # Windows下的Ctrl+Break
+
+    parser = argparse.ArgumentParser(description="将视频文件批量转换为WebP格式。")
+    parser.add_argument("root_folder", type=str, help="包含视频文件的根目录路径")
+    parser.add_argument("--overwrite", type=str, choices=['skip', 'replace_all', 'ask'], default='ask', 
+                        help="处理已存在的WebP文件的方式: 'skip', 'replace_all', 'ask' (默认)")
+    parser.add_argument("--duration", type=str, default=CONVERSION_DURATION_SECONDS, 
+                        help=f"从视频截取的时长（秒），默认为 {CONVERSION_DURATION_SECONDS}")
+
+    # 检查是否从服务器环境运行（通过特定环境变量判断，或者没有输入参数时）
+    # 在服务器环境中，参数由 server.py 传递
+    # 在直接运行时，如果没有提供参数，则进入交互模式
+    args = None
+    # 尝试解析参数，如果失败（例如直接运行脚本未提供参数），则进入交互模式
+    # 或者如果 sys.stdin.isatty() 为 False，说明可能是在非交互环境（如服务器调用）
+    # 并且有参数传入
+    if not sys.stdin.isatty() and len(sys.argv) > 1:
+        try:
+            args = parser.parse_args()
+            print("通过命令行参数运行...")
+        except SystemExit: # argparse 在参数错误时会调用 sys.exit()
+            print("命令行参数解析失败，尝试进入交互模式或检查参数...")
+            # 如果是服务器调用，不应该进入交互模式，而是报错退出
+            if 'WEBP_TOOL_SERVER_MODE' in os.environ:
+                 print("错误：服务器模式下命令行参数解析失败。请检查服务器传递的参数。")
+                 sys.exit(1)
+            # 否则，可能是用户直接运行但参数错了，可以尝试交互
+            args = None 
+
+    if args and args.root_folder:
+        root_folder_str = args.root_folder
+        overwrite_mode = args.overwrite
+        CONVERSION_DURATION_SECONDS = args.duration
+        print(f"根目录: {root_folder_str}")
+        print(f"覆盖模式: {overwrite_mode}")
+        print(f"转换时长: {CONVERSION_DURATION_SECONDS}秒")
+        root_folder = pathlib.Path(root_folder_str)
+        if not root_folder.is_dir():
+            print(f"错误：通过参数提供的路径 '{root_folder_str}' 不是一个有效的文件夹。")
+            sys.exit(1)
+    else:
+        print("欢迎使用视频批量转WebP工具！(交互模式)")
+        print("=========================================")
+        if not check_ffmpeg_availability(FFMPEG_PATH):
+            sys.exit(1)
+        root_folder = get_valid_folder_path_from_user()
+        overwrite_mode = get_overwrite_preference() # 获取覆盖偏好
+        # 交互模式下也可以考虑让用户输入时长
+        try:
+            duration_input = input(f"请输入转换时长（秒，默认为 {CONVERSION_DURATION_SECONDS}，直接回车使用默认值）: ").strip()
+            if duration_input:
+                CONVERSION_DURATION_SECONDS = duration_input
+        except EOFError: # 如果是在非交互环境（如服务器重定向了stdin但未提供输入）
+            print("无法读取时长输入，使用默认值。")
+            pass # 使用默认时长
+
     if not check_ffmpeg_availability(FFMPEG_PATH):
-        print("\n无法继续执行，请确保FFmpeg正确安装后重试。")
-        input("按 Enter 键退出...")
-        return
-    
-    # 获取目标目录
-    target_directory = get_valid_folder_path_from_user()
-    if target_directory is None:
-        print("\n操作已取消。")
-        input("按 Enter 键退出...")
-        return
-    
-    # 获取覆盖偏好
-    overwrite_mode = get_overwrite_preference()
-    
-    # 开始转换
-    try:
-        convert_videos_to_webp_recursive(target_directory, FFMPEG_PATH, overwrite_mode)
-    except KeyboardInterrupt:
-        print("\n\n用户中断操作。")
-    except Exception as e:
-        print(f"\n\n程序执行过程中发生错误: {e}")
-    finally:
-        input("\n按 Enter 键退出...")
+        sys.exit(1)
+
+    convert_videos_to_webp_recursive(root_folder, FFMPEG_PATH, overwrite_mode)
 
 
 if __name__ == "__main__":
-    main()                            
+    main()

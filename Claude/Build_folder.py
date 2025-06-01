@@ -140,6 +140,9 @@ def create_folders_pathlib(base_dir: pathlib.Path, num_folders_to_create: int) -
 def main():
     """
     主函数：控制程序的执行流程。
+    支持两种输入模式：
+    1. 交互式输入模式（命令行直接运行）
+    2. 标准输入模式（Web环境或管道输入）
     """
     print("编号文件夹批量创建工具")
     print("=" * 50)
@@ -148,38 +151,62 @@ def main():
     script_start_time = time.time()
     
     try:
-        # 1. 获取用户输入：基础目录路径
-        base_path = get_valid_folder_path_from_user(
-            "请输入基础目录路径: "
-        )
+        # 检测是否为非交互模式（Web环境或管道输入）
+        is_non_interactive = hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty()
         
-        # 2. 获取用户输入：要创建的子文件夹数量
-        num_folders = get_positive_integer_input(
-            "请输入要创建的子文件夹个数 (例如: 5): "
-        )
+        if is_non_interactive:
+            # 非交互模式：从标准输入读取参数（适用于Web环境）
+            print("🌐 检测到Web环境，使用标准输入模式")
+            try:
+                # 从标准输入读取参数（按服务器传递顺序：path, count）
+                path_str = input().strip()
+                count_str = input().strip()
+                
+                # 验证路径
+                base_path = pathlib.Path(path_str)
+                if not base_path.exists() or not base_path.is_dir():
+                    raise ValueError(f"路径不存在或不是目录: {path_str}")
+                
+                # 验证数量
+                num_folders = int(count_str)
+                if num_folders <= 0:
+                    raise ValueError("文件夹数量必须为正整数")
+                    
+            except (ValueError, EOFError) as e:
+                print(f"❌ 参数读取错误: {e}")
+                return
+        else:
+            # 交互模式：使用原有的交互式输入函数
+            print("💻 检测到命令行环境，使用交互式输入模式")
+            base_path = get_valid_folder_path_from_user(
+                "请输入要创建子文件夹的基础目录路径: "
+            )
+            num_folders = get_positive_integer_input(
+                "请输入要创建的子文件夹数量: "
+            )
         
-        print(f"\n配置确认:")
-        print(f"- 基础目录路径: {base_path}")
-        print(f"- 创建子文件夹数量: {num_folders}")
+        print(f"\n✅ 参数设置成功:")
+        print(f"   基础目录路径: {base_path.absolute()}")
+        print(f"   创建子文件夹数量: {num_folders}")
         
-        # 3. 执行文件夹创建任务
+        # 执行文件夹创建任务
         success, created_count = create_folders_pathlib(base_path, num_folders)
         
         if success:
-            print("\n所有文件夹创建任务完成！")
+            print("\n✅ 所有文件夹创建任务完成！")
         else:
-            print(f"\n文件夹创建任务部分完成，成功创建 {created_count}/{num_folders} 个文件夹。")
+            print(f"\n⚠️ 文件夹创建任务部分完成，成功创建 {created_count}/{num_folders} 个文件夹。")
         
-        # 4. 输出脚本总执行时间
+        # 输出脚本总执行时间
         script_end_time = time.time()
         total_script_time = script_end_time - script_start_time
-        print(f"\n脚本总执行时间: {total_script_time:.2f} 秒")
+        print(f"\n⏱️ 脚本总执行时间: {total_script_time:.2f} 秒")
         print("程序执行完毕。")
         
     except KeyboardInterrupt:
-        print("\n\n用户中断程序执行。")
+        print("\n\n⚠️ 用户中断程序执行。")
     except Exception as e:
-        print(f"\n程序执行过程中发生意外错误: {e}")
+        print(f"\n❌ 程序执行过程中发生意外错误: {e}")
         print("请检查输入参数和文件权限后重试。")
 
 if __name__ == "__main__":

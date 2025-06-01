@@ -185,6 +185,9 @@ def copy_file_safely(source_path: Path, target_path: Path, filename: str):
 def copy_random_images_optimized():
     """
     优化版本的图片随机复制函数，执行图片随机复制逻辑，并在结束时报告统计信息。
+    支持两种输入模式：
+    1. 交互式输入模式（命令行直接运行）
+    2. 标准输入模式（Web环境或管道输入）
 
     返回:
         tuple: (是否全部成功, 成功复制的文件数量, 总尝试复制的文件数量)
@@ -198,12 +201,42 @@ def copy_random_images_optimized():
     failed_operations = []
     
     try:
-        # 1. 获取用户输入的路径
+        # 1. 智能检测输入模式并获取路径
         print("\n步骤 1: 获取文件夹路径")
-        source_base_path = get_valid_folder_path_from_user('请输入"素材"文件夹的完整路径: ')
-        target_base_path = get_valid_folder_path_from_user('请输入"发布"文件夹的完整路径: ')
         
-        print(f"\n配置确认:")
+        # 检测是否为非交互模式（Web环境或管道输入）
+        is_non_interactive = hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty()
+        
+        if is_non_interactive:
+            # 非交互模式：从标准输入读取参数（适用于Web环境）
+            print("🌐 检测到Web环境，使用标准输入模式")
+            try:
+                # 从标准输入读取参数（按服务器传递顺序：source_path, target_path）
+                source_path_str = input().strip()
+                target_path_str = input().strip()
+                
+                source_base_path = Path(source_path_str)
+                target_base_path = Path(target_path_str)
+                
+                if not source_base_path.exists() or not source_base_path.is_dir():
+                    raise ValueError(f"素材文件夹路径不存在或不是目录: {source_path_str}")
+                if not target_base_path.exists() or not target_base_path.is_dir():
+                    raise ValueError(f"发布文件夹路径不存在或不是目录: {target_path_str}")
+                    
+            except (ValueError, EOFError) as e:
+                print(f"❌ 参数读取错误: {e}")
+                return False, 0, 0
+        else:
+            # 交互模式：使用原有的交互式输入函数
+            print("💻 检测到命令行环境，使用交互式输入模式")
+            source_base_path = get_valid_folder_path_from_user(
+                "请输入素材文件夹的路径: "
+            )
+            target_base_path = get_valid_folder_path_from_user(
+                "请输入发布文件夹的路径: "
+            )
+        
+        print(f"\n✅ 配置确认:")
         print(f"- 素材文件夹: {source_base_path}")
         print(f"- 发布文件夹: {target_base_path}")
         

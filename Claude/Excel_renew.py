@@ -5,7 +5,7 @@
 # ==============================================================================
 #
 # 脚本名称 (Script Name):
-#   Excel_renew_Claude4.py (Claude4优化版)
+#   Excel_renew.py
 #
 # 主要目的 (Main Purpose):
 #   本脚本用于批量处理指定文件夹内的Excel文件，对每个文件执行以下操作：
@@ -220,6 +220,9 @@ def scan_excel_files(folder_path: Path) -> list:
 def process_excel_files_batch() -> Tuple[bool, int, int, int, int]:
     """
     批量处理Excel文件的主函数。
+    支持两种输入模式：
+    1. 交互式输入模式（命令行直接运行）
+    2. 标准输入模式（Web环境或管道输入）
     
     返回:
         tuple: (是否全部成功, 成功处理的文件数, 失败的文件数, 总K2清空数, 总C列清空数)
@@ -230,13 +233,33 @@ def process_excel_files_batch() -> Tuple[bool, int, int, int, int]:
     start_time = time.time()
     
     try:
-        # 1. 获取用户输入的文件夹路径
+        # 1. 智能检测输入模式并获取文件夹路径
         print("\n步骤 1: 获取文件夹路径")
-        folder_path = get_valid_folder_path_from_user(
-            "请输入包含Excel文件的文件夹目录路径: "
-        )
         
-        print(f"\n配置确认:")
+        # 检测是否为非交互模式（Web环境或管道输入）
+        is_non_interactive = hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty()
+        
+        if is_non_interactive:
+            # 非交互模式：从标准输入读取参数（适用于Web环境）
+            print("🌐 检测到Web环境，使用标准输入模式")
+            try:
+                path_str = input().strip()
+                folder_path = Path(path_str)
+                
+                if not folder_path.exists() or not folder_path.is_dir():
+                    raise ValueError(f"路径不存在或不是目录: {path_str}")
+                    
+            except (ValueError, EOFError) as e:
+                print(f"❌ 参数读取错误: {e}")
+                return False, 0, 0, 0, 0
+        else:
+            # 交互模式：使用原有的交互式输入函数
+            print("💻 检测到命令行环境，使用交互式输入模式")
+            folder_path = get_valid_folder_path_from_user(
+                "请输入包含Excel文件的文件夹路径: "
+            )
+        
+        print(f"\n✅ 配置确认:")
         print(f"- 目标文件夹: {folder_path}")
         print(f"- 处理文件类型: .xlsx文件")
         print(f"- 操作内容: 清空所有工作表的K2单元格 + 清空第一个工作表的C列（从C2开始）")
@@ -246,28 +269,16 @@ def process_excel_files_batch() -> Tuple[bool, int, int, int, int]:
         excel_files = scan_excel_files(folder_path)
         
         if not excel_files:
-            print(f"警告：在文件夹 '{folder_path}' 中没有找到任何.xlsx文件")
+            print(f"⚠️ 警告：在文件夹 '{folder_path}' 中没有找到任何.xlsx文件")
             return False, 0, 0, 0, 0
         
         print(f"找到 {len(excel_files)} 个Excel文件:")
         for i, file_path in enumerate(excel_files, 1):
             print(f"  {i}. {file_path.name}")
         
-        # 3. 用户确认
-        print(f"\n步骤 3: 确认处理")
-        print("⚠️  警告：此操作将直接修改Excel文件内容，建议先备份重要数据！")
-        
-        try:
-            confirm = input(f"\n确认处理这 {len(excel_files)} 个文件吗？(y/N): ").strip().lower()
-            if confirm not in ['y', 'yes', '是']:
-                print("操作已取消")
-                return False, 0, 0, 0, 0
-        except KeyboardInterrupt:
-            print("\n操作已由用户中止")
-            return False, 0, 0, 0, 0
-        
-        # 4. 开始批量处理
-        print(f"\n步骤 4: 开始批量处理")
+        # 3. 自动开始处理（Web环境下不需要用户确认）
+        print(f"\n步骤 3: 开始处理 {len(excel_files)} 个文件")
+        print("⚠️ 警告：此操作将直接修改Excel文件内容！")
         print("=" * 60)
         
         processed_files_count = 0

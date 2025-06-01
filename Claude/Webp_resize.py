@@ -2,6 +2,8 @@ import os
 import subprocess
 import pathlib
 import time
+import signal
+import threading
 from typing import Union, Tuple, List, Optional, Dict
 
 # ==============================================================================
@@ -36,6 +38,10 @@ from typing import Union, Tuple, List, Optional, Dict
 # --- 配置参数 ---
 FFMPEG_PATH = "ffmpeg"
 ORIGINAL_VIDEO_EXTENSIONS = ['.mp4', '.mov', '.mkv', '.avi', '.wmv', '.flv', '.webm', '.mpeg', '.mpg']
+
+# --- 全局变量用于进程管理 ---
+current_ffmpeg_process = None
+process_lock = threading.Lock()
 # 保持原有的转码和压缩参数不变
 BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO = [
     "-c:v", "libwebp",
@@ -46,6 +52,34 @@ BASE_WEBP_CONVERSION_OPTIONS_FROM_VIDEO = [
 ]
 VIDEO_DURATION_FOR_WEBP = "3"  # 秒
 FFMPEG_TIMEOUT_SECONDS = 180
+
+
+def signal_handler(signum, frame):
+    """信号处理函数，用于处理中断信号"""
+    global current_ffmpeg_process
+    print("\n\n⚠️  接收到终止信号，正在停止当前操作...")
+    
+    with process_lock:
+        if current_ffmpeg_process and current_ffmpeg_process.poll() is None:
+            print("🔄 正在终止 FFmpeg 进程...")
+            try:
+                current_ffmpeg_process.terminate()
+                # 等待进程终止，最多等待5秒
+                try:
+                    current_ffmpeg_process.wait(timeout=5)
+                    print("✅ FFmpeg 进程已正常终止")
+                except subprocess.TimeoutExpired:
+                    print("⚠️  FFmpeg 进程未响应，强制终止...")
+                    current_ffmpeg_process.kill()
+                    current_ffmpeg_process.wait()
+                    print("✅ FFmpeg 进程已强制终止")
+            except Exception as e:
+                print(f"❌ 终止 FFmpeg 进程时出错: {e}")
+            finally:
+                current_ffmpeg_process = None
+    
+    print("🛑 操作已终止")
+    exit(0)
 
 
 def get_human_readable_size(size_bytes: Optional[int]) -> str:
@@ -320,16 +354,27 @@ def process_webp_regeneration(webp_files_info: List[Dict], target_fps: int) -> T
         try:
             # 执行 FFmpeg 命令
             print(f"  正在重新生成...")
-            result = subprocess.run(
-                ffmpeg_command,
-                capture_output=True,
-                text=True,
-                timeout=FFMPEG_TIMEOUT_SECONDS,
-                encoding='utf-8',
-                errors='replace'
-            )
             
-            if result.returncode == 0:
+            # 使用 Popen 以便能够控制进程
+            with process_lock:
+                global current_ffmpeg_process
+                current_ffmpeg_process = subprocess.Popen(
+                    ffmpeg_command,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    encoding='utf-8',
+                    errors='replace'
+                )
+            
+            try:
+                stdout, stderr = current_ffmpeg_process.communicate(timeout=FFMPEG_TIMEOUT_SECONDS)
+                returncode = current_ffmpeg_process.returncode
+            finally:
+                with process_lock:
+                    current_ffmpeg_process = None
+            
+            if returncode == 0:
                 # 检查新文件大小
                 try:
                     new_size = webp_path.stat().st_size
@@ -347,13 +392,27 @@ def process_webp_regeneration(webp_files_info: List[Dict], target_fps: int) -> T
                     print(f"  ❌ 无法获取新文件大小: {e}")
                     success_count += 1  # 仍然算作成功，因为 FFmpeg 返回成功
             else:
-                print(f"  ❌ FFmpeg 失败 (返回码: {result.returncode})")
-                if result.stderr:
-                    print(f"     错误信息: {result.stderr.strip()[:200]}")
+                print(f"  ❌ FFmpeg 失败 (返回码: {returncode})")
+                if stderr:
+                    print(f"     错误信息: {stderr.strip()[:200]}")
                 fail_count += 1
                 
         except subprocess.TimeoutExpired:
             print(f"  ❌ 超时 (超过 {FFMPEG_TIMEOUT_SECONDS} 秒)")
+            # 终止超时的进程
+            with process_lock:
+                if current_ffmpeg_process and current_ffmpeg_process.poll() is None:
+                    try:
+                        current_ffmpeg_process.terminate()
+                        try:
+                            current_ffmpeg_process.wait(timeout=5)
+                        except subprocess.TimeoutExpired:
+                            current_ffmpeg_process.kill()
+                            current_ffmpeg_process.wait()
+                    except Exception as e:
+                        print(f"     终止进程时出错: {e}")
+                    finally:
+                        current_ffmpeg_process = None
             fail_count += 1
         except Exception as e:
             print(f"  ❌ 处理失败: {e}")
@@ -396,8 +455,11 @@ def display_final_results(success_count: int, fail_count: int, total_files: int)
 
 
 def main():
-    """主函数：协调整个 WebP 重新生成流程"""
-    print("" + "=" * 80)
+    """主函数"""
+    # 注册信号处理器
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
     print("🎬 WebP 文件批量重新生成工具")
     print("" + "=" * 80)
     print("功能: 从原始视频重新生成超过指定大小的 WebP 文件")
@@ -410,12 +472,37 @@ def main():
             print("\n❌ 程序终止: FFmpeg 不可用")
             return
         
-        # 2. 获取用户输入
-        root_dir_path = get_valid_folder_path_from_user(
-            "请输入包含 WebP 文件和对应源视频文件的根目录路径:"
-        )
-        
-        size_threshold_bytes, target_fps = get_regeneration_parameters()
+        # 2. 从标准输入获取参数（适用于Web环境）
+        try:
+            # 从标准输入读取参数（按服务器传递顺序：path, size_threshold, fps）
+            path_str = input().strip()
+            size_threshold_str = input().strip()
+            fps_str = input().strip()
+            
+            # 验证路径
+            root_dir_path = pathlib.Path(path_str)
+            if not root_dir_path.exists() or not root_dir_path.is_dir():
+                raise ValueError(f"路径不存在或不是目录: {path_str}")
+            
+            # 验证大小阈值
+            size_threshold_mb = float(size_threshold_str)
+            if size_threshold_mb <= 0:
+                raise ValueError("大小阈值必须为正数")
+            size_threshold_bytes = size_threshold_mb * 1024 * 1024
+            
+            # 验证帧率
+            target_fps = int(fps_str)
+            if target_fps <= 0:
+                raise ValueError("帧率必须为正整数")
+                
+            print(f"✅ 参数设置成功:")
+            print(f"   路径: {root_dir_path.absolute()}")
+            print(f"   大小阈值: {get_human_readable_size(int(size_threshold_bytes))}")
+            print(f"   目标帧率: {target_fps} fps")
+            
+        except (ValueError, EOFError) as e:
+            print(f"❌ 参数读取错误: {e}")
+            return
         
         # 3. 扫描文件
         webp_files_info = scan_webp_files(root_dir_path, size_threshold_bytes)
@@ -425,10 +512,8 @@ def main():
             print("\n✅ 没有需要处理的文件，程序结束。")
             return
         
-        # 5. 用户确认
-        if not confirm_processing():
-            print("\n❌ 用户取消操作，程序结束。")
-            return
+        # 5. 自动确认处理（Web环境下不需要用户交互）
+        print("\n🚀 开始自动处理...")
         
         # 6. 开始处理
         success_count, fail_count = process_webp_regeneration(webp_files_info, target_fps)
@@ -438,15 +523,38 @@ def main():
         
     except KeyboardInterrupt:
         print("\n\n⚠️  用户中断操作 (Ctrl+C)")
+        # 确保清理当前进程
+        with process_lock:
+            if current_ffmpeg_process and current_ffmpeg_process.poll() is None:
+                try:
+                    current_ffmpeg_process.terminate()
+                    current_ffmpeg_process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    current_ffmpeg_process.kill()
+                    current_ffmpeg_process.wait()
+                except Exception:
+                    pass
+                finally:
+                    current_ffmpeg_process = None
         print("程序已停止。")
     except Exception as e:
         print(f"\n❌ 程序执行过程中发生未知错误: {e}")
+        # 确保清理当前进程
+        with process_lock:
+            if current_ffmpeg_process and current_ffmpeg_process.poll() is None:
+                try:
+                    current_ffmpeg_process.terminate()
+                    current_ffmpeg_process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    current_ffmpeg_process.kill()
+                    current_ffmpeg_process.wait()
+                except Exception:
+                    pass
+                finally:
+                    current_ffmpeg_process = None
         print("建议检查输入参数和系统配置。")
-    finally:
-        print("\n按 Enter 键退出...")
-        input()
 
 
 if __name__ == "__main__":
-    main() 
+    main()
     
