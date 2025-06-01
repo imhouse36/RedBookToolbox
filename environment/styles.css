@@ -752,14 +752,14 @@ body {
 /* 输出容器 */
 .output-container {
     position: relative;
-    height: 700px; /* 780px减去面板头部高度 */
+    height: 680px; /* 减少高度为容器内部留出更多空间 */
     min-height: 300px;
     overflow: hidden;
 }
 
 .output-content {
     height: 100%;
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 2rem 1.5rem; /* 增加底部padding为2rem，防止内容被切除 */
     font-family: 'JetBrains Mono', 'Consolas', monospace;
     font-size: 0.875rem;
     line-height: 1.6;
@@ -770,6 +770,8 @@ body {
     word-wrap: break-word;
     border-radius: 8px;
     border: 1px solid #333333;
+    /* 确保滚动条出现时内容底部有足够的可视空间 */
+    box-sizing: border-box;
 }
 
 /* 自定义滚动条 */
@@ -932,7 +934,7 @@ body {
     height: calc(100vh - 80px);
 }
 
-/* 响应式设计 */
+/* 响应式设计优化 - 确保输出内容在所有尺寸下都有足够的底部间隙 */
 @media (max-width: 1200px) {
     .main-content {
         grid-template-columns: 1fr;
@@ -950,13 +952,14 @@ body {
     .tools-panel {
         order: -1;
     }
-    
+
     .tools-list {
+        padding: 0.75rem;
         max-height: 270px;
     }
     
     .output-container {
-        height: 270px;
+        height: 280px; /* 增加高度，确保内容不被切除 */
         min-height: 250px;
     }
 }
@@ -976,7 +979,7 @@ body {
     .tools-panel,
     .output-panel {
         height: auto;
-        max-height: 300px;
+        max-height: 320px; /* 增加最大高度 */
     }
     
     .header-content {
@@ -1020,8 +1023,14 @@ body {
     }
     
     .output-container {
-        height: 220px;
+        height: 240px; /* 增加高度，确保移动设备上也有足够的显示空间 */
         min-height: 200px;
+    }
+    
+    /* 移动设备上输出内容的特殊样式调整 */
+    .output-content {
+        font-size: 0.8125rem; /* 稍微减小字体大小以容纳更多内容 */
+        padding: 1rem 1rem 1.5rem 1rem; /* 调整padding，底部留出足够间隙 */
     }
 }
 
