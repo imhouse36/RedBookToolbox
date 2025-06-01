@@ -205,7 +205,7 @@ def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_pat
     skipped_count = 0
     total_found = 0
 
-    print(f"\n开始在目录 '{root_dir_path}' 及其子目录中查找视频文件并转换为 WebP (仅前 {CONVERSION_DURATION_SECONDS} 秒)...")
+    print(f"\n开始在目录 '{root_dir_path}' 及其子目录中查找视频文件并转换为 WebP (仅前 {CONVERSION_DURATION_SECONDS} 秒)...", flush=True)
     
     # 首先统计总文件数
     for dirpath_str, _, filenames in os.walk(root_dir_path):
@@ -216,12 +216,12 @@ def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_pat
                 total_found += 1
     
     if total_found == 0:
-        print(f"在目录 '{root_dir_path}' 中未找到任何支持的视频文件。")
+        print(f"在目录 '{root_dir_path}' 中未找到任何支持的视频文件。", flush=True)
         return
     
-    print(f"找到 {total_found} 个视频文件待处理。")
-    print(f"覆盖模式: {overwrite_mode}")
-    print("-" * 60)
+    print(f"找到 {total_found} 个视频文件待处理。", flush=True)
+    print(f"覆盖模式: {overwrite_mode}", flush=True)
+    print("-" * 60, flush=True)
     
     current_file = 0
     
@@ -250,7 +250,7 @@ def convert_videos_to_webp_recursive(root_dir_path: pathlib.Path, ffmpeg_exe_pat
                 command.extend(WEBP_CONVERSION_OPTIONS)
                 command.append(str(output_file_path))
 
-                print(f"    执行命令: {' '.join(command)}")
+                print(f"    执行命令: {' '.join(command)}", flush=True)
 
                 try:
                     # 使用Popen来获取进程对象，以便可以在信号处理中终止
@@ -361,32 +361,34 @@ def main():
     # 在服务器环境中，参数由 server.py 传递
     # 在直接运行时，如果没有提供参数，则进入交互模式
     args = None
-    # 尝试解析参数，如果失败（例如直接运行脚本未提供参数），则进入交互模式
-    # 或者如果 sys.stdin.isatty() 为 False，说明可能是在非交互环境（如服务器调用）
-    # 并且有参数传入
-    if not sys.stdin.isatty() and len(sys.argv) > 1:
+    
+    # 如果在服务器模式下或者有命令行参数，尝试解析参数
+    server_mode = 'WEBP_TOOL_SERVER_MODE' in os.environ
+    has_args = len(sys.argv) > 1
+    
+    if server_mode or has_args:
         try:
             args = parser.parse_args()
             print("通过命令行参数运行...")
         except SystemExit: # argparse 在参数错误时会调用 sys.exit()
             print("命令行参数解析失败，尝试进入交互模式或检查参数...")
             # 如果是服务器调用，不应该进入交互模式，而是报错退出
-            if 'WEBP_TOOL_SERVER_MODE' in os.environ:
+            if server_mode:
                  print("错误：服务器模式下命令行参数解析失败。请检查服务器传递的参数。")
                  sys.exit(1)
             # 否则，可能是用户直接运行但参数错了，可以尝试交互
-            args = None 
+            args = None
 
     if args and args.root_folder:
         root_folder_str = args.root_folder
         overwrite_mode = args.overwrite
         CONVERSION_DURATION_SECONDS = args.duration
-        print(f"根目录: {root_folder_str}")
-        print(f"覆盖模式: {overwrite_mode}")
-        print(f"转换时长: {CONVERSION_DURATION_SECONDS}秒")
+        print(f"根目录: {root_folder_str}", flush=True)
+        print(f"覆盖模式: {overwrite_mode}", flush=True)
+        print(f"转换时长: {CONVERSION_DURATION_SECONDS}秒", flush=True)
         root_folder = pathlib.Path(root_folder_str)
         if not root_folder.is_dir():
-            print(f"错误：通过参数提供的路径 '{root_folder_str}' 不是一个有效的文件夹。")
+            print(f"错误：通过参数提供的路径 '{root_folder_str}' 不是一个有效的文件夹。", flush=True)
             sys.exit(1)
     else:
         print("欢迎使用视频批量转WebP工具！(交互模式)")

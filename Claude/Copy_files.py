@@ -37,6 +37,10 @@ import random
 import time
 import sys
 from pathlib import Path
+from typing import List, Tuple, Optional
+# 添加多线程支持
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 # Python 3.7兼容的类型提示导入
 try:
@@ -47,6 +51,9 @@ except ImportError:
     Tuple = tuple
     Optional = type(None)
 
+# 线程锁用于线程安全的计数器
+copy_lock = threading.Lock()
+copy_stats = {'total': 0, 'success': 0, 'failed': 0}
 
 def get_valid_folder_path_from_user(prompt_message: str) -> Path:
     """
@@ -155,18 +162,18 @@ def generate_unique_filename(target_path: Path, original_filename: str) -> str:
             return f"{file_stem}_{timestamp}{file_suffix}"
 
 
-def copy_file_safely(source_path: Path, target_path: Path, filename: str):
+def copy_file_safely_threaded(args: tuple) -> tuple:
     """
-    安全地复制文件，处理文件名冲突。
-
+    线程安全的文件复制函数
+    
     参数:
-        source_path (Path): 源文件路径。
-        target_path (Path): 目标目录路径。
-        filename (str): 文件名。
-
+        args: (source_path, target_path, filename, thread_id)
+    
     返回:
-        tuple: (是否成功, 最终文件名, 错误信息)
+        tuple: (是否成功, 最终文件名, 错误信息, 线程ID)
     """
+    source_path, target_path, filename, thread_id = args
+    
     try:
         # 生成唯一文件名
         unique_filename = generate_unique_filename(target_path, filename)
@@ -177,183 +184,103 @@ def copy_file_safely(source_path: Path, target_path: Path, filename: str):
         # 复制文件
         shutil.copy2(source_file_path, target_file_path)
         
-        return True, unique_filename, ""
+        # 线程安全的统计更新
+        with copy_lock:
+            copy_stats['success'] += 1
+            
+        return True, unique_filename, "", thread_id
+        
     except Exception as e:
-        return False, filename, str(e)
+        with copy_lock:
+            copy_stats['failed'] += 1
+        return False, filename, str(e), thread_id
 
 
-def copy_random_images_optimized():
+def copy_random_images_parallel(source_folders: List[Path], target_folders: List[Path], 
+                               max_workers: int = 4) -> Tuple[bool, int, int]:
     """
-    优化版本的图片随机复制函数，执行图片随机复制逻辑，并在结束时报告统计信息。
-    支持两种输入模式：
-    1. 交互式输入模式（命令行直接运行）
-    2. 标准输入模式（Web环境或管道输入）
-
+    并行复制图片文件，提升处理速度
+    
+    参数:
+        source_folders: 素材文件夹列表
+        target_folders: 目标文件夹列表  
+        max_workers: 最大工作线程数
+    
     返回:
-        tuple: (是否全部成功, 成功复制的文件数量, 总尝试复制的文件数量)
+        tuple: (是否全部成功, 成功复制数, 尝试复制数)
     """
-    print("图片随机复制工具 (Claude4优化版)")
-    print("=" * 60)
+    print(f"\n🚀 使用 {max_workers} 个线程并行复制图片...")
     
-    start_time = time.time()
-    total_files_copied = 0
-    total_files_attempted = 0
-    failed_operations = []
+    # 重置统计
+    global copy_stats
+    copy_stats = {'total': 0, 'success': 0, 'failed': 0}
     
-    try:
-        # 1. 智能检测输入模式并获取路径
-        print("\n步骤 1: 获取文件夹路径")
-        
-        # 检测是否为非交互模式（Web环境或管道输入）
-        is_non_interactive = hasattr(sys.stdin, 'isatty') and not sys.stdin.isatty()
-        
-        if is_non_interactive:
-            # 非交互模式：从标准输入读取参数（适用于Web环境）
-            print("🌐 检测到Web环境，使用标准输入模式")
-            try:
-                # 从标准输入读取参数（按服务器传递顺序：source_path, target_path）
-                source_path_str = input().strip()
-                target_path_str = input().strip()
-                
-                source_base_path = Path(source_path_str)
-                target_base_path = Path(target_path_str)
-                
-                if not source_base_path.exists() or not source_base_path.is_dir():
-                    raise ValueError(f"素材文件夹路径不存在或不是目录: {source_path_str}")
-                if not target_base_path.exists() or not target_base_path.is_dir():
-                    raise ValueError(f"发布文件夹路径不存在或不是目录: {target_path_str}")
-                    
-            except (ValueError, EOFError) as e:
-                print(f"❌ 参数读取错误: {e}")
-                return False, 0, 0
-        else:
-            # 交互模式：使用原有的交互式输入函数
-            print("💻 检测到命令行环境，使用交互式输入模式")
-            source_base_path = get_valid_folder_path_from_user(
-                "请输入素材文件夹的路径: "
-            )
-            target_base_path = get_valid_folder_path_from_user(
-                "请输入发布文件夹的路径: "
-            )
-        
-        print(f"\n✅ 配置确认:")
-        print(f"- 素材文件夹: {source_base_path}")
-        print(f"- 发布文件夹: {target_base_path}")
-        
-        # 定义支持的图片文件扩展名（包含.gif格式）
-        image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp')
-        print(f"- 支持的图片格式: {', '.join(image_extensions)}")
-        
-        # 2. 获取"素材"文件夹下的所有子目录
-        print("\n步骤 2: 扫描素材文件夹")
-        source_subfolders = get_subdirectories(source_base_path, "素材")
-        
-        if not source_subfolders:
-            print(f'警告："素材"文件夹 \'{source_base_path}\' 中没有找到任何子目录。脚本无法继续。')
-            return False, 0, 0
-        
-        print(f"找到 {len(source_subfolders)} 个素材类别: {', '.join(source_subfolders)}")
-        
-        # 3. 获取"发布"文件夹下的所有子目录
-        print("\n步骤 3: 扫描发布文件夹")
-        target_subfolders = get_subdirectories(target_base_path, "发布")
-        
-        if not target_subfolders:
-            print(f'警告："发布"文件夹 \'{target_base_path}\' 中没有找到任何子目录。脚本无法继续。')
-            return False, 0, 0
-        
-        print(f"找到 {len(target_subfolders)} 个发布目标: {', '.join(target_subfolders)}")
-        
-        # 4. 开始复制过程
-        print(f"\n步骤 4: 开始图片复制任务")
-        print(f"{'='*60}")
-        
-        total_operations = len(target_subfolders) * len(source_subfolders)
-        current_operation = 0
-        
-        # 遍历"发布"文件夹的每个子目录
-        for target_index, target_sub_name in enumerate(target_subfolders, 1):
-            current_target_dir_path = target_base_path / target_sub_name
-            print(f"\n[{target_index}/{len(target_subfolders)}] 处理发布目录: '{target_sub_name}'")
+    # 准备复制任务列表
+    copy_tasks = []
+    
+    for target_folder in target_folders:
+        for source_folder in source_folders:
+            # 获取源文件夹中的图片文件
+            image_files = [f for f in source_folder.iterdir() 
+                         if f.is_file() and f.suffix.lower() in image_extensions]
             
-            copied_images_count_for_this_target = 0
-            skipped_categories = []
-            
-            # 遍历"素材"文件夹的每个子目录
-            for source_sub_name in source_subfolders:
-                current_operation += 1
-                progress = (current_operation / total_operations) * 100
-                
-                current_source_category_path = source_base_path / source_sub_name
-                
-                # 获取当前素材类别目录下的所有图片文件
-                available_images = get_image_files_in_directory(
-                    current_source_category_path, image_extensions
-                )
-                
-                if not available_images:
-                    print(f"  [进度: {progress:.1f}%] 跳过类别 '{source_sub_name}' - 无图片文件")
-                    skipped_categories.append(source_sub_name)
-                    continue
-                
+            if image_files:
                 # 随机选择一张图片
-                chosen_image_name = random.choice(available_images)
-                total_files_attempted += 1
+                selected_image = random.choice(image_files)
+                copy_tasks.append((source_folder, target_folder, selected_image.name, len(copy_tasks)))
+    
+    copy_stats['total'] = len(copy_tasks)
+    
+    if not copy_tasks:
+        print("⚠️ 没有找到可复制的图片文件")
+        return False, 0, 0
+    
+    print(f"📋 准备复制 {len(copy_tasks)} 个文件...")
+    
+    # 使用线程池并行执行
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # 提交所有任务
+        future_to_task = {executor.submit(copy_file_safely_threaded, task): task 
+                         for task in copy_tasks}
+        
+        # 处理完成的任务
+        completed = 0
+        for future in as_completed(future_to_task):
+            completed += 1
+            task = future_to_task[future]
+            
+            try:
+                success, final_name, error, thread_id = future.result()
                 
-                # 安全复制文件
-                success, final_filename, error_msg = copy_file_safely(
-                    current_source_category_path, current_target_dir_path, chosen_image_name
-                )
+                # 计算进度
+                progress = (completed / len(copy_tasks)) * 100
                 
                 if success:
-                    if final_filename != chosen_image_name:
-                        print(f"  [进度: {progress:.1f}%] '{source_sub_name}/{chosen_image_name}' → '{target_sub_name}/{final_filename}' (重命名避免冲突)")
-                    else:
-                        print(f"  [进度: {progress:.1f}%] '{source_sub_name}/{chosen_image_name}' → '{target_sub_name}/{final_filename}'")
-                    copied_images_count_for_this_target += 1
-                    total_files_copied += 1
+                    print(f"✅ [{progress:5.1f}%] 线程{thread_id:2d}: {final_name}")
                 else:
-                    error_info = f"复制 '{source_sub_name}/{chosen_image_name}' 到 '{target_sub_name}' 失败: {error_msg}"
-                    print(f"  [进度: {progress:.1f}%] 错误: {error_info}")
-                    failed_operations.append(error_info)
-            
-            # 输出当前目标目录的统计信息
-            print(f"  ✓ 目标目录 '{target_sub_name}' 处理完成")
-            print(f"    - 预期复制数量: {len(source_subfolders)}")
-            print(f"    - 实际复制数量: {copied_images_count_for_this_target}")
-            if skipped_categories:
-                print(f"    - 跳过的类别: {', '.join(skipped_categories)}")
-        
-        # 5. 输出最终统计报告
-        end_time = time.time()
-        execution_time = end_time - start_time
-        
-        print(f"\n{'='*60}")
-        print("图片复制任务完成统计报告:")
-        print(f"{'='*60}")
-        print(f"总尝试复制文件数量: {total_files_attempted}")
-        print(f"成功复制文件数量: {total_files_copied}")
-        print(f"失败操作数量: {len(failed_operations)}")
-        print(f"成功率: {(total_files_copied/total_files_attempted*100):.1f}%" if total_files_attempted > 0 else "成功率: N/A")
-        print(f"总执行时间: {execution_time:.2f} 秒")
-        print(f"平均复制速度: {total_files_copied/execution_time:.2f} 文件/秒" if execution_time > 0 else "平均复制速度: N/A")
-        
-        if failed_operations:
-            print(f"\n失败操作详情:")
-            for i, error in enumerate(failed_operations, 1):
-                print(f"  {i}. {error}")
-        
-        print(f"{'='*60}")
-        
-        return len(failed_operations) == 0, total_files_copied, total_files_attempted
-        
-    except KeyboardInterrupt:
-        print("\n\n用户中断程序执行。")
-        return False, total_files_copied, total_files_attempted
-    except Exception as e:
-        print(f"\n程序执行过程中发生意外错误: {e}")
-        print("请检查输入参数和文件权限后重试。")
-        return False, total_files_copied, total_files_attempted
+                    print(f"❌ [{progress:5.1f}%] 线程{thread_id:2d}: {task[2]} - {error}")
+                    
+                # 每10个任务显示一次汇总
+                if completed % 10 == 0 or completed == len(copy_tasks):
+                    with copy_lock:
+                        print(f"📊 进度汇总: {copy_stats['success']}/{copy_stats['total']} 成功, "
+                             f"{copy_stats['failed']} 失败")
+                        
+            except Exception as e:
+                print(f"❌ 任务执行异常: {e}")
+                with copy_lock:
+                    copy_stats['failed'] += 1
+    
+    # 返回结果
+    success_rate = copy_stats['success'] / copy_stats['total'] if copy_stats['total'] > 0 else 0
+    all_success = copy_stats['failed'] == 0
+    
+    print(f"\n📈 复制完成统计:")
+    print(f"   成功: {copy_stats['success']} 个文件")
+    print(f"   失败: {copy_stats['failed']} 个文件") 
+    print(f"   成功率: {success_rate:.1%}")
+    
+    return all_success, copy_stats['success'], copy_stats['total']
 
 
 def main():
@@ -365,7 +292,7 @@ def main():
         script_start_time = time.time()
         
         # 执行图片复制任务
-        success, copied_count, attempted_count = copy_random_images_optimized()
+        success, copied_count, attempted_count = copy_random_images_parallel()
         
         # 输出脚本总执行时间
         script_end_time = time.time()

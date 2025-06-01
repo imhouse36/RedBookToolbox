@@ -13,6 +13,7 @@
 - 支持所有项目中的工具脚本
 - 自动参数验证和错误处理
 - 跨域支持，便于开发调试
+- 异步执行和多线程支持，确保停止命令及时响应
 
 使用方法:
 1. 运行此脚本: python server.py
@@ -37,6 +38,10 @@ from urllib.parse import urlparse, parse_qs
 from pathlib import Path
 import queue
 import signal
+import uuid
+from concurrent.futures import ThreadPoolExecutor
+import asyncio
+from typing import Dict, Optional
 
 # 获取项目根目录（server.py现在在environment文件夹中）
 SCRIPT_DIR = Path(__file__).resolve().parent.parent
@@ -55,9 +60,11 @@ SCRIPT_MAPPING = {
     'test_stop_button': 'Claude/Test_stop_button.py'
 }
 
-# 全局变量，用于存储当前运行的进程
-current_process = None
+# 全局变量，用于存储当前运行的进程和任务管理
+current_processes: Dict[str, subprocess.Popen] = {}
+active_tasks: Dict[str, dict] = {}
 process_lock = threading.Lock()
+task_executor = ThreadPoolExecutor(max_workers=5)  # 创建线程池
 
 class ToolboxRequestHandler(BaseHTTPRequestHandler):
     """
@@ -78,6 +85,8 @@ class ToolboxRequestHandler(BaseHTTPRequestHandler):
         
         if parsed_path.path == '/api/status':
             self._handle_status()
+        elif parsed_path.path == '/api/tasks':
+            self._handle_get_tasks()
         elif parsed_path.path == '/' or parsed_path.path == '/index.html':
             self._serve_index_html()
         elif parsed_path.path.startswith('/environment/'):
@@ -93,6 +102,10 @@ class ToolboxRequestHandler(BaseHTTPRequestHandler):
             self._handle_run_script()
         elif parsed_path.path == '/api/stop-script':
             self._handle_stop_script()
+        elif parsed_path.path == '/api/restart-server':
+            self._handle_restart_server()
+        elif parsed_path.path == '/api/shutdown-server':
+            self._handle_shutdown_server()
         else:
             self._send_404()
     
@@ -112,103 +125,152 @@ class ToolboxRequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             self._send_error_response(f"处理脚本执行请求失败: {str(e)}")
     
-    def _handle_stop_script(self):
-        """处理终止脚本请求"""
-        global current_process
+    def _handle_get_tasks(self):
+        """处理获取活动任务列表请求"""
         try:
             with process_lock:
-                print(f"终止请求 - current_process: {current_process}")
-                if current_process:
-                    print(f"进程状态 - PID: {current_process.pid}, poll: {current_process.poll()}")
+                tasks_info = []
+                for task_id, task_data in active_tasks.items():
+                    task_info = {
+                        'task_id': task_id,
+                        'script_name': task_data.get('script_name'),
+                        'status': task_data.get('status'),
+                        'start_time': task_data.get('start_time'),
+                        'elapsed_time': time.time() - task_data.get('start_time', time.time())
+                    }
+                    if 'error' in task_data:
+                        task_info['error'] = task_data['error']
+                    if 'return_code' in task_data:
+                        task_info['return_code'] = task_data['return_code']
+                    tasks_info.append(task_info)
                 
-                if current_process and current_process.poll() is None:
-                    print(f"正在终止进程 PID: {current_process.pid}")
-                    # 终止进程
-                    if platform.system() == "Windows":
-                        # Windows系统：使用taskkill命令终止进程树
-                        try:
-                            print(f"使用taskkill终止进程树 PID: {current_process.pid}")
-                            # 使用taskkill命令发送CTRL_BREAK信号给进程树
-                            result = subprocess.run(['taskkill', '/T', '/PID', str(current_process.pid)], 
-                                                   capture_output=True, text=True, timeout=5)
-                            if result.returncode == 0:
-                                print("进程树已通过taskkill优雅终止")
-                                current_process.wait(timeout=3)
-                            else:
-                                print(f"taskkill优雅终止失败: {result.stderr}，使用强制终止")
-                                subprocess.run(['taskkill', '/F', '/T', '/PID', str(current_process.pid)], 
-                                             capture_output=True, check=False, timeout=5)
-                                print("已使用taskkill强制终止进程树")
-                        except subprocess.TimeoutExpired:
-                            print("taskkill超时，尝试terminate()")
+                response_data = {
+                    'active_tasks': tasks_info,
+                    'process_count': len(current_processes),
+                    'total_tasks': len(active_tasks)
+                }
+                
+                self._send_json_response(response_data)
+                
+        except Exception as e:
+            self._send_error_response(f"获取任务列表失败: {str(e)}")
+    
+    def _handle_stop_script(self):
+        """处理终止脚本请求"""
+        global current_processes
+        try:
+            with process_lock:
+                print(f"终止请求 - current_processes: {list(current_processes.keys())}")
+                print(f"终止请求 - active_tasks: {list(active_tasks.keys())}")
+                
+                if current_processes:
+                    stopped_processes = []
+                    
+                    for pid, process in list(current_processes.items()):
+                        if process.poll() is None:  # 进程仍在运行
+                            print(f"正在强制终止进程 PID: {pid}")
+                            
                             try:
-                                current_process.terminate()
-                                current_process.wait(timeout=2)
-                                print("进程已通过terminate()终止")
-                            except subprocess.TimeoutExpired:
-                                print("terminate()超时，使用强制taskkill")
-                                subprocess.run(['taskkill', '/F', '/T', '/PID', str(current_process.pid)], 
-                                             capture_output=True, check=False, timeout=5)
-                                print("已使用强制taskkill终止进程树")
-                        except Exception as e:
-                            print(f"taskkill失败: {e}，使用terminate()")
-                            try:
-                                current_process.terminate()
-                                current_process.wait(timeout=2)
-                                print("进程已通过terminate()终止")
-                            except:
-                                print("terminate()失败，使用强制taskkill")
-                                subprocess.run(['taskkill', '/F', '/T', '/PID', str(current_process.pid)], 
-                                             capture_output=True, check=False, timeout=5)
-                                print("已使用强制taskkill终止进程树")
+                                if platform.system() == "Windows":
+                                    # Windows系统：直接使用强制终止
+                                    print(f"使用taskkill强制终止进程树 PID: {pid}")
+                                    result = subprocess.run(['taskkill', '/F', '/T', '/PID', str(pid)], 
+                                                          capture_output=True, text=True, timeout=3)
+                                    if result.returncode == 0:
+                                        print(f"进程树已强制终止 PID: {pid}")
+                                        stopped_processes.append(pid)
+                                    else:
+                                        print(f"taskkill失败: {result.stderr}，尝试Python方法 PID: {pid}")
+                                        process.kill()
+                                        try:
+                                            process.wait(timeout=2)
+                                            stopped_processes.append(pid)
+                                        except subprocess.TimeoutExpired:
+                                            print(f"进程可能已经终止 PID: {pid}")
+                                            stopped_processes.append(pid)
+                                else:
+                                    # Unix系统：直接强制杀死
+                                    print(f"强制终止进程 PID: {pid}")
+                                    process.kill()
+                                    process.wait(timeout=2)
+                                    stopped_processes.append(pid)
+                                    print(f"进程已强制终止 PID: {pid}")
+                                    
+                            except Exception as e:
+                                print(f"终止进程失败 PID: {pid}, 错误: {e}")
+                                # 即使失败也标记为已处理
+                                stopped_processes.append(pid)
+                    
+                    # 清理所有进程引用
+                    current_processes.clear()
+                    
+                    # 清理所有任务
+                    active_tasks.clear()
+                    
+                    if stopped_processes:
+                        self._send_json_response({
+                            'status': 'success',
+                            'message': f'已强制终止 {len(stopped_processes)} 个脚本进程'
+                        })
                     else:
-                        # Unix系统：直接使用terminate()和kill()方法
-                        try:
-                            # 首先尝试优雅终止
-                            current_process.terminate()
-                            current_process.wait(timeout=3)
-                            print("进程已优雅终止")
-                        except subprocess.TimeoutExpired:
-                            print("优雅终止超时，强制终止进程")
-                            # 强制终止
-                            current_process.kill()
-                            try:
-                                current_process.wait(timeout=2)
-                                print("进程已强制终止")
-                            except subprocess.TimeoutExpired:
-                                print("强制终止超时")
-                        except Exception as kill_error:
-                            print(f"Unix进程终止失败: {kill_error}")
-                            # 回退到直接终止
-                            current_process.terminate()
-                            try:
-                                current_process.wait(timeout=3)
-                            except subprocess.TimeoutExpired:
-                                current_process.kill()
-                    
-                    current_process = None
-                    
-                    self._send_json_response({
-                        'status': 'success',
-                        'message': '脚本已成功终止'
-                    })
+                        self._send_json_response({
+                            'status': 'info',
+                            'message': '没有发现正在运行的脚本进程'
+                        })
                 else:
-                    if current_process is None:
-                        message = '当前没有通过Web界面启动的脚本'
-                    else:
-                        message = '当前脚本已经结束或不存在'
-                    print(f"终止请求失败: {message}")
                     self._send_json_response({
                         'status': 'info',
-                        'message': message
+                        'message': '当前没有通过Web界面启动的脚本'
                     })
                     
         except Exception as e:
             print(f"终止脚本异常: {e}")
             self._send_error_response(f"终止脚本失败: {str(e)}")
     
+    def _handle_restart_server(self):
+        """处理服务器重启请求"""
+        try:
+            self._send_json_response({
+                'status': 'success',
+                'message': '服务器重启功能已收到请求，但需要外部工具支持'
+            })
+            
+            # 注意：这里只是返回成功响应，实际重启需要外部脚本
+            # 可以在这里添加调用外部重启脚本的逻辑
+            print("收到服务器重启请求")
+            
+        except Exception as e:
+            self._send_error_response(f"处理重启请求失败: {str(e)}")
+    
+    def _handle_shutdown_server(self):
+        """处理服务器停止请求"""
+        try:
+            # 先发送响应
+            self._send_json_response({
+                'status': 'success',
+                'message': '服务器即将关闭'
+            })
+            
+            print("收到服务器停止请求，即将关闭...")
+            
+            # 在单独的线程中延迟关闭服务器，确保响应能够发送
+            import threading
+            def delayed_shutdown():
+                import time
+                time.sleep(1)  # 等待1秒确保响应发送完成
+                global server_should_exit
+                server_should_exit = True
+                print("服务器正在关闭...")
+            
+            shutdown_thread = threading.Thread(target=delayed_shutdown)
+            shutdown_thread.daemon = True
+            shutdown_thread.start()
+            
+        except Exception as e:
+            self._send_error_response(f"处理停止请求失败: {str(e)}")
+    
     def _handle_run_script(self):
-        """处理脚本执行请求"""
+        """处理脚本执行请求 - 异步版本"""
         try:
             # 读取请求数据
             content_length = int(self.headers['Content-Length'])
@@ -249,17 +311,19 @@ class ToolboxRequestHandler(BaseHTTPRequestHandler):
                 self._send_error_response(f"脚本文件不存在: {script_file}")
                 return
             
-            # 执行脚本
-            self._execute_script(script_file, script_name, params)
+            # 生成任务ID
+            task_id = str(uuid.uuid4())[:8]
             
-        except Exception as e:
-            self._send_stream_error(f"处理请求失败: {str(e)}")
-    
-    def _execute_script(self, script_file: Path, script_name: str, params: dict):
-        """执行Python脚本并流式返回输出"""
-        global current_process
-        try:
-            # 设置响应头
+            # 记录任务信息
+            with process_lock:
+                active_tasks[task_id] = {
+                    'script_name': script_name,
+                    'params': params,
+                    'start_time': time.time(),
+                    'status': 'starting'
+                }
+            
+            # 设置响应头（立即开始流式响应）
             self.send_response(200)
             self.send_header('Content-Type', 'text/plain; charset=utf-8')
             self.send_header('Access-Control-Allow-Origin', '*')
@@ -268,76 +332,96 @@ class ToolboxRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Transfer-Encoding', 'chunked')
             self.end_headers()
             
+            # 发送任务开始信息
+            self._send_stream_data({
+                'type': 'output',
+                'content': f"=== 任务开始 [{task_id}] {Path(SCRIPT_MAPPING[script_name]).name} ==="
+            })
+            
+            # 在线程池中异步执行脚本
+            future = task_executor.submit(
+                self._execute_script_async, 
+                script_file, 
+                script_name, 
+                params, 
+                task_id
+            )
+            
+            # 在主线程中监控执行状态并发送实时输出
+            self._monitor_script_execution(future, task_id)
+            
+        except Exception as e:
+            self._send_stream_error(f"处理请求失败: {str(e)}")
+    
+    def _execute_script_async(self, script_file: Path, script_name: str, params: dict, task_id: str):
+        """在独立线程中异步执行Python脚本"""
+        global current_processes
+        
+        try:
+            # 更新任务状态
+            with process_lock:
+                if task_id in active_tasks:
+                    active_tasks[task_id]['status'] = 'running'
+            
             # 准备脚本输入
             script_input_result = self._prepare_script_input(script_name, params)
             
-            # 发送开始信息
-            self._send_stream_data({
-                'type': 'output',
-                'content': f"=== 开始执行 {SCRIPT_MAPPING[script_name]} ==="
-            })
-            
-            self._send_stream_data({
-                'type': 'output', 
-                'content': f"参数: {json.dumps(params, ensure_ascii=False, indent=2)}"
-            })
-            
-            # 执行脚本
-            # 设置环境变量确保使用UTF-8编码和无缓冲输出
-            env = os.environ.copy()
-            env['PYTHONIOENCODING'] = 'utf-8'
-            env['PYTHONUNBUFFERED'] = '1'  # 强制Python使用无缓冲输出
-            
-            # 设置工作目录为脚本文件所在目录
-            script_cwd = script_file.parent
-            
             # 处理不同类型的脚本输入
             if isinstance(script_input_result, tuple) and len(script_input_result) == 2:
-                # webp_video 脚本返回 (stdin_inputs, cmd_args)
                 script_input, cmd_args = script_input_result
                 cmd = [sys.executable, '-u', str(script_file)] + cmd_args
+                print(f"[DEBUG] 使用命令行参数模式: {cmd}")
             else:
-                # 其他脚本返回字符串输入
                 script_input = script_input_result
                 cmd = [sys.executable, '-u', str(script_file)]
+                print(f"[DEBUG] 使用标准输入模式: {cmd}")
+                print(f"[DEBUG] 标准输入内容: {repr(script_input)}")
+            
+            # 设置环境变量
+            env = os.environ.copy()
+            env['PYTHONIOENCODING'] = 'utf-8'
+            env['PYTHONUNBUFFERED'] = '1'
+            env['WEBP_TOOL_SERVER_MODE'] = '1'  # 标识服务器模式
+            
+            script_cwd = script_file.parent
             
             # 根据操作系统设置进程创建参数
             if platform.system() == "Windows":
-                # Windows上创建新的进程组
                 process = subprocess.Popen(
-                    cmd,  # 使用准备好的命令
+                    cmd,
                     stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     text=True,
                     encoding='utf-8',
-                    errors='replace',  # 添加错误处理
+                    errors='replace',
                     cwd=str(script_cwd),
-                    bufsize=0,  # 设置为0实现无缓冲
+                    bufsize=0,  # 无缓冲
                     universal_newlines=True,
-                    env=env,  # 传递环境变量
-                    creationflags=subprocess.CREATE_NEW_PROCESS_GROUP  # Windows创建新进程组
+                    env=env,
+                    creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
                 )
             else:
-                # Unix系统创建新的进程组
                 process = subprocess.Popen(
-                    cmd,  # 使用准备好的命令
+                    cmd,
                     stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     text=True,
                     encoding='utf-8',
-                    errors='replace',  # 添加错误处理
+                    errors='replace',
                     cwd=str(script_cwd),
-                    bufsize=0,  # 设置为0实现无缓冲
+                    bufsize=0,  # 无缓冲
                     universal_newlines=True,
-                    env=env,  # 传递环境变量
-                    preexec_fn=os.setsid  # Unix创建新会话
+                    env=env,
+                    preexec_fn=os.setsid
                 )
             
-            # 存储当前进程
+            # 存储进程引用
             with process_lock:
-                current_process = process
+                current_processes[str(process.pid)] = process
+            
+            print(f"[DEBUG] 脚本进程已启动，PID: {process.pid}")
             
             # 发送输入到脚本
             if script_input:
@@ -345,57 +429,201 @@ class ToolboxRequestHandler(BaseHTTPRequestHandler):
                     process.stdin.write(script_input)
                     process.stdin.flush()
                     process.stdin.close()
+                    print(f"[DEBUG] 已发送输入到脚本")
                 except Exception as e:
-                    self._send_stream_data({
-                        'type': 'error',
-                        'content': f"发送输入到脚本失败: {str(e)}"
-                    })
-            
-            # 实时读取输出
-            while True:
-                output = process.stdout.readline()
-                if output == '' and process.poll() is not None:
-                    break
-                if output:
-                    self._send_stream_data({
-                        'type': 'output',
-                        'content': output.rstrip()
-                    })
-            
-            # 等待进程结束
-            return_code = process.wait()
-            
-            # 只有在进程正常结束时才清除引用，被终止的进程在终止函数中已经清除
-            with process_lock:
-                if current_process == process and return_code == 0:
-                    current_process = None
-            
-            # 发送结束信息
-            if return_code == 0:
-                self._send_stream_data({
-                    'type': 'success',
-                    'content': f"=== 脚本执行完成，返回码: {return_code} ==="
-                })
-            elif return_code == -15 or return_code == 1:  # 被终止的情况
-                self._send_stream_data({
-                    'type': 'warning',
-                    'content': f"=== 脚本被用户终止 ==="
-                })
+                    print(f"[DEBUG] 发送输入到脚本失败: {str(e)}")
             else:
+                # 如果没有输入，也关闭stdin避免脚本等待
+                try:
+                    process.stdin.close()
+                    print(f"[DEBUG] 已关闭stdin（无输入）")
+                except Exception as e:
+                    print(f"[DEBUG] 关闭stdin失败: {str(e)}")
+            
+            # 使用实时输出读取 - 直接返回进程对象供监控使用
+            return {
+                'process': process,
+                'task_id': task_id,
+                'script_name': script_name
+            }
+            
+        except Exception as e:
+            # 清理进程引用
+            with process_lock:
+                if 'process' in locals():
+                    current_processes.pop(str(process.pid), None)
+                if task_id in active_tasks:
+                    active_tasks[task_id]['status'] = 'failed'
+                    active_tasks[task_id]['error'] = str(e)
+            
+            print(f"[DEBUG] 执行脚本时发生错误: {str(e)}")
+            return {
+                'error': str(e),
+                'task_id': task_id
+            }
+    
+    def _monitor_script_execution(self, future, task_id: str):
+        """监控脚本执行状态并发送实时输出"""
+        process = None
+        try:
+            # 等待脚本启动
+            print(f"[DEBUG] 开始监控任务 {task_id}")
+            
+            # 获取执行结果
+            result = future.result(timeout=10.0)  # 等待脚本启动
+            
+            if 'error' in result:
                 self._send_stream_data({
                     'type': 'error',
-                    'content': f"=== 脚本执行失败，返回码: {return_code} ==="
+                    'content': f"启动脚本失败: {result['error']}"
                 })
+                return
+            
+            process = result['process']
+            script_name = result['script_name']
+            
+            print(f"[DEBUG] 获取到进程对象，开始实时读取输出，PID: {process.pid}")
+            
+            # 实时读取输出并发送
+            output_count = 0
+            connection_broken = False
+            
+            while True:
+                # *** 第一优先级：检查连接是否已断开 ***
+                if connection_broken:
+                    print(f"[DEBUG] 连接已断开，立即终止脚本进程 PID: {process.pid}")
+                    self._terminate_process(process, f"连接断开，强制终止任务 {task_id}")
+                    break
                 
-        except Exception as e:
-            # 清除当前进程引用
+                # 检查进程是否仍在运行
+                if process.poll() is not None:
+                    # 进程已结束，读取剩余输出
+                    remaining_output = process.stdout.read()
+                    if remaining_output and not connection_broken:
+                        for line in remaining_output.splitlines():
+                            if line.strip():
+                                try:
+                                    self._send_stream_data({
+                                        'type': 'output',
+                                        'content': line.strip()
+                                    })
+                                    output_count += 1
+                                except Exception as e:
+                                    print(f"[DEBUG] 发送剩余输出失败，连接已断开: {e}")
+                                    connection_broken = True
+                                    break
+                    break
+                
+                # 读取一行输出
+                try:
+                    output_line = process.stdout.readline()
+                    if output_line:
+                        output_count += 1
+                        try:
+                            self._send_stream_data({
+                                'type': 'output',
+                                'content': output_line.rstrip()
+                            })
+                            print(f"[DEBUG] 发送输出行 {output_count}: {output_line.rstrip()[:50]}...")
+                        except Exception as send_error:
+                            print(f"[DEBUG] 发送数据失败，连接断开，设置断开标记: {send_error}")
+                            connection_broken = True
+                            # 不要continue，让下次循环开始时检查connection_broken状态
+                    elif not output_line:
+                        # 没有更多输出，测试连接状态
+                        if not connection_broken:
+                            try:
+                                # 发送一个心跳测试连接
+                                self._send_stream_data({
+                                    'type': 'ping',
+                                    'content': ''
+                                })
+                            except Exception as ping_error:
+                                print(f"[DEBUG] 心跳检测失败，连接已断开: {ping_error}")
+                                connection_broken = True
+                        
+                        # 没有更多输出，稍等片刻
+                        time.sleep(0.1)
+                except Exception as e:
+                    print(f"[DEBUG] 读取输出时出错: {e}")
+                    if not connection_broken:
+                        try:
+                            self._send_stream_data({
+                                'type': 'error',
+                                'content': f"读取输出时发生错误: {str(e)}"
+                            })
+                        except:
+                            print(f"[DEBUG] 发送错误信息失败，连接已断开")
+                            connection_broken = True
+                    break
+            
+            # 获取返回码
+            if process.poll() is not None:
+                return_code = process.returncode
+                if connection_broken:
+                    print(f"[DEBUG] 脚本因连接断开被终止，返回码: {return_code}，总输出行数: {output_count}")
+                else:
+                    print(f"[DEBUG] 脚本执行完成，返回码: {return_code}，总输出行数: {output_count}")
+            else:
+                # 进程可能被强制终止
+                return_code = -1
+                print(f"[DEBUG] 脚本被强制终止，总输出行数: {output_count}")
+            
+            # 清理进程引用
             with process_lock:
-                current_process = None
+                current_processes.pop(str(process.pid), None)
+                if task_id in active_tasks:
+                    if connection_broken:
+                        active_tasks[task_id]['status'] = 'terminated'
+                    else:
+                        active_tasks[task_id]['status'] = 'completed'
+                    active_tasks[task_id]['return_code'] = return_code
+            
+            # 只有在连接未断开时才发送结束信息
+            if not connection_broken:
+                # 发送结束信息
+                if return_code == 0:
+                    self._send_stream_data({
+                        'type': 'success',
+                        'content': f"=== 任务 [{task_id}] 执行完成，返回码: {return_code} ==="
+                    })
+                elif return_code == -15 or return_code == 1:
+                    self._send_stream_data({
+                        'type': 'warning',
+                        'content': f"=== 任务 [{task_id}] 被用户终止 ==="
+                    })
+                else:
+                    self._send_stream_data({
+                        'type': 'error',
+                        'content': f"=== 任务 [{task_id}] 执行失败，返回码: {return_code} ==="
+                    })
                 
-            self._send_stream_data({
-                'type': 'error',
-                'content': f"执行脚本时发生错误: {str(e)}"
-            })
+                # 发送结束标记
+                self._send_stream_data({
+                    'type': 'end',
+                    'content': 'STREAM_END'
+                })
+            else:
+                print(f"[DEBUG] 连接已断开，跳过发送结束信息")
+            
+        except Exception as e:
+            print(f"[DEBUG] 监控任务执行时发生错误: {str(e)}")
+            # 如果有进程在运行，尝试终止它
+            if process and process.poll() is None:
+                self._terminate_process(process, f"监控异常，终止任务 {task_id}")
+            
+            try:
+                self._send_stream_data({
+                    'type': 'error',
+                    'content': f"监控任务执行时发生错误: {str(e)}"
+                })
+            except:
+                print(f"[DEBUG] 无法发送错误信息，连接可能已断开")
+        finally:
+            # 清理任务记录
+            with process_lock:
+                active_tasks.pop(task_id, None)
+            print(f"[DEBUG] 任务 {task_id} 监控结束")
     
     def _prepare_script_input(self, script_name: str, params: dict) -> str:
         """根据脚本类型和参数准备输入数据"""
@@ -596,6 +824,58 @@ class ToolboxRequestHandler(BaseHTTPRequestHandler):
         """自定义日志格式"""
         timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
         print(f"[{timestamp}] {format % args}")
+
+    def _terminate_process(self, process, reason: str):
+        """安全地终止进程"""
+        try:
+            if process and process.poll() is None:
+                print(f"[DEBUG] {reason}，正在终止进程 PID: {process.pid}")
+                
+                if platform.system() == "Windows":
+                    # Windows系统：直接使用强制终止，不再尝试优雅终止
+                    try:
+                        print(f"[DEBUG] 立即强制终止进程树 PID: {process.pid}")
+                        result = subprocess.run(['taskkill', '/F', '/T', '/PID', str(process.pid)], 
+                                              capture_output=True, text=True, timeout=3)
+                        if result.returncode == 0:
+                            print(f"[DEBUG] 进程树已强制终止 PID: {process.pid}")
+                        else:
+                            print(f"[DEBUG] taskkill失败: {result.stderr}，尝试Python方法 PID: {process.pid}")
+                            process.kill()
+                            try:
+                                process.wait(timeout=1)
+                                print(f"[DEBUG] Python方法终止成功 PID: {process.pid}")
+                            except subprocess.TimeoutExpired:
+                                print(f"[DEBUG] 进程终止超时，但已发送终止信号 PID: {process.pid}")
+                    except Exception as e:
+                        print(f"[DEBUG] 强制终止失败，尝试最后手段: {e}")
+                        try:
+                            process.kill()
+                            process.wait(timeout=1)
+                        except:
+                            print(f"[DEBUG] 所有终止方法都失败，进程可能已终止 PID: {process.pid}")
+                else:
+                    # Unix系统：直接使用强制终止
+                    try:
+                        process.kill()
+                        process.wait(timeout=2)
+                        print(f"[DEBUG] 进程已强制终止 PID: {process.pid}")
+                    except subprocess.TimeoutExpired:
+                        print(f"[DEBUG] 进程终止超时，但已发送终止信号 PID: {process.pid}")
+                
+                # 从进程字典中移除
+                with process_lock:
+                    current_processes.pop(str(process.pid), None)
+                    print(f"[DEBUG] 已从进程字典中移除 PID: {process.pid}")
+                    
+        except Exception as e:
+            print(f"[DEBUG] 终止进程时发生错误: {e}")
+            # 即使出错也要清理进程引用
+            try:
+                with process_lock:
+                    current_processes.pop(str(process.pid), None)
+            except:
+                pass
 
 # 全局退出标志
 server_should_exit = False

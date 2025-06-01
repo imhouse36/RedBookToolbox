@@ -58,6 +58,10 @@
                         <button class="control-btn stop-btn" id="stop-btn" title="终止执行" style="display: none;">
                             <i class="fas fa-stop"></i>
                         </button>
+                        <button class="control-btn server-status-btn" id="server-status-btn" title="检查服务器状态和重启功能">
+                            <i class="fas fa-server"></i>
+                            <span>服务状态</span>
+                        </button>
                         <button class="control-btn" onclick="copyOutput()" title="复制输出内容">
                             <i class="fas fa-copy"></i>
                         </button>
@@ -108,11 +112,21 @@
                         <div class="tool-form">
                             <div class="input-group">
                                 <label>基础目录路径</label>
-                                <input type="text" id="auto-base-path" name="base_path" placeholder="请输入基础目录路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="auto-base-path" name="base_path" placeholder="请输入基础目录路径">
+                                    <button type="button" class="browse-btn" data-target="auto-base-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>素材目录路径</label>
-                                <input type="text" id="auto-source-path" name="source_path" placeholder="请输入素材目录路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="auto-source-path" name="source_path" placeholder="请输入素材目录路径">
+                                    <button type="button" class="browse-btn" data-target="auto-source-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>文件夹数量</label>
@@ -149,7 +163,12 @@
                         <div class="tool-form">
                             <div class="input-group">
                                 <label>图片目录路径</label>
-                                <input type="text" id="md5-path" name="path" placeholder="请输入图片文件夹路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="md5-path" name="path" placeholder="请输入图片文件夹路径">
+                                    <button type="button" class="browse-btn" data-target="md5-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>随机字节数</label>
@@ -186,7 +205,12 @@
                         <div class="tool-form">
                             <div class="input-group">
                                 <label>ZIP文件夹路径</label>
-                                <input type="text" id="unzip-path" name="path" placeholder="请输入ZIP文件夹路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="unzip-path" name="path" placeholder="请输入ZIP文件夹路径">
+                                    <button type="button" class="browse-btn" data-target="unzip-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>覆盖已存在文件</label>
@@ -226,7 +250,12 @@
                         <div class="tool-form">
                             <div class="input-group">
                                 <label>视频目录路径</label>
-                                <input type="text" id="webp-video-path" name="path" placeholder="请输入视频文件夹路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="webp-video-path" name="path" placeholder="请输入视频文件夹路径">
+                                    <button type="button" class="browse-btn" data-target="webp-video-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="input-row">
                                 <div class="input-group">
@@ -272,7 +301,12 @@
                         <div class="tool-form">
                             <div class="input-group">
                                 <label>目录路径</label>
-                                <input type="text" id="webp-resize-path" name="path" placeholder="请输入目录路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="webp-resize-path" name="path" placeholder="请输入目录路径">
+                                    <button type="button" class="browse-btn" data-target="webp-resize-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>文件大小阈值(MB)</label>
@@ -313,7 +347,12 @@
                         <div class="tool-form">
                             <div class="input-group">
                                 <label>目标目录路径</label>
-                                <input type="text" id="rename-files-path" name="path" placeholder="请输入文件夹路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="rename-files-path" name="path" placeholder="请输入文件夹路径">
+                                    <button type="button" class="browse-btn" data-target="rename-files-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="button-group">
                                 <button class="execute-btn" data-script="rename_files">
@@ -346,7 +385,12 @@
                         <div class="tool-form">
                             <div class="input-group">
                                 <label>Excel文件夹路径</label>
-                                <input type="text" id="excel-folder-path" name="path" placeholder="请输入包含Excel文件的文件夹路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="excel-folder-path" name="path" placeholder="请输入包含Excel文件的文件夹路径">
+                                    <button type="button" class="browse-btn" data-target="excel-folder-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>处理说明</label>
@@ -387,7 +431,12 @@
                         <div class="tool-form">
                             <div class="input-group">
                                 <label>目标目录路径</label>
-                                <input type="text" id="build-folder-path" name="path" placeholder="请输入文件夹路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="build-folder-path" name="path" placeholder="请输入文件夹路径">
+                                    <button type="button" class="browse-btn" data-target="build-folder-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>文件夹数量</label>
@@ -424,11 +473,21 @@
                         <div class="tool-form">
                             <div class="input-group">
                                 <label>素材文件夹路径</label>
-                                <input type="text" id="copy-source-path" name="source_path" placeholder="请输入素材文件夹路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="copy-source-path" name="source_path" placeholder="请输入素材文件夹路径">
+                                    <button type="button" class="browse-btn" data-target="copy-source-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>发布文件夹路径</label>
-                                <input type="text" id="copy-target-path" name="target_path" placeholder="请输入发布文件夹路径">
+                                <div class="input-group-with-browse">
+                                    <input type="text" id="copy-target-path" name="target_path" placeholder="请输入发布文件夹路径">
+                                    <button type="button" class="browse-btn" data-target="copy-target-path" title="选择文件夹">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="button-group">
                                 <button class="execute-btn" data-script="copy_files">
@@ -448,7 +507,7 @@
                         <div class="tool-header">
                             <div class="tool-number">10</div>
                             <div class="tool-icon testing">
-                                <i class="fas fa-bug"></i>
+                                <i class="fas fa-toilet"></i>
                             </div>
                             <div class="tool-info">
                                 <h3>终止按钮测试</h3>
@@ -485,6 +544,71 @@
 
 
         </main>
+    </div>
+
+    <!-- 服务状态弹窗 -->
+    <div id="server-status-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-dialog server-status-dialog">
+            <div class="modal-header">
+                <h3><i class="fas fa-server"></i> 服务器状态与控制</h3>
+                <button class="modal-close" onclick="closeServerStatusModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 服务器状态信息 -->
+                <div class="status-section">
+                    <h4>服务器状态信息</h4>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <span class="status-label">服务状态:</span>
+                            <span class="status-value" id="server-running-status">检查中...</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">工作目录:</span>
+                            <span class="status-value" id="server-work-dir">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Python版本:</span>
+                            <span class="status-value" id="server-python-version">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">可用工具:</span>
+                            <span class="status-value" id="server-tool-count">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 控制按钮 -->
+                <div class="control-buttons">
+                    <button class="dialog-btn dialog-btn-primary" onclick="refreshServerStatus()">
+                        <i class="fas fa-sync-alt"></i>
+                        刷新状态
+                    </button>
+                    <button class="dialog-btn dialog-btn-warning" onclick="restartServer()">
+                        <i class="fas fa-redo"></i>
+                        重启服务器
+                    </button>
+                    <button class="dialog-btn dialog-btn-danger" onclick="stopServer()">
+                        <i class="fas fa-stop"></i>
+                        停止服务器
+                    </button>
+                </div>
+
+                <!-- 控制说明 -->
+                <div class="control-info">
+                    <p><i class="fas fa-info-circle"></i> 重启和停止功能需要服务器支持，执行后需要手动重新启动</p>
+                </div>
+
+                <!-- 服务器日志 -->
+                <div class="log-section">
+                    <h4>服务器日志</h4>
+                    <div class="log-container" id="server-logs">
+                        <div class="log-item">正在加载日志...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="environment/script.js"></script>
