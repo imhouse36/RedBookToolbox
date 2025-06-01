@@ -9,23 +9,23 @@
 ## 功能模块
 
 ### 1. 文件夹管理工具
-- **Build_folder_Claude4.py** - 批量创建编号文件夹
-- **Auto_build_and_copy_Claude4.py** - 自动创建文件夹并复制素材
-- **Copy_files_Claude4.py** - 智能文件复制工具
+- **Build_folder.py** - 批量创建编号文件夹，在指定目录下创建用户指定数量的编号子文件夹
+- **Auto_build_and_copy.py** - 自动创建编号文件夹并从素材库随机复制图片到各个文件夹
+- **Copy_files.py** - 智能文件复制工具，将素材文件夹的图片随机分配到发布文件夹的各个子目录
 
 ### 2. 文件重命名工具
-- **Rename_files_Claude4.py** - 递归批量重命名文件
+- **Rename_files.py** - 递归批量重命名文件，按"文件夹名_编号.扩展名"格式重命名所有文件
 
-### 3. 图片处理工具
-- **Webp_video_to_img_Claude4.py** - 视频转WebP动图（Claude4优化版）
-- **Webp_video_to_img_Gemini2.5pro.py** - 视频转WebP动图（Gemini版）
-- **Webp_resize_Claude4.py** - WebP文件重新生成工具（Claude4优化版）
-- **Webp_resize_Gemini2.5pro.py** - WebP文件重新生成工具（Gemini版）
+### 3. 图片与视频处理工具
+- **Webp_video_to_img.py** - 视频转WebP动图，批量将视频文件转换为WebP动画格式
+- **Webp_video_to_img_Gemini2.5pro.py** - 视频转WebP动图（Gemini优化版）
+- **Webp_resize.py** - WebP文件重新生成工具，从原始视频重新生成超过阈值的WebP文件
+- **Webp_resize_Gemini2.5pro.py** - WebP文件重新生成工具（Gemini优化版）
 
 ### 4. 文件处理工具
-- **Unzip_Claude4.py** - 批量解压缩工具
-- **Md5_renew_Claude4.py** - MD5值修改工具
-- **Excel_renew_Claude4.py** - Excel文件批量处理工具
+- **Unzip.py** - 批量解压缩工具，自动解压指定文件夹内的所有ZIP压缩文件
+- **Md5_renew.py** - MD5值修改工具，通过在图片文件末尾添加随机字节改变MD5值
+- **Excel_renew.py** - Excel文件批量处理工具，清空Excel文件的K2单元格和第一个工作表的C列内容
 
 ## 环境要求
 
@@ -51,14 +51,14 @@ pip install openpyxl
 每个脚本都是独立运行的，直接执行即可：
 
 ```bash
-python Build_folder_Claude4.py
+python Build_folder.py
 ```
 
 所有脚本都会提示用户输入必要的参数（如文件夹路径、处理选项等），无需修改代码。
 
 ## 功能特性
 
-### Claude4优化版本特性
+### 脚本优化特性
 - ✅ 完善的类型提示
 - ✅ 增强的错误处理
 - ✅ 详细的进度显示
@@ -82,10 +82,10 @@ python Build_folder_Claude4.py
 
 ## 版本对比
 
-项目中包含了Claude4和Gemini2.5pro两个版本的部分工具，用户可以根据需要选择：
+项目中包含了标准版本和Gemini2.5pro优化版本的部分工具，用户可以根据需要选择：
 
-- **Claude4版本**：功能更完整，用户体验更好，错误处理更完善
-- **Gemini版本**：代码结构相对简单，适合快速批量处理
+- **标准版本**：功能完整，用户体验好，错误处理完善，适合日常使用
+- **Gemini版本**：代码结构优化，处理效率更高，适合大批量文件处理
 
 ## 贡献
 
