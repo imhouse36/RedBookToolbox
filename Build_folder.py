@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # 脚本功能:
 # 本脚本用于在指定的父目录下创建一系列用户指定数量的编号子文件夹 (例如，如果用户输入5，则创建 1, 2, 3, 4, 5)。
 # 每次运行时，会提示用户输入基础目录的路径以及要创建的子文件夹数量。
@@ -20,90 +21,166 @@
 # 注意事项:
 # - 请确保运行脚本的用户对指定的基础目录及其子目录有写入权限。
 # - 输入的文件夹数量必须是大于0的整数。
+# - 支持用户中断操作（Ctrl+C）优雅退出。
 
-import pathlib # 导入 pathlib 模块，用于以面向对象的方式处理文件系统路径
-import errno   # 导入 errno 模块，用于处理特定的错误号 (虽然pathlib内置了部分处理)
+import pathlib
+import time
+import sys
+from typing import Tuple
 
-def create_folders_pathlib(base_dir_str: str, num_folders_to_create: int):
+def get_positive_integer_input(prompt_message: str) -> int:
+    """
+    提示用户输入一个正整数，并持续请求直到输入有效。
+
+    参数:
+        prompt_message (str): 显示给用户的提示信息。
+
+    返回:
+        int: 用户输入的有效正整数。
+    """
+    while True:
+        try:
+            num_str = input(prompt_message).strip()
+            if not num_str:
+                print("错误：未输入内容。请重新输入。")
+                continue
+            num_val = int(num_str)
+            if num_val <= 0:
+                print("错误：输入的数字必须是大于0的正整数。请重新输入。")
+            else:
+                return num_val
+        except ValueError:
+            print("错误：请输入一个有效的数字。请重新输入。")
+        except KeyboardInterrupt:
+            print("\n用户取消操作。")
+            sys.exit(0)
+
+def get_valid_folder_path_from_user(prompt_message: str) -> pathlib.Path:
+    """
+    提示用户输入一个文件夹路径，并验证输入非空。
+
+    参数:
+        prompt_message (str): 显示给用户的提示信息。
+
+    返回:
+        pathlib.Path: 用户输入的文件夹路径对象。
+    """
+    while True:
+        try:
+            folder_path_str = input(prompt_message).strip()
+            if not folder_path_str:
+                print("错误：未输入路径。请重新输入。")
+                continue
+            return pathlib.Path(folder_path_str)
+        except KeyboardInterrupt:
+            print("\n用户取消操作。")
+            sys.exit(0)
+
+def create_folders_pathlib(base_dir: pathlib.Path, num_folders_to_create: int) -> Tuple[bool, int]:
     """
     在指定的基础目录下创建指定数量的编号子文件夹 (使用 pathlib)。
 
     参数:
-    base_dir_str (str): 用户通过input()输入的基础目录路径字符串。
-    num_folders_to_create (int): 用户希望创建的子文件夹数量。
-    """
-    try:
-        # 将输入的字符串路径转换为 Path 对象，方便进行路径操作
-        base_path = pathlib.Path(base_dir_str)
+        base_dir (pathlib.Path): 基础目录路径对象。
+        num_folders_to_create (int): 用户希望创建的子文件夹数量。
 
+    返回:
+        Tuple[bool, int]: (是否全部成功, 成功创建的文件夹数量)
+    """
+    print(f"\n--- 开始创建编号子文件夹于 '{base_dir}' ---")
+    start_time = time.time()
+    success_count = 0
+    
+    try:
         # 创建基础目录
-        # base_path.mkdir(parents=True, exist_ok=True)
-        # - parents=True: 如果路径中的父目录不存在，则一并创建 (类似于 os.makedirs)。
-        # - exist_ok=True: 如果目标目录已经存在，则不会引发 FileExistsError 错误。
-        base_path.mkdir(parents=True, exist_ok=True)
-        print(f"基础目录 '{base_path}' 确保存在。")
+        # parents=True: 如果路径中的父目录不存在，则一并创建
+        # exist_ok=True: 如果目标目录已经存在，则不会引发 FileExistsError 错误
+        base_dir.mkdir(parents=True, exist_ok=True)
+        print(f"基础目录 '{base_dir}' 确保存在。")
 
         # 创建指定数量的子文件夹
-        # 循环从 1 到 num_folders_to_create (包含)
         for i in range(1, num_folders_to_create + 1):
-            # 使用 / 操作符拼接路径，这是 pathlib 的一个便捷特性
-            folder_name = str(i) # 文件夹名称为数字字符串 "1", "2", ...
-            folder_path = base_path / folder_name
+            folder_name = str(i)
+            folder_path = base_dir / folder_name
+            progress = (i / num_folders_to_create) * 100
 
             try:
-                # 创建子文件夹
-                # exist_ok=True: 如果子文件夹已存在，不引发错误。
-                # parents=False (默认): 因为我们已经确保了 base_path (父目录) 存在。
-                folder_path.mkdir(exist_ok=True)
-                print(f"子文件夹 '{folder_path}' 确保存在。")
+                # 检查文件夹是否已存在
+                if folder_path.exists():
+                    print(f"  [进度: {progress:.1f}%] 子文件夹 '{folder_name}' 已存在，跳过创建。")
+                else:
+                    folder_path.mkdir(exist_ok=True)
+                    print(f"  [进度: {progress:.1f}%] 子文件夹 '{folder_name}' 创建成功。")
+                success_count += 1
             except OSError as e:
-                # 捕获在创建单个子文件夹时可能发生的操作系统错误，例如权限问题。
-                # FileExistsError 会被 exist_ok=True 处理，所以这里主要捕获其他 OSError。
-                print(f"创建子文件夹 '{folder_path}' 时出错: {e}")
+                print(f"  [进度: {progress:.1f}%] 创建子文件夹 '{folder_path}' 时出错: {e}")
 
-        print(f"已处理完 {num_folders_to_create} 个子文件夹的创建请求。")
+        # 输出统计信息
+        end_time = time.time()
+        execution_time = end_time - start_time
+        
+        print(f"\n{'='*50}")
+        print("文件夹创建任务完成统计报告:")
+        print(f"{'='*50}")
+        print(f"成功处理文件夹数量: {success_count}/{num_folders_to_create}")
+        print(f"总执行时间: {execution_time:.2f} 秒")
+        print(f"平均创建速度: {success_count/execution_time:.2f} 文件夹/秒" if execution_time > 0 else "平均创建速度: N/A")
+        print(f"{'='*50}")
+        
+        return success_count == num_folders_to_create, success_count
 
     except OSError as e:
-        # 主要捕获在处理 base_path.mkdir 时可能发生的严重错误，
-        # 例如，如果 base_dir_str 指向一个文件，或者因权限不足无法创建基础目录。
-        print(f"处理基础目录 '{base_dir_str}' 时发生操作系统错误: {e}")
+        print(f"处理基础目录 '{base_dir}' 时发生操作系统错误: {e}")
+        return False, success_count
     except Exception as ex:
-        # 捕获其他所有未预料到的意外错误，增加脚本的健壮性。
-        print(f"发生意外错误: {ex}")
+        print(f"创建编号子文件夹时发生意外错误: {ex}")
+        return False, success_count
 
+
+def main():
+    """
+    主函数：控制程序的执行流程。
+    """
+    print("编号文件夹批量创建工具")
+    print("=" * 50)
+    
+    # 记录脚本开始时间
+    script_start_time = time.time()
+    
+    try:
+        # 1. 获取用户输入：基础目录路径
+        base_path = get_valid_folder_path_from_user(
+            "请输入基础目录路径: "
+        )
+        
+        # 2. 获取用户输入：要创建的子文件夹数量
+        num_folders = get_positive_integer_input(
+            "请输入要创建的子文件夹个数 (例如: 5): "
+        )
+        
+        print(f"\n配置确认:")
+        print(f"- 基础目录路径: {base_path}")
+        print(f"- 创建子文件夹数量: {num_folders}")
+        
+        # 3. 执行文件夹创建任务
+        success, created_count = create_folders_pathlib(base_path, num_folders)
+        
+        if success:
+            print("\n所有文件夹创建任务完成！")
+        else:
+            print(f"\n文件夹创建任务部分完成，成功创建 {created_count}/{num_folders} 个文件夹。")
+        
+        # 4. 输出脚本总执行时间
+        script_end_time = time.time()
+        total_script_time = script_end_time - script_start_time
+        print(f"\n脚本总执行时间: {total_script_time:.2f} 秒")
+        print("程序执行完毕。")
+        
+    except KeyboardInterrupt:
+        print("\n\n用户中断程序执行。")
+    except Exception as e:
+        print(f"\n程序执行过程中发生意外错误: {e}")
+        print("请检查输入参数和文件权限后重试。")
 
 if __name__ == "__main__":
-    # 提示用户输入基础目录路径，并移除首尾可能存在的空白字符
-    base_directory_from_input = input("请输入基础目录路径 : ").strip()
-
-    # 检查用户是否输入了基础目录路径
-    if not base_directory_from_input:
-        print("错误：未输入目录路径。脚本将退出。")
-    else:
-        # 如果输入了基础目录路径，则继续提示输入要创建的文件夹数量
-        num_folders_to_create_input = 0 # 初始化变量
-        while True: # 使用循环来确保用户输入的是有效的正整数
-            try:
-                num_folders_str = input("请输入要创建的子文件夹个数 (例如: 5): ").strip()
-                if not num_folders_str: # 检查是否输入了内容
-                    print("错误：未输入文件夹个数。请重新输入。")
-                    continue
-
-                num_folders_to_create_input = int(num_folders_str) # 尝试将输入转换为整数
-
-                if num_folders_to_create_input <= 0: # 检查数字是否为正数
-                    print("错误：文件夹个数必须是大于0的正整数。请重新输入。")
-                else:
-                    break # 输入有效，跳出循环
-            except ValueError:
-                # 如果 int()转换失败 (例如用户输入了文本)，则捕获 ValueError
-                print("错误：请输入一个有效的数字作为文件夹个数 (例如: 5)。请重新输入。")
-
-        # 打印用户输入的路径和数量，以便确认
-        print(f"接收到的基础目录路径: '{base_directory_from_input}'")
-        print(f"计划创建的子文件夹个数: {num_folders_to_create_input}")
-
-        # 调用函数执行文件夹创建操作
-        create_folders_pathlib(base_directory_from_input, num_folders_to_create_input)
-
-        print("脚本执行完毕。")
+    main()
