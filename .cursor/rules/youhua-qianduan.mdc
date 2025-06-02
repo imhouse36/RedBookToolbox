@@ -1,0 +1,456 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 前端开发规则 - 小红书工具箱项目
+
+## 🎯 项目特定规则
+
+### 代码组织原则
+- 必须将超过500行的JavaScript文件进行模块化拆分
+- 必须将超过800行的CSS文件按功能模块拆分
+- 使用ES6模块化语法，避免全局变量污染
+- 所有新增功能必须以组件化方式实现
+
+### 文件命名和结构
+environment/js/
+├── core/
+│ ├── api.js # API调用封装
+│ ├── utils.js # 工具函数
+│ └── constants.js # 常量定义
+├── components/
+│ ├── toolManager.js # 工具管理组件
+│ ├── outputPanel.js # 输出面板组件
+│ ├── progressBar.js # 进度条组件
+│ └── statusIndicator.js # 状态指示器
+├── services/
+│ ├── scriptRunner.js # 脚本执行服务
+│ ├── taskMonitor.js # 任务监控服务
+│ └── configManager.js # 配置管理服务
+└── main.js # 主入口文件
+environment/css/
+├── base/
+│ ├── variables.css # CSS变量
+│ ├── reset.css # 重置样式
+│ └── typography.css # 字体样式
+├── components/
+│ ├── header.css # 头部样式
+│ ├── tools.css # 工具区域样式
+│ ├── output.css # 输出面板样式
+│ └── progress.css # 进度条样式
+└── main.css # 主样式文件
+
+
+## 🔧 JavaScript 编码规范
+
+### 模块化要求
+```javascript
+// ✅ 正确：使用ES6模块语法
+// api.js
+export class ApiService {
+    constructor(baseURL = '/api') {
+        this.baseURL = baseURL;
+        this.abortController = null;
+    }
+    
+    async executeScript(scriptName, params) {
+        // 实现API调用
+    }
+}
+
+// main.js  
+import { ApiService } from './core/api.js';
+import { ToolManager } from './components/toolManager.js';
+
+// ❌ 错误：避免全局变量
+window.currentProcess = null; // 不要这样做
+```
+
+### 异步处理规范
+```javascript
+// ✅ 正确：使用async/await
+async function executeScript(scriptName, params) {
+    try {
+        this.updateStatus('running');
+        const result = await this.apiService.executeScript(scriptName, params);
+        this.handleSuccess(result);
+    } catch (error) {
+        this.handleError(error);
+    } finally {
+        this.cleanup();
+    }
+}
+
+// ❌ 错误：避免回调地狱
+fetch('/api/run-script').then(response => {
+    return response.json();
+}).then(data => {
+    // 处理数据
+}).catch(error => {
+    // 处理错误
+});
+```
+
+### 错误处理标准
+```javascript
+// ✅ 必须的错误处理模式
+class ScriptRunner {
+    async runScript(scriptName, params) {
+        try {
+            // 预检查
+            if (!this.validateParams(params)) {
+                throw new ValidationError('参数验证失败');
+            }
+            
+            // 执行脚本
+            const result = await this.executeScript(scriptName, params);
+            
+            // 成功处理
+            this.reportSuccess(result);
+            return result;
+            
+        } catch (error) {
+            // 分类错误处理
+            if (error instanceof ValidationError) {
+                this.showUserError(error.message);
+            } else if (error instanceof NetworkError) {
+                this.showNetworkError();
+            } else {
+                this.showGenericError(error);
+            }
+            
+            // 错误日志
+            console.error('Script execution failed:', {
+                scriptName,
+                params,
+                error: error.message,
+                stack: error.stack
+            });
+            
+            throw error; // 重新抛出供上层处理
+        }
+    }
+}
+```
+
+### 性能优化要求
+```javascript
+// ✅ 防抖和节流
+class OutputPanel {
+    constructor() {
+        this.updateOutput = this.debounce(this._updateOutput.bind(this), 100);
+        this.scrollToBottom = this.throttle(this._scrollToBottom.bind(this), 50);
+    }
+    
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+}
+
+// ✅ 内存泄漏防护
+class ComponentBase {
+    constructor() {
+        this.eventListeners = [];
+        this.timers = [];
+    }
+    
+    addEventListener(element, event, handler) {
+        element.addEventListener(event, handler);
+        this.eventListeners.push(() => element.removeEventListener(event, handler));
+    }
+    
+    destroy() {
+        // 清理事件监听器
+        this.eventListeners.forEach(cleanup => cleanup());
+        this.eventListeners = [];
+        
+        // 清理定时器
+        this.timers.forEach(timer => clearTimeout(timer));
+        this.timers = [];
+    }
+}
+```
+
+## 🎨 CSS 编码规范
+
+### CSS变量使用
+```css
+/* ✅ 必须：在variables.css中定义所有颜色和尺寸 */
+:root {
+    /* 颜色系统 */
+    --primary-color: #3b82f6;
+    --secondary-color: #8b5cf6;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    
+    /* 间距系统 */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    /* 字体系统 */
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+}
+
+/* ✅ 使用变量而非硬编码值 */
+.tool-item {
+    background: var(--primary-color);
+    padding: var(--spacing-md);
+    font-size: var(--font-size-base);
+}
+```
+
+### BEM命名规范
+```css
+/* ✅ 正确：BEM命名 */
+.tool-panel {}
+.tool-panel__header {}
+.tool-panel__body {}
+.tool-panel__footer {}
+
+.tool-item {}
+.tool-item--active {}
+.tool-item--disabled {}
+.tool-item__icon {}
+.tool-item__title {}
+.tool-item__description {}
+
+/* ❌ 错误：避免深层嵌套 */
+.tool-panel .header .title .text span {} /* 不要这样做 */
+```
+
+### 响应式设计要求
+```css
+/* ✅ 必须：使用移动优先设计 */
+.tool-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+    .tool-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .tool-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+```
+
+## 📊 组件开发规范
+
+### 组件基类模式
+```javascript
+// ✅ 所有组件必须继承ComponentBase
+class ComponentBase {
+    constructor(container, options = {}) {
+        this.container = container;
+        this.options = { ...this.defaultOptions, ...options };
+        this.eventListeners = [];
+        this.isDestroyed = false;
+        
+        this.init();
+    }
+    
+    get defaultOptions() {
+        return {};
+    }
+    
+    init() {
+        this.render();
+        this.bindEvents();
+    }
+    
+    render() {
+        // 子类实现
+        throw new Error('render method must be implemented');
+    }
+    
+    bindEvents() {
+        // 子类实现
+    }
+    
+    destroy() {
+        if (this.isDestroyed) return;
+        
+        this.eventListeners.forEach(cleanup => cleanup());
+        this.eventListeners = [];
+        this.isDestroyed = true;
+    }
+}
+
+// ✅ 组件实现示例
+class ProgressBar extends ComponentBase {
+    get defaultOptions() {
+        return {
+            showPercentage: true,
+            showETA: true,
+            animated: true
+        };
+    }
+    
+    render() {
+        this.container.innerHTML = `
+            <div class="progress-bar">
+                <div class="progress-bar__fill"></div>
+                <div class="progress-bar__text"></div>
+            </div>
+        `;
+        
+        this.fillElement = this.container.querySelector('.progress-bar__fill');
+        this.textElement = this.container.querySelector('.progress-bar__text');
+    }
+    
+    updateProgress(percent, message = '') {
+        if (this.isDestroyed) return;
+        
+        this.fillElement.style.width = `${percent}%`;
+        this.textElement.textContent = message;
+        
+        // 触发更新事件
+        this.container.dispatchEvent(new CustomEvent('progress-updated', {
+            detail: { percent, message }
+        }));
+    }
+}
+```
+
+## 🚀 性能优化要求
+
+### 代码分割
+```javascript
+// ✅ 动态导入大型组件
+async function loadAdvancedEditor() {
+    const { AdvancedEditor } = await import('./components/advancedEditor.js');
+    return new AdvancedEditor();
+}
+
+// ✅ 延迟加载非关键功能
+class ToolManager {
+    async showAdvancedOptions() {
+        if (!this.advancedPanel) {
+            const { AdvancedPanel } = await import('./components/advancedPanel.js');
+            this.advancedPanel = new AdvancedPanel();
+        }
+        this.advancedPanel.show();
+    }
+}
+```
+
+### DOM操作优化
+```javascript
+// ✅ 批量DOM操作
+class OutputPanel {
+    appendMultipleLines(lines) {
+        const fragment = document.createDocumentFragment();
+        
+        lines.forEach(line => {
+            const lineElement = document.createElement('div');
+            lineElement.className = 'output-line';
+            lineElement.textContent = line;
+            fragment.appendChild(lineElement);
+        });
+        
+        this.container.appendChild(fragment);
+        this.scrollToBottom();
+    }
+    
+    // ✅ 使用虚拟滚动处理大量内容
+    setupVirtualScrolling() {
+        if (this.outputLines.length > 1000) {
+            this.enableVirtualScrolling();
+        }
+    }
+}
+```
+
+## 📝 文档和注释要求
+
+### JSDoc注释标准
+```javascript
+/**
+ * 执行工具脚本
+ * @param {string} scriptName - 脚本名称 (webp_video, md5_renew, 等)
+ * @param {Object} params - 脚本参数
+ * @param {string} params.path - 目标路径
+ * @param {number} [params.duration=3] - 转换时长(秒)
+ * @param {string} [params.overwrite='ask'] - 覆盖模式 (skip|replace_all|ask)
+ * @returns {Promise<Object>} 执行结果
+ * @throws {ValidationError} 参数验证失败
+ * @throws {NetworkError} 网络连接失败
+ * @example
+ * const result = await scriptRunner.execute('webp_video', {
+ *   path: '/path/to/videos',
+ *   duration: 5,
+ *   overwrite: 'skip'
+ * });
+ */
+async execute(scriptName, params) {
+    // 实现...
+}
+```
+
+## 🧪 测试要求
+
+### 基础测试用例
+```javascript
+// ✅ 每个组件必须包含基础测试
+// tests/components/progressBar.test.js
+describe('ProgressBar', () => {
+    let container, progressBar;
+    
+    beforeEach(() => {
+        container = document.createElement('div');
+        document.body.appendChild(container);
+        progressBar = new ProgressBar(container);
+    });
+    
+    afterEach(() => {
+        progressBar.destroy();
+        document.body.removeChild(container);
+    });
+    
+    test('应该正确初始化', () => {
+        expect(container.querySelector('.progress-bar')).toBeTruthy();
+    });
+    
+    test('应该正确更新进度', () => {
+        progressBar.updateProgress(50, '50% 完成');
+        const fill = container.querySelector('.progress-bar__fill');
+        expect(fill.style.width).toBe('50%');
+    });
+});
+```
+
+## 🎯 代码审查检查点
+
+### 提交前必检项
+- [ ] 是否消除了全局变量
+- [ ] 是否正确使用了ES6模块
+- [ ] 是否添加了错误处理
+- [ ] 是否添加了JSDoc注释
+- [ ] 是否使用了CSS变量
+- [ ] 是否遵循BEM命名
+- [ ] 是否添加了组件销毁逻辑
+- [ ] 是否优化了DOM操作性能
+- [ ] 是否兼容目标浏览器
+- [ ] 是否添加了基础测试用例

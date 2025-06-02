@@ -1,0 +1,625 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 后端开发规则 - 小红书工具箱项目
+
+## 🎯 项目特定规则
+
+### 双模式架构原则
+- 每个工具脚本必须支持独立运行和Web调用两种模式
+- 必须使用公共模块来消除代码重复（目标减少50%代码量）
+- 所有工具必须继承统一的基类或遵循统一的接口
+- 本地化优先：专注个人效率工具，避免过度工程化
+
+### 文件组织结构
+小红书工具箱/
+├── shared/ # 公共模块
+│ ├── file_utils.py # 文件操作工具
+│ ├── input_helper.py # 输入处理助手
+│ ├── progress_reporter.py # 进度报告器
+│ └── path_validator.py # 路径验证器
+├── tools/ # 重构后的工具
+│ ├── webp_video_converter.py
+│ ├── md5_modifier.py
+│ └── file_renamer.py
+├── environment/
+│ ├── server.py # 简化后的服务器
+│ ├── web_adapter.py # Web适配器
+│ └── tool_registry.py # 工具注册器
+└── config/
+└── tool_settings.py # 工具配置
+
+
+## 🔧 Python 编码规范
+
+### 双模式脚本模板
+```python
+# ✅ 每个工具脚本必须遵循此模板
+"""
+工具名称 - 支持独立运行和Web调用双模式
+"""
+import os
+import sys
+import argparse
+from pathlib import Path
+from typing import Optional, Dict, Any
+
+# 导入公共模块
+try:
+    from shared.file_utils import get_valid_folder_path, scan_files_by_extensions
+    from shared.progress_reporter import ProgressReporter
+    from shared.path_validator import PathValidator
+except ImportError:
+    # 回退实现：如果公共模块不可用
+    print("警告: 公共模块不可用，使用内置实现")
+    # 提供最小化的本地实现
+
+class ToolNameConverter:
+    """工具核心类"""
+    def __init__(self, reporter: ProgressReporter = None):
+        self.reporter = reporter or ProgressReporter()
+        self.stats = {'总数': 0, '成功': 0, '失败': 0}
+    
+    def process_directory(self, directory: Path, **options) -> bool:
+        """核心处理逻辑"""
+        self.reporter.report_start(f"开始处理: {directory}")
+        
+        try:
+            # 具体处理逻辑
+            files = self._scan_files(directory)
+            for i, file_path in enumerate(files, 1):
+                success = self._process_single_file(file_path, **options)
+                self._update_stats(success)
+                self.reporter.report_progress(i, len(files), file_path.name)
+            
+            self.reporter.report_completion(self.stats)
+            return self.stats['失败'] == 0
+            
+        except KeyboardInterrupt:
+            self.reporter.report_warning("用户中断操作")
+            return False
+        except Exception as e:
+            self.reporter.report_error(f"处理失败: {e}")
+            return False
+
+def main() -> int:
+    """独立运行模式 - 命令行交互"""
+    print("工具名称 - 独立模式")
+    
+    try:
+        # 获取用户输入
+        directory = get_valid_folder_path("请输入目录路径: ")
+        
+        # 工具特定参数获取
+        options = get_tool_specific_options()
+        
+        # 执行处理
+        processor = ToolNameConverter()
+        success = processor.process_directory(directory, **options)
+        
+        return 0 if success else 1
+        
+    except KeyboardInterrupt:
+        print("\n操作被用户中断")
+        return 1
+    except Exception as e:
+        print(f"错误: {e}")
+        return 1
+
+def web_main(params: Dict[str, Any]) -> Dict[str, Any]:
+    """Web调用模式 - 由server.py调用"""
+    try:
+        # 解析和验证Web参数
+        directory = Path(params.get('path', ''))
+        if not directory.exists():
+            return {'success': False, 'error': f'目录不存在: {directory}'}
+        
+        # 解析工具特定参数
+        options = parse_web_params(params)
+        
+        # 创建Web模式报告器
+        reporter = ProgressReporter(web_mode=True)
+        processor = ToolNameConverter(reporter)
+        
+        # 执行处理
+        success = processor.process_directory(directory, **options)
+        
+        return {
+            'success': success,
+            'stats': processor.stats,
+            'message': '处理完成'
+        }
+        
+    except Exception as e:
+        return {'success': False, 'error': str(e)}
+
+if __name__ == "__main__":
+    # 支持命令行参数模式
+    if len(sys.argv) > 1:
+        args = parse_command_line_args()
+        if args and args.path:
+            processor = ToolNameConverter()
+            success = processor.process_directory(Path(args.path), **vars(args))
+            sys.exit(0 if success else 1)
+    
+    # 交互模式
+    sys.exit(main())
+```
+
+### 公共模块设计规范
+
+#### 文件操作工具 (`shared/file_utils.py`)
+```python
+# ✅ 必须实现的核心函数
+from pathlib import Path
+from typing import List, Set, Optional
+import os
+
+def get_valid_folder_path(prompt: str = "", allow_empty: bool = False) -> Optional[Path]:
+    """
+    通用文件夹路径获取函数
+    
+    Args:
+        prompt: 提示信息
+        allow_empty: 是否允许空输入
+        
+    Returns:
+        验证后的路径对象
+        
+    Raises:
+        ValueError: 路径无效
+    """
+    # 检测运行环境
+    is_web_mode = 'WEBP_TOOL_SERVER_MODE' in os.environ
+    
+    if is_web_mode:
+        # Web环境：从stdin读取
+        try:
+            path_str = input().strip()
+        except EOFError:
+            if allow_empty:
+                return None
+            raise ValueError("未提供路径")
+    else:
+        # 命令行环境：交互式输入
+        path_str = input(prompt or "请输入文件夹路径: ").strip()
+    
+    # 统一路径处理
+    if not path_str and allow_empty:
+        return None
+    
+    path_str = path_str.strip('\'"')  # 移除引号
+    folder_path = Path(path_str)
+    
+    # 路径验证
+    if not folder_path.exists():
+        raise ValueError(f"路径不存在: {path_str}")
+    if not folder_path.is_dir():
+        raise ValueError(f"不是有效文件夹: {path_str}")
+    
+    return folder_path
+
+def scan_files_by_extensions(directory: Path, extensions: Set[str]) -> List[Path]:
+    """
+    递归扫描指定扩展名文件
+    
+    Args:
+        directory: 目标目录
+        extensions: 文件扩展名集合 (如 {'.jpg', '.png'})
+        
+    Returns:
+        文件路径列表，按名称排序
+    """
+    files = []
+    for ext in extensions:
+        # 大小写不敏感搜索
+        files.extend(directory.rglob(f"*{ext.lower()}"))
+        files.extend(directory.rglob(f"*{ext.upper()}"))
+    
+    # 去重并排序
+    return sorted(list(set(files)))
+
+def get_file_size_human(file_path: Path) -> str:
+    """获取人类可读的文件大小"""
+    size = file_path.stat().st_size
+    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+        if size < 1024.0:
+            return f"{size:.2f} {unit}"
+        size /= 1024.0
+    return f"{size:.2f} PB"
+
+# 向后兼容别名
+get_valid_folder_path_from_user = get_valid_folder_path
+get_human_readable_size = get_file_size_human
+```
+
+#### 进度报告器 (`shared/progress_reporter.py`)
+```python
+# ✅ 统一的进度报告工具
+import sys
+import time
+from typing import Dict, Any, Optional
+
+class ProgressReporter:
+    """统一的进度报告工具"""
+    
+    def __init__(self, web_mode: Optional[bool] = None):
+        if web_mode is None:
+            self.web_mode = 'WEBP_TOOL_SERVER_MODE' in os.environ
+        else:
+            self.web_mode = web_mode
+        
+        self.start_time = time.time()
+        self.last_update = 0
+        
+    def report_start(self, message: str):
+        """报告开始"""
+        self._output(f"🚀 {message}")
+        
+    def report_progress(self, current: int, total: int, item_name: str = ""):
+        """报告进度"""
+        # 限制更新频率
+        if time.time() - self.last_update < 0.5 and current < total:
+            return
+        self.last_update = time.time()
+        
+        percentage = (current / total * 100) if total > 0 else 0
+        elapsed = time.time() - self.start_time
+        
+        message = f"📊 进度: [{current}/{total}] {percentage:.1f}%"
+        if item_name:
+            message += f" - {item_name}"
+        if elapsed > 1 and current > 0:
+            eta = (elapsed / current * (total - current))
+            message += f" (预计剩余: {eta:.0f}秒)"
+            
+        self._output(message)
+    
+    def report_success(self, message: str):
+        """报告成功"""
+        self._output(f"✅ {message}")
+    
+    def report_error(self, message: str):
+        """报告错误"""
+        self._output(f"❌ {message}")
+    
+    def report_warning(self, message: str):
+        """报告警告"""
+        self._output(f"⚠️ {message}")
+    
+    def report_completion(self, stats: Dict[str, Any]):
+        """报告完成统计"""
+        elapsed = time.time() - self.start_time
+        self._output("=" * 50)
+        self._output("📈 处理完成统计:")
+        for key, value in stats.items():
+            self._output(f"   {key}: {value}")
+        self._output(f"⏱️ 总耗时: {elapsed:.2f}秒")
+        self._output("=" * 50)
+    
+    def _output(self, message: str):
+        """统一输出处理"""
+        timestamp = time.strftime("%H:%M:%S")
+        formatted_message = f"[{timestamp}] {message}"
+        
+        print(formatted_message, flush=True)
+        
+        # Web模式确保立即刷新
+        if self.web_mode:
+            sys.stdout.flush()
+```
+
+### 错误处理规范
+```python
+# ✅ 统一异常处理模式
+import functools
+import logging
+from typing import Callable, Any
+
+def handle_exceptions(logger: logging.Logger = None):
+    """装饰器：统一异常处理"""
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs) -> Any:
+            try:
+                return func(*args, **kwargs)
+            except KeyboardInterrupt:
+                if logger:
+                    logger.info("用户中断操作")
+                print("⚠️ 操作被用户中断")
+                return False
+            except FileNotFoundError as e:
+                if logger:
+                    logger.error(f"文件未找到: {e}")
+                print(f"❌ 文件未找到: {e}")
+                return False
+            except PermissionError as e:
+                if logger:
+                    logger.error(f"权限错误: {e}")
+                print(f"❌ 权限不足: {e}")
+                return False
+            except ValueError as e:
+                if logger:
+                    logger.error(f"参数错误: {e}")
+                print(f"❌ 参数错误: {e}")
+                return False
+            except Exception as e:
+                if logger:
+                    logger.exception(f"未知错误: {e}")
+                print(f"❌ 发生错误: {e}")
+                return False
+        return wrapper
+    return decorator
+
+# ✅ 使用示例
+@handle_exceptions()
+def process_file(file_path: Path) -> bool:
+    """处理单个文件"""
+    # 文件处理逻辑
+    pass
+```
+
+### 配置管理规范
+```python
+# ✅ 配置管理 (config/tool_settings.py)
+from typing import Dict, Any
+from pathlib import Path
+
+# 全局配置
+GLOBAL_CONFIG = {
+    'timeout': 120,
+    'max_workers': 5,
+    'log_level': 'INFO',
+    'temp_dir': Path.home() / '.toolbox_temp'
+}
+
+# 工具特定配置
+TOOL_CONFIGS = {
+    'webp_video_converter': {
+        'default_duration': 3,
+        'default_quality': 75,
+        'ffmpeg_timeout': 120,
+        'supported_extensions': {'.mp4', '.mkv', '.avi', '.mov', '.wmv'}
+    },
+    'md5_modifier': {
+        'default_bytes': 16,
+        'max_bytes': 1024,
+        'supported_extensions': {'.jpg', '.jpeg', '.png', '.bmp', '.gif'}
+    }
+}
+
+def get_tool_config(tool_name: str) -> Dict[str, Any]:
+    """获取工具配置"""
+    config = TOOL_CONFIGS.get(tool_name, {})
+    config.update(GLOBAL_CONFIG)  # 合并全局配置
+    return config
+
+def get_supported_extensions(tool_name: str) -> set:
+    """获取工具支持的文件扩展名"""
+    config = get_tool_config(tool_name)
+    return config.get('supported_extensions', set())
+```
+
+### Web适配器规范
+```python
+# ✅ Web适配器 (environment/web_adapter.py)
+import importlib
+import sys
+from pathlib import Path
+from typing import Dict, Any
+
+class WebAdapter:
+    """Web模式适配器"""
+    
+    def __init__(self):
+        self.tools_dir = Path(__file__).parent.parent / 'tools'
+        self.tool_mapping = {
+            'webp_video': 'webp_video_converter',
+            'md5_renew': 'md5_modifier',
+            'rename_files': 'file_renamer',
+            'copy_files': 'file_copier',
+            'unzip': 'archive_extractor',
+            'auto_build_copy': 'auto_builder',
+            'webp_resize': 'webp_resizer',
+            'excel_renew': 'excel_processor',
+            'build_folder': 'folder_builder',
+            'test_stop_button': 'test_tool'
+        }
+    
+    def execute_tool(self, tool_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """执行指定工具"""
+        try:
+            # 参数验证
+            if tool_name not in self.tool_mapping:
+                return {'success': False, 'error': f'未知工具: {tool_name}'}
+            
+            # 动态导入
+            module_name = self.tool_mapping[tool_name]
+            module = self._import_tool_module(module_name)
+            
+            # 执行工具
+            if hasattr(module, 'web_main'):
+                return module.web_main(params)
+            else:
+                return {'success': False, 'error': f'工具{tool_name}不支持Web模式'}
+                
+        except Exception as e:
+            return {'success': False, 'error': f'执行失败: {str(e)}'}
+    
+    def _import_tool_module(self, module_name: str):
+        """动态导入工具模块"""
+        # 添加tools目录到Python路径
+        if str(self.tools_dir) not in sys.path:
+            sys.path.insert(0, str(self.tools_dir))
+        
+        return importlib.import_module(module_name)
+```
+
+## 📋 代码质量要求
+
+### 类型提示
+```python
+# ✅ 必须使用类型提示
+from typing import List, Dict, Optional, Union, Tuple, Any
+from pathlib import Path
+
+def process_files(
+    file_paths: List[Path], 
+    options: Dict[str, Any],
+    progress_callback: Optional[Callable[[int, int], None]] = None
+) -> Tuple[bool, Dict[str, int]]:
+    """
+    处理文件列表
+    
+    Args:
+        file_paths: 文件路径列表
+        options: 处理选项
+        progress_callback: 进度回调函数
+        
+    Returns:
+        (是否成功, 统计信息)
+    """
+    pass
+```
+
+### 文档字符串
+```python
+# ✅ 必须的docstring格式
+def convert_video_to_webp(
+    input_path: Path, 
+    output_path: Path, 
+    duration: int = 3,
+    quality: int = 75
+) -> bool:
+    """
+    将视频文件转换为WebP格式
+    
+    Args:
+        input_path: 输入视频文件路径
+        output_path: 输出WebP文件路径  
+        duration: 转换时长(秒)，默认3秒
+        quality: 质量参数(0-100)，默认75
+        
+    Returns:
+        bool: 转换是否成功
+        
+    Raises:
+        FileNotFoundError: 输入文件不存在
+        PermissionError: 没有写入权限
+        subprocess.TimeoutExpired: FFmpeg执行超时
+        
+    Example:
+        >>> success = convert_video_to_webp(
+        ...     Path("video.mp4"), 
+        ...     Path("output.webp"),
+        ...     duration=5,
+        ...     quality=80
+        ... )
+        >>> print(f"转换{'成功' if success else '失败'}")
+    """
+    pass
+```
+
+### 日志记录
+```python
+# ✅ 统一日志记录
+import logging
+
+def setup_logger(name: str, level: str = 'INFO') -> logging.Logger:
+    """设置标准日志器"""
+    logger = logging.getLogger(name)
+    logger.setLevel(getattr(logging, level.upper()))
+    
+    if not logger.handlers:
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(
+            '[%(asctime)s] %(name)s - %(levelname)s: %(message)s'
+        )
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    
+    return logger
+
+# ✅ 在工具中使用
+class ToolProcessor:
+    def __init__(self):
+        self.logger = setup_logger(self.__class__.__name__)
+    
+    def process(self):
+        self.logger.info("开始处理")
+        try:
+            # 处理逻辑
+            self.logger.debug("处理详细信息")
+        except Exception as e:
+            self.logger.error(f"处理失败: {e}", exc_info=True)
+```
+
+## 🧪 测试要求
+
+### 基础测试用例
+```python
+# ✅ 每个工具必须包含测试
+# tests/test_webp_converter.py
+import pytest
+from pathlib import Path
+from tools.webp_video_converter import WebpVideoConverter, web_main
+
+class TestWebpVideoConverter:
+    def setup_method(self):
+        self.test_dir = Path("test_data")
+        self.converter = WebpVideoConverter()
+    
+    def test_scan_video_files(self):
+        """测试视频文件扫描"""
+        # 创建测试文件
+        (self.test_dir / "test.mp4").touch()
+        (self.test_dir / "test.txt").touch()
+        
+        videos = self.converter._scan_video_files(self.test_dir)
+        assert len(videos) == 1
+        assert videos[0].suffix == '.mp4'
+    
+    def test_web_main_interface(self):
+        """测试Web接口"""
+        params = {
+            'path': str(self.test_dir),
+            'duration': 3,
+            'overwrite': 'skip'
+        }
+        
+        result = web_main(params)
+        assert 'success' in result
+        assert 'stats' in result or 'error' in result
+```
+
+## 🎯 代码审查检查点
+
+### 提交前必检项
+- [ ] 是否实现了双模式支持(main + web_main)
+- [ ] 是否使用了公共模块减少重复代码
+- [ ] 是否添加了完整的类型提示
+- [ ] 是否添加了详细的docstring
+- [ ] 是否包含统一的错误处理
+- [ ] 是否使用了ProgressReporter
+- [ ] 是否支持KeyboardInterrupt中断
+- [ ] 是否兼容Web环境和命令行环境
+- [ ] 是否添加了基础测试用例
+- [ ] 是否遵循了文件命名规范
+
+### 性能检查点
+- [ ] 是否使用了生成器处理大量文件
+- [ ] 是否避免了不必要的文件重复读取
+- [ ] 是否实现了合理的进度报告频率
+- [ ] 是否使用了适当的超时机制
+- [ ] 是否正确释放了文件句柄和进程资源
+
+### 兼容性检查点
+- [ ] 是否保持了原有脚本的功能完整性
+- [ ] 是否支持原有的参数格式
+- [ ] 是否兼容Windows和Unix系统
+- [ ] 是否正确处理了路径分隔符和编码
+- [ ] 是否在公共模块不可用时提供回退方案
+
+
